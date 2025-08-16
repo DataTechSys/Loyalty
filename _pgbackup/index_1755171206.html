@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Loyalty Console • Loading…</title>
+        <link rel="preload" href="images/DataTech.png" as="image">
+        <style>
+    html,body{height:100%} body{display:flex;align-items:center;justify-content:center;font:16px system-ui, -apple-system, Segoe UI, Roboto, Arial}
+    .box{color:#555}
+    .small{font-size:12px;color:#888;margin-top:6px}
+    .err{color:#c62828}
+  </style>
+    </head>
+    <body>
+        <div class="box">
+            <div id="msg">Loading…</div>
+            <div class="small">If this takes long, refresh the page.</div>
+            <div class="small err" id="err" hidden></div>
+        </div>
+        <!-- Order matters: config (optional) → rbac → app-auth → app -->
+        <script src="js/config.js"></script>
+        <script src="js/rbac.js"></script>
+        <script src="js/app-auth.js"></script>
+        <script src="js/app.js"></script>
+    </body>
+</html>

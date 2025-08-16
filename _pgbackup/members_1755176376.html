@@ -1,0 +1,28 @@
+<main class="container py-4">
+    <div class="d-flex align-items-center mb-3">
+        <h1 class="h4 mb-0 me-3">Members</h1>
+        <div class="ms-auto" style="max-width:280px">
+            <input id="q" class="form-control" placeholder="Search name or phone…"/>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Total</th>
+                    <th>Last visit</th>
+                </tr>
+            </thead>
+            <tbody id="tbl"></tbody>
+        </table>
+    </div>
+    <div class="d-flex gap-2">
+        <button id="prev" class="btn btn-outline-secondary btn-sm">Previous</button>
+        <button id="next" class="btn btn-outline-secondary btn-sm">Next</button>
+        <div id="pageInfo" class="ms-auto small text-muted"></div>
+    </div>
+</main>
+<script src="js/pages/members-page.js"></script>

@@ -1,0 +1,41 @@
+<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 d-flex align-items-center" href="dashboard.html">
+    <strong>Loyalty</strong>
+  </a>
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button"
+          data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
+          aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="ms-auto me-3 d-none d-md-flex align-items-center">
+    <select id="tenantSwitcher" class="form-select form-select-sm me-2" style="min-width:220px"></select>
+    <div class="dropdown">
+      <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
+        <span id="userEmail">User</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="users.html">Users</a></li>
+        <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><button class="dropdown-item" id="logoutBtn">Sign out</button></li>
+      </ul>
+    </div>
+  </div>
+</header>
+<script>
+(function(){{
+  const s = RBAC.session();
+  const emailEl = document.getElementById('userEmail'); if (emailEl && s) emailEl.textContent = s.email || 'User';
+  const sel = document.getElementById('tenantSwitcher');
+  if (sel) {{
+    const tenants = RBAC.getTenants();
+    sel.innerHTML='';
+    tenants.forEach(t=>{{
+      const o=document.createElement('option'); o.value=t.id; o.textContent=`${{t.name}} — ${{t.accountId||t.code||''}}`;
+      if (t.id===RBAC.getActiveTenantId()) o.selected=true; sel.appendChild(o);
+    }});
+    sel.addEventListener('change', ()=>{{ RBAC.setActiveTenant(sel.value); location.reload(); }});
+  }}
+  document.getElementById('logoutBtn')?.addEventListener('click', ()=>{{ RBAC.logout(); location.href='login.html'; }});
+}})();
+</script>

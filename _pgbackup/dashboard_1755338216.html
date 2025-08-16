@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Dashboard · Loyalty Console</title>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Fonts / Bootstrap / Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <!-- App styles -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Reusable Sidebar -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main column -->
+            <div class="main">
+                <!-- Reusable Topbar with avatar dropdown (injected by app-user.js) -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page content -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title / actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Dashboard</h1>
+                                <div class="text-muted small">Overview & selected reports</div>
+                            </div>
+                            <div class="d-flex gap-2"><a class="btn btn-outline-secondary btn-sm" href="reports.html"> <i class="fa-solid fa-chart-simple me-1"></i> Open Reports </a><a class="btn btn-primary btn-sm" href="messages.html"> <i class="fa-solid fa-paper-plane me-1"></i> New Campaign </a>
+                            </div>
+                        </div>
+                        <!-- KPI tiles -->
+                        <div class="row g-2">
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Revenue (30d)</div>
+                                    <div class="value" id="kpiRevenue">—</div>
+                                    <div class="delta up small" id="kpiRevenueDelta">+5.4% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Orders</div>
+                                    <div class="value" id="kpiOrders">—</div>
+                                    <div class="delta up small" id="kpiOrdersDelta">+2.1% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">New Members</div>
+                                    <div class="value" id="kpiMembers">—</div>
+                                    <div class="delta up small" id="kpiMembersDelta">+7.9% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Redemptions</div>
+                                    <div class="value" id="kpiRedemptions">—</div>
+                                    <div class="delta down small" id="kpiRedemptionsDelta">-1.2% vs prior</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Charts row -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Revenue (last 30 days)</h2><a class="small" href="reports.html">Open Reports</a>
+                                    </div>
+                                    <canvas id="chartRevenue" height="140"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Orders by Day</h2><a class="small" href="reports.html">Open Reports</a>
+                                    </div>
+                                    <canvas id="chartOrders" height="140"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Status + Activity -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Payment Methods</h2>
+                                    </div>
+                                    <canvas id="chartStatus" height="180"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Recent Activity</h2><a class="small" href="orders.html">See all</a>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Ref</th>
+                                                    <th>Summary</th>
+                                                    <th class="text-end">When</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="activity"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Vendor JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+        <!-- App JS (order matters) -->
+        <script src="js/dt-include.js"></script>         
+
+        <!-- loads sidebar & topbar partials -->
+        <script src="js/sidebar.js" defer></script>         
+
+        <!-- handles sidebar dropdown groups -->
+        <script src="js/app-user.js" defer></script>         
+
+        <!-- auth guard + user chip -->
+        <!-- Page script (charts + demo data) -->
+        <script>
+    (function(){
+      // Wait a tick so partials can load (charts don't depend on them, but harmless)
+      const DAYS = 30;
+      const labels = Array.from({length:DAYS},(_,i)=>{
+        const d=new Date(); d.setDate(d.getDate()-(DAYS-1-i));
+        return d.toLocaleDateString([],{month:'short',day:'2-digit'});
+      });
+      function genSeries(n,b,j){const o=[]; for(let i=0;i<n;i++){o.push(Math.max(0,b+(Math.sin(i/4)*b*0.05)+(Math.random()-0.5)*j));} return o;}
+      const series = {
+        revenue: genSeries(DAYS,260,80).map(v=>+v.toFixed(2)),
+        orders:  genSeries(DAYS,80,25).map(v=>Math.round(v))
+      };
+
+      const sum = a => a.reduce((x,y)=>x+y,0);
+      const fmtKWD=v=>'KWD '+v.toFixed(3);
+
+      // KPIs
+      document.getElementById('kpiRevenue').textContent = fmtKWD(sum(series.revenue));
+      document.getElementById('kpiOrders').textContent   = sum(series.orders).toLocaleString();
+      document.getElementById('kpiMembers').textContent  = '410';
+      document.getElementById('kpiRedemptions').textContent = '780';
+
+      // Charts
+      new Chart(document.getElementById('chartRevenue'),{
+        type:'line',
+        data:{ labels, datasets:[{ label:'Revenue', data:series.revenue, fill:true, tension:.35 }]},
+        options:{ responsive:true, plugins:{ legend:{display:false} }, scales:{ y:{ beginAtZero:true } } }
+      });
+
+      new Chart(document.getElementById('chartOrders'),{
+        type:'bar',
+        data:{ labels, datasets:[{ label:'Orders', data:series.orders }]},
+        options:{ responsive:true, plugins:{ legend:{display:false} }, scales:{ y:{ beginAtZero:true } } }
+      });
+
+      // Payment methods breakdown (demo)
+      const pm = { 'Knet':48, 'Apple Pay':22, 'Loyalty':15, 'Cash':10, 'Other':5 };
+      new Chart(document.getElementById('chartStatus'),{
+        type:'doughnut',
+        data:{ labels:Object.keys(pm), datasets:[{ data:Object.values(pm) }]},
+        options:{ responsive:true, plugins:{ legend:{ position:'bottom' } }, cutout:'60%' }
+      });
+
+      // Recent activity (demo)
+      const ACT=[
+        {type:'Order',ref:'#1765956',summary:'Knet · Mustafa · KWD 5.000',when:'Today 09:45'},
+        {type:'Message',ref:'July Push',summary:'Sent to All · 3,990 delivered',when:'Yesterday'},
+        {type:'Order',ref:'#1765007',summary:'Apple Pay · Reem · KWD 3.780',when:'Yesterday'},
+        {type:'Order',ref:'#1764989',summary:'Loyalty · Ali · KWD 2.600',when:'Yesterday'}
+      ];
+      document.getElementById('activity').innerHTML = ACT.map(a=>`
+        <tr>
+          <td class="fw-semibold">${a.type}</td>
+          <td>${a.type==='Order'?`<a href="order-details.html?id=${a.ref.replace('#','')}">${a.ref}</a>`:a.ref}</td>
+          <td>${a.summary}</td>
+          <td class="text-end">${a.when}</td>
+        </tr>`).join('');
+    })();
+  </script>
+        <script src="js/utils.js"></script>
+    </body>
+</html>

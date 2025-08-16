@@ -1,0 +1,10 @@
+<script>
+  (function () {
+    try {
+      if (window.RBAC && RBAC.session && RBAC.session()) {
+        var base = location.pathname.replace(/[^\/]*$/, '');
+        location.replace(base + 'dashboard.html');
+      }
+    } catch (e) {}
+  })();
+</script>

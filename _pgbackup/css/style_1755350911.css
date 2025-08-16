@@ -1,0 +1,714 @@
+/* css/style.css */
+/* =========================
+   Design tokens / variables
+   ========================= */
+:root {
+    --dt-bg: #f3f5f9;
+    --dt-card: #fff;
+    --dt-text: #4d4949;
+    --dt-muted: #40a3a3;
+    --dt-primary: #307583;
+    --dt-border: #ccd7de;
+    --dt-radius-lg: 16px;
+    --dt-shadow: 0 8px 24px rgba(180, 182, 189, 0.06);
+    --hover: #f1f1f6;
+    --maxw: 1180px;
+    --sidebar-w: 240px;
+}
+
+/* =====
+   Base
+   ===== */
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--dt-bg);
+    color: var(--dt-text);
+    font-family: 'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+
+/* =======
+   Layout
+   ======= */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========
+   Sidebar
+   ========= */
+.sidebar {
+    width: var(--sidebar-w);
+    background: #c2c2c5;
+    color: #555657;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    border-right: 1px solid #98999d;
+    display: flex;
+    flex-direction: column;
+    transition: width .18s ease, transform .2s ease;
+}
+
+.sidebar.collapsed {
+    width: 78px;
+}
+
+.sb-brand {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: 14px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    font-weight: 700;
+}
+
+.sb-brand img {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+}
+
+.brand-text,
+.sb-text {
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity .12s ease;
+}
+
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .sb-text {
+    opacity: 0;
+}
+
+.sb-nav {
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sb-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: #48484b;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .95rem;
+}
+
+.sb-link:hover {
+    background: #1f2937;
+}
+
+.sb-link.active {
+    background: #8f95a0;
+    color: #fff;
+}
+
+.sb-link i {
+    width: 22px;
+    min-width: 22px;
+    text-align: center;
+    font-size: 16px;
+    opacity: .95;
+}
+
+.sb-footer {
+    margin-top: auto;
+    padding: 12px;
+    font-size: 0.8rem;
+    color: #282929;
+    border-top: 1px solid rgba(255,255,255,.06);
+}
+
+/* =========
+   Top bar
+   ========= */
+.dt-topbar {
+    background: var(--dt-card);
+    border-bottom: 1px solid var(--dt-border);
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.tb-inner.container {
+    max-width: calc(var(--maxw) + 32px);
+    padding: 8px 16px;
+}
+
+.dt-brand {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    font-weight: 600;
+}
+
+.dt-brand img {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--dt-border);
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* =========
+   Content
+   ========= */
+.page {
+    flex: 1;
+}
+
+.container-narrow {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 18px 16px 28px;
+}
+
+/* Cards / panels */
+.dt-card {
+    background: var(--dt-card);
+    border: 1px solid var(--dt-border);
+    border-radius: var(--dt-radius-lg);
+    box-shadow: var(--dt-shadow);
+}
+
+.p-card {
+    padding: 16px;
+}
+
+@media (min-width:768px){
+    .p-card {
+        padding: 18px;
+    }
+}
+
+/* KPI tiles */
+.kpi {
+    border: 1px solid var(--dt-border);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: var(--dt-shadow);
+    padding: 14px;
+    height: 100%;
+}
+
+.kpi .label {
+    color: var(--dt-muted);
+    font-size: .82rem;
+}
+
+.kpi .value {
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+}
+
+.kpi .delta.up {
+    color: #059669;
+}
+
+.kpi .delta.down {
+    color: #b91c1c;
+}
+
+/* Tables */
+.table thead th {
+    color: var(--dt-muted);
+    font-weight: 600;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-top: 0;
+}
+
+.table>:not(caption)>*>* {
+    border-color: var(--dt-border);
+}
+
+.table tbody tr:hover {
+    background: var(--hover);
+}
+
+/* Badges (soft) */
+.badge-soft {
+    border: 1px solid;
+    padding: .3rem .55rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: .7rem;
+}
+
+.st-paid {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+.st-refunded {
+    background: #eff6ff;
+    color: #1e3a8a;
+    border-color: #bfdbfe;
+}
+
+.st-unpaid {
+    background: #fff7ed;
+    color: #9a3412;
+    border-color: #fed7aa;
+}
+
+/* ===========
+   Responsive
+   =========== */
+/* Mobile sidebar overlay */
+@media (max-width:991.98px){
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        transform: translateX(-100%);
+        z-index: 1040;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .tb-inner.container {
+        padding-left: 56px;
+        padding-right: 16px;
+    }
+
+    .burger {
+        display: inline-flex !important;
+    }
+}
+
+.burger {
+    display: none;
+}
+
+/* ===== Topbar user chip (shared) ======================================= */
+.user-chip {
+    background: #fff;
+    border: 1px solid var(--dt-border);
+    border-radius: 999px;
+    padding: 6px 10px;
+    box-shadow: var(--dt-shadow);
+}
+
+.user-chip:hover {
+    background: #f9fafb;
+}
+
+.user-chip .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 1px solid var(--dt-border);
+}
+
+.chip-name {
+    font-weight: 600;
+    color: var(--dt-text);
+    font-size: .9rem;
+    letter-spacing: -.01em;
+}
+
+.chip-role {
+    font-size: .72rem;
+    color: var(--dt-muted);
+}
+
+/* Dropdown polish */
+.dropdown-menu {
+    border-radius: 12px;
+    border: 1px solid var(--dt-border);
+    box-shadow: var(--dt-shadow);
+}
+
+.dropdown-menu .dropdown-header {
+    font-size: .8rem;
+}
+
+/* Optional: keep chip tidy on very small screens */
+@media (max-width: 575.98px) {
+    .chip-name,
+    .chip-role,
+    .user-chip i.fa-chevron-down {
+        display: none !important;
+    }
+}
+
+/* Footer style */
+.sb-footer {
+    text-align: center;
+    padding: 6px;
+    font-size: 14px;
+    color: #aaa;
+    background: #f8f9fa;
+
+    /* light grey background */
+    border-top: 1px solid #ddd;
+    position: fixed;
+
+    /* always stick to bottom */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+/* --- Sidebar groups (collapsible) --- */
+.sb-group {
+    display: block;
+}
+
+.sb-group > .sb-link {
+    align-items: center;
+}
+
+.sb-group > .sb-link .chev {
+    margin-left: auto;
+    transition: transform .15s ease;
+}
+
+.sb-group.open > .sb-link .chev {
+    transform: rotate(180deg);
+}
+
+/* sublinks */
+.sb-sublinks {
+    display: none;
+    margin: 4px 0 0 0;
+    padding-left: 8px;
+}
+
+.sb-group.open > .sb-sublinks {
+    display: block;
+}
+
+.sb-sublinks .sb-sublink {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px 8px 36px;
+
+    /* indent */
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .92rem;
+    color: #4a4b4c;
+}
+
+.sb-sublinks .sb-sublink:hover {
+    background: #e9ecef;
+}
+
+.sb-sublinks .sb-sublink.active {
+    background: #23314a;
+    color: #fff;
+}
+
+/* When sidebar collapsed, hide text & sublinks completely */
+.sidebar.collapsed .sb-sublinks {
+    display: none !important;
+}
+
+.sidebar.collapsed .sb-link .chev {
+    display: none;
+}
+
+/* === Sidebar groups & sublinks (fix) === */
+.sb-nav {
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* main links */
+.sb-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: #464647;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .95rem;
+}
+
+.sb-link:hover {
+    background: #d8dadf;
+}
+
+/* light hover on grey sidebar */
+.sb-link.active {
+    background: #23314a;
+    color: #fff;
+}
+
+/* ensure the toggle buttons look like links (not pills) */
+button.sb-link {
+    border: 0;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    appearance: none;
+}
+
+/* icon inside links */
+.sb-link i {
+    width: 22px;
+    min-width: 22px;
+    text-align: center;
+    font-size: 16px;
+    opacity: .95;
+}
+
+/* group wrapper */
+.sb-group {
+    margin-top: 6px;
+}
+
+/* rotate caret when open */
+.sb-group .fa-chevron-down {
+    transition: transform .15s ease;
+}
+
+.sb-group.open .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* sub list */
+.sb-sub {
+    display: none;
+    padding: 4px 0 6px 40px;
+}
+
+/* indent under the icons */
+.sb-group.open .sb-sub {
+    display: block;
+}
+
+/* sub links */
+.sb-sublink {
+    display: block;
+    padding: 6px 8px;
+    border-radius: 8px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: .92rem;
+}
+
+.sb-sublink:hover {
+    background: #e3e5ea;
+}
+
+.sb-sublink.active {
+    background: #23314a;
+    color: #fff;
+}
+
+/* footer year (optional) */
+.sb-footer-year::before {
+    content: attr(data-year);
+}
+
+/* topbar base already in your style; these just ensure spacing */
+.dt-topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--dt-border);
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.tb-inner.container {
+    max-width: calc(var(--maxw) + 32px);
+    padding: 8px 16px;
+}
+
+/* Chip hover/arrow */
+.userchip-btn .fa-chevron-down {
+    transition: transform .2s ease;
+}
+
+.userchip-btn[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(-180deg);
+}
+
+.userchip-menu {
+    box-shadow: var(--dt-shadow);
+    border: 1px solid var(--dt-border);
+    border-radius: 12px;
+    background: #fff;
+}
+
+/* Sleek pill toolbar */
+.dt-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.dt-toolbar .pill,
+.dt-toolbar .pill-btn,
+.dt-toolbar .pill-icon {
+    border: 1px solid var(--dt-border,#e5e7eb);
+    background: #fff;
+    border-radius: 999px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.04);
+    height: 38px;
+}
+
+/* Input pills (icon + control) */
+.dt-toolbar .pill {
+    display: flex;
+    align-items: center;
+    padding: 0 10px 0 12px;
+    gap: 8px;
+}
+
+.dt-toolbar .pill i {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.dt-toolbar .pill .pill-input {
+    border: 0;
+    outline: 0;
+    height: 36px;
+    line-height: 36px;
+    background: transparent;
+    padding: 0 4px;
+    font-size: .92rem;
+    color: #0f172a;
+}
+
+.dt-toolbar .pill select.pill-input {
+    appearance: none;
+}
+
+.dt-toolbar .pill input[type="date"].pill-input {
+    min-width: 160px;
+}
+
+/* Buttons */
+.dt-toolbar .pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    font-weight: 600;
+    font-size: .9rem;
+    color: #1f2937;
+}
+
+.dt-toolbar .pill-btn i {
+    font-size: 14px;
+    color: #1f2937;
+}
+
+.dt-toolbar .pill-icon {
+    width: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #1f2937;
+}
+
+.dt-toolbar .pill-icon i {
+    font-size: 14px;
+}
+
+/* Hover focus */
+.dt-toolbar .pill:hover,
+.dt-toolbar .pill-btn:hover,
+.dt-toolbar .pill-icon:hover {
+    background: #f9fafb;
+}
+
+.dt-toolbar .pill:has(.pill-input:focus) {
+    outline: 2px solid rgba(31,111,235,.15);
+    border-color: #bcd2ff;
+}
+
+/* Table header tone to match screenshot */
+.table thead th {
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    font-size: .8rem;
+    color: #1f6f6b;
+
+    /* teal-ish header like your screenshot */
+    border-top: 0;
+}
+
+/* ===== Orders Page Full Width Table ===== */
+.container {
+    max-width: 100% !important;
+
+    /* override Bootstrap */
+    padding: 0 20px;
+
+    /* keep a little spacing on the sides */
+}
+
+.table {
+    width: 100% !important;
+    table-layout: auto;
+}
+
+.table th,
+.table td {
+    white-space: nowrap;
+    padding: 10px 15px;
+}
+
+/* Reports filter dropdowns */
+.reports-filters select {
+    max-width: 200px;
+
+    /* limit maximum width */
+    min-width: 150px;
+
+    /* keep them from shrinking too much */
+    width: auto;
+
+    /* size based on content */
+    padding: 6px 10px;
+    border-radius: 6px;
+}

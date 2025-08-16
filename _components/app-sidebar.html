@@ -1,0 +1,18 @@
+<nav id="sidebarMenu" class="d-md-block sidebar collapse show">
+  <div class="position-sticky pt-3">
+    <ul class="nav flex-column sidebar">
+      <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" href="members.html">Members</a></li>
+      <li class="nav-item"><a class="nav-link" href="messages.html">Campaigns</a></li>
+      <li class="nav-item"><a class="nav-link" href="settings.html">Settings</a></li>
+      <li class="nav-item"><a class="nav-link" href="users.html">Users</a></li>
+    </ul>
+  </div>
+</nav>
+<script>
+(function(){{
+  const links=document.querySelectorAll('#sidebarMenu .nav-link');
+  const path=location.pathname.split('/').pop();
+  links.forEach(a=>{{ if(a.getAttribute('href')===path) a.classList.add('active'); }});
+}})();
+</script>

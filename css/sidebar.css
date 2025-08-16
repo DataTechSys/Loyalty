@@ -1,0 +1,30 @@
+/* Hide submenus by default */
+.sb-sub {
+  display: none;
+  flex-direction: column;
+  padding-left: 1.5rem;
+}
+
+.sb-sub .sb-sublink {
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+  text-decoration: none;
+}
+
+.sb-sub .sb-sublink:hover {
+  color: #fff;
+}
+
+/* Open state */
+.sb-group.open .sb-sub {
+  display: flex;
+}
+
+/* Rotate arrow */
+.sb-group .fa-chevron-down {
+  transition: transform 0.2s ease;
+}
+.sb-group.open .fa-chevron-down {
+  transform: rotate(-180deg);
+}

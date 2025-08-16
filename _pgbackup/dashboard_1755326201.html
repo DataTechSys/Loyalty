@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Dashboard · Loyalty Console</title>
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <!-- Your shared theme -->
+        <link href="css/style.css" rel="stylesheet">
+        <!-- Favicon (optional) -->
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <link rel="icon" type="image/png" href="images/datatech-ico.png">
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sb-brand">
+                    <img src="images/DataTech.png" alt="DataTech"><span class="brand-text">Loyalty Console</span>
+                </div>
+                <nav class="sb-nav"><a class="sb-link active" href="dashboard.html"><i class="fa-solid fa-gauge-high"></i><span class="sb-text">Dashboard</span></a><a class="sb-link" href="orders.html"><i class="fa-solid fa-cart-shopping"></i><span class="sb-text">Orders</span></a><a class="sb-link" href="members.html"><i class="fa-solid fa-users"></i><span class="sb-text">Customers</span></a><a class="sb-link" href="messages.html"><i class="fa-solid fa-paper-plane"></i><span class="sb-text">Messages</span></a><a class="sb-link" href="reports.html"><i class="fa-solid fa-chart-line"></i><span class="sb-text">Reports</span></a><a class="sb-link" href="settings.html"><i class="fa-solid fa-gear"></i><span class="sb-text">Settings</span></a><a class="sb-link" href="admin.html"><i class="fa-solid fa-user-shield"></i><span class="sb-text">Admin</span></a>
+                </nav>
+                <div class="sb-footer">© DataTech 2025</div>
+            </aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar (no center title; user chip on right) -->
+                <header class="dt-topbar">
+                    <div class="tb-inner container d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn-icon burger" id="burger" aria-label="Toggle menu">☰</button>
+                            <button class="btn-icon" id="collapseBtn" aria-label="Collapse sidebar"><i class="fa-solid fa-bars"></i>
+                            </button>
+                        </div>
+                        <!-- empty middle to keep spacing consistent -->
+                        <div></div>
+                        <!-- User chip placeholder (populated by js/app-user.js) -->
+                        <div class="userchip-wrap"></div>
+                    </div>
+                </header>
+                <!-- Page content -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title + actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Dashboard</h1>
+                                <div class="text-muted small">Overview & selected reports</div>
+                            </div>
+                            <div class="d-flex gap-2"><a class="btn btn-outline-secondary btn-sm" href="reports.html"> <i class="fa-solid fa-chart-simple me-1"></i>Open Reports </a><a class="btn btn-primary btn-sm" href="messages.html"> <i class="fa-solid fa-paper-plane me-1"></i>New Campaign </a>
+                            </div>
+                        </div>
+                        <!-- KPIs -->
+                        <div class="row g-2">
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Revenue (30d)</div>
+                                    <div class="value" id="kpiRevenue">—</div>
+                                    <div class="delta up small" id="kpiRevenueDelta">+5.4% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Orders</div>
+                                    <div class="value" id="kpiOrders">—</div>
+                                    <div class="delta up small" id="kpiOrdersDelta">+2.1% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">New Members</div>
+                                    <div class="value" id="kpiMembers">—</div>
+                                    <div class="delta up small" id="kpiMembersDelta">+7.9% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Redemptions</div>
+                                    <div class="value" id="kpiRedemptions">—</div>
+                                    <div class="delta down small" id="kpiRedemptionsDelta">-1.2% vs prior</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Charts row -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Revenue (last 30 days)</h2><a class="small" href="reports.html">Open Reports</a>
+                                    </div>
+                                    <canvas id="chartRevenue" height="140"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Orders by Day</h2><a class="small" href="reports.html">Open Reports</a>
+                                    </div>
+                                    <canvas id="chartOrders" height="140"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Activity & status -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Status Breakdown</h2>
+                                    </div>
+                                    <canvas id="chartStatus" height="180"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Recent Activity</h2><a class="small" href="orders.html">See all</a>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Ref</th>
+                                                    <th>Summary</th>
+                                                    <th class="text-end">When</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="activity"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Vendor scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+        <!-- Your user/session helper (renders chip; no page reloads) -->
+        <script src="js/app-user.js"></script>
+        <!-- Page logic -->
+        <script>
+  (function () {
+    // Guard (optional). Redirect to login if not authenticated.
+    try {
+      if (window.UserSession && !window.UserSession.isAuthenticated()) {
+        sessionStorage.setItem('redirectAfterLogin','dashboard.html');
+        location.replace('login.html'); return;
+      }
+    } catch(e){}
+
+    // Sidebar toggles
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('burger')?.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+    document.getElementById('collapseBtn')?.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+    sidebar.querySelectorAll('a.sb-link').forEach(a => {
+      a.addEventListener('click', () => sidebar.classList.remove('open'));
+    });
+
+    // --- Demo data for charts / KPIs ---------------------------------------
+    const DAYS = 30;
+    const labels = Array.from({length: DAYS}, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (DAYS - 1 - i));
+      return d.toLocaleDateString([], { month:'short', day:'2-digit' });
+    });
+    function series(n, base, jitter){
+      const out = [];
+      for (let i=0;i<n;i++) {
+        out.push(Math.max(0, base + (Math.sin(i/4)*base*0.05) + (Math.random()-0.5)*jitter));
+      }
+      return out;
+    }
+    const revenue = series(DAYS, 260, 80).map(v => +v.toFixed(2));
+    const orders = series(DAYS, 80, 25).map(v => Math.round(v));
+    const paid=68, refunded=9, unpaid=23;
+
+    const sum = a => a.reduce((x,y)=>x+y, 0);
+    const kwd = v => 'KWD ' + v.toFixed(3);
+
+    // KPIs
+    document.getElementById('kpiRevenue').textContent = kwd(sum(revenue));
+    document.getElementById('kpiOrders').textContent   = sum(orders).toLocaleString();
+    document.getElementById('kpiMembers').textContent  = '410';
+    document.getElementById('kpiRedemptions').textContent = '780';
+
+    // Charts
+    new Chart(document.getElementById('chartRevenue'), {
+      type: 'line',
+      data: { labels, datasets: [{ label:'Revenue', data: revenue, fill:true, tension: .35 }] },
+      options: { responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+    });
+    new Chart(document.getElementById('chartOrders'), {
+      type: 'bar',
+      data: { labels, datasets: [{ label:'Orders', data: orders }] },
+      options: { responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+    });
+    new Chart(document.getElementById('chartStatus'), {
+      type: 'doughnut',
+      data: { labels:['Paid','Refunded','Unpaid'], datasets:[{ data: [paid,refunded,unpaid] }] },
+      options: { responsive:true, plugins:{ legend:{ position:'bottom' } }, cutout:'60%' }
+    });
+
+    // Activity table
+    const ACT = [
+      {type:'Order',ref:'#1765956',summary:'Paid · Mustafa · KWD 5.000',when:'Today 09:45',status:'paid'},
+      {type:'Message',ref:'July Push',summary:'Sent to All · 3,990 delivered',when:'Yesterday',status:'sent'},
+      {type:'Order',ref:'#1765007',summary:'Refunded · Reem · KWD 3.780',when:'Yesterday',status:'refunded'},
+      {type:'Order',ref:'#1764989',summary:'Unpaid · Ali · KWD 2.600',when:'Yesterday',status:'unpaid'}
+    ];
+    function badge(s){
+      if (s==='paid')     return '<span class="badge-soft st-paid">Paid</span>';
+      if (s==='refunded') return '<span class="badge-soft st-refunded">Refunded</span>';
+      if (s==='unpaid')   return '<span class="badge-soft st-unpaid">Unpaid</span>';
+      if (s==='sent')     return '<span class="badge-soft st-paid">Sent</span>';
+      return '';
+    }
+    document.getElementById('activity').innerHTML = ACT.map(a => `
+      <tr>
+        <td class="fw-semibold">${a.type}</td>
+        <td>${a.type==='Order'
+              ? `<a href="order-details.html?id=${a.ref.replace('#','')}">${a.ref}</a>`
+              : a.ref}</td>
+        <td>${a.summary}</td>
+        <td class="text-end"><div>${a.when}</div><div>${badge(a.status)}</div></td>
+      </tr>
+    `).join('');
+
+    // IMPORTANT: prevent any accidental "#" links from causing a jump/reload
+    document.querySelectorAll('a[href="#"]').forEach(a=>{
+      a.addEventListener('click', e => e.preventDefault(), {passive:false});
+    });
+  })();
+  </script>
+    </body>
+</html>

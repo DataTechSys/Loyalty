@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Reports · Loyalty Console</title>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link href="css/style.css" rel="stylesheet"/>
+        <!-- Charts -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- ========== Sidebar (inline) ========== -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sb-brand">
+                    <img src="images/DataTech.png" alt="DataTech"><span class="brand-text">Loyalty Console</span>
+                </div>
+                <nav class="sb-nav"><a class="sb-link" data-link="dashboard" href="dashboard.html"> <i class="fa-solid fa-gauge-high"></i><span class="sb-text">Dashboard</span> </a><a class="sb-link" data-link="orders" href="orders.html"> <i class="fa-solid fa-cart-shopping"></i><span class="sb-text">Orders</span> </a><a class="sb-link" data-link="customers" href="customers.html"> <i class="fa-solid fa-users"></i><span class="sb-text">Customers</span> </a><a class="sb-link" data-link="messages" href="messages.html"> <i class="fa-solid fa-paper-plane"></i><span class="sb-text">Messages</span> </a><a class="sb-link active" data-link="reports" href="reports.html"> <i class="fa-solid fa-chart-line"></i><span class="sb-text">Reports</span> </a>
+                    <!-- Settings/Admin moved to profile dropdown per your request --><a class="sb-link" data-link="login" href="login.html"> <i class="fa-solid fa-right-to-bracket"></i><span class="sb-text">Login</span> </a>
+                </nav>
+                <div class="sb-footer">© DataTech 2025</div>
+            </aside>
+            <!-- ========== Main ========== -->
+            <div class="main">
+                <!-- Topbar with burger/collapse + user chip -->
+                <header class="dt-topbar">
+                    <div class="tb-inner container d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn-icon burger" id="burger" aria-label="Toggle menu">☰</button>
+                            <button class="btn-icon" id="collapseBtn" aria-label="Collapse sidebar"><i class="fa-solid fa-bars"></i>
+                            </button>
+                        </div>
+                        <!-- keep center empty for balance -->
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- profile dropdown mounts here -->
+                            <div class="userchip-wrap"></div>
+                        </div>
+                    </div>
+                </header>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title + actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Reports</h1>
+                                <div class="text-muted small">Track revenue, orders, customers, and audit logs</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button id="btnExportCsv" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-file-export me-1"></i> Export CSV
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Filters -->
+                        <div class="dt-card p-card mb-2">
+                            <form id="filterForm" class="row g-2 align-items-end">
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small">From</label>
+                                    <input type="date" id="fFrom" class="form-control">
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small">To</label>
+                                    <input type="date" id="fTo" class="form-control">
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small">Customer</label>
+                                    <input type="text" id="fCustomer" class="form-control" placeholder="name or phone">
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small">Branch</label>
+                                    <select id="fBranch" class="form-select">
+                                        <option value="">All branches</option>
+                                        <option>AHB | Abu Halifa</option>
+                                        <option>JAB | Jabriya</option>
+                                        <option>SHA | Sharq</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small">Payment</label>
+                                    <select id="fPay" class="form-select">
+                                        <option value="">All</option>
+                                        <option>Knet</option>
+                                        <option>Apple Pay</option>
+                                        <option>Cash</option>
+                                        <option>Card</option>
+                                        <option>Loyalty</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-9 text-md-end">
+                                    <button type="submit" class="btn btn-primary me-1">Apply</button>
+                                    <button type="button" id="btnReset" class="btn btn-outline-secondary">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Tabs -->
+                        <ul class="nav nav-pills mb-2" id="repTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="tab-overview" data-bs-toggle="pill" data-bs-target="#pane-overview" type="button" role="tab">Overview</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-logs" data-bs-toggle="pill" data-bs-target="#pane-logs" type="button" role="tab">Logs</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- Overview -->
+                            <div class="tab-pane fade show active" id="pane-overview" role="tabpanel">
+                                <div class="row g-2">
+                                    <div class="col-12 col-lg-4">
+                                        <div class="kpi">
+                                            <div class="label">Revenue</div>
+                                            <div class="value" id="kpiRevenue">—</div>
+                                            <div class="delta up small" id="kpiRevenueDelta"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-lg-4">
+                                        <div class="kpi">
+                                            <div class="label">Orders</div>
+                                            <div class="value" id="kpiOrders">—</div>
+                                            <div class="delta up small" id="kpiOrdersDelta"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-lg-4">
+                                        <div class="kpi">
+                                            <div class="label">Avg. Order Value</div>
+                                            <div class="value" id="kpiAov">—</div>
+                                            <div class="delta small text-muted" id="kpiAovNote"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-2 mt-2">
+                                    <div class="col-12 col-lg-7">
+                                        <div class="dt-card p-card h-100">
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                <h2 class="h6 mb-0">Revenue by Day</h2>
+                                            </div>
+                                            <canvas id="chRevenue" height="140"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-5">
+                                        <div class="dt-card p-card h-100">
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                <h2 class="h6 mb-0">Orders by Day</h2>
+                                            </div>
+                                            <canvas id="chOrders" height="140"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-2 mt-2">
+                                    <div class="col-12 col-lg-5">
+                                        <div class="dt-card p-card h-100">
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                <h2 class="h6 mb-0">Payment Methods</h2>
+                                            </div>
+                                            <canvas id="chPayments" height="180"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-7">
+                                        <div class="dt-card p-card h-100">
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                <h2 class="h6 mb-0">Top Customers</h2>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table align-middle mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Customer</th>
+                                                            <th>Orders</th>
+                                                            <th class="text-end">Revenue</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tbTopCust"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Logs -->
+                            <div class="tab-pane fade" id="pane-logs" role="tabpanel">
+                                <div class="dt-card p-card">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Logs</h2>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>When</th>
+                                                    <th>Type</th>
+                                                    <th>Ref</th>
+                                                    <th>Summary</th>
+                                                    <th class="text-end">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbLogs"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tab-content -->
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Bootstrap -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- User/session helper (injects profile dropdown) -->
+        <script src="js/app-user.js"></script>
+        <script>
+  // ========== Sidebar interactions ==========
+  (function(){
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('burger')?.addEventListener('click', ()=> sidebar.classList.toggle('open'));
+    document.getElementById('collapseBtn')?.addEventListener('click', ()=> sidebar.classList.toggle('collapsed'));
+    sidebar.querySelectorAll('a.sb-link').forEach(a=>{
+      a.addEventListener('click', ()=> sidebar.classList.remove('open'));
+    });
+  })();
+  </script>
+        <script>
+  // ========== Reports logic ==========
+  (function(){
+    // Mark Reports active (already set in markup, keep if you reuse file)
+    document.querySelector('[data-link="reports"]')?.classList.add('active');
+
+    // Demo data
+    const ORDERS = [
+      { id:1770355, cust:'Mark Christopher', branch:'AHB | Abu Halifa', when:'2025-08-16T08:05:00Z', pay:'Knet',      amount:1.400 },
+      { id:1770220, cust:'Reem',             branch:'JAB | Jabriya',   when:'2025-08-16T07:51:00Z', pay:'Apple Pay', amount:3.780 },
+      { id:1769988, cust:'Ali',              branch:'SHA | Sharq',     when:'2025-08-15T23:10:00Z', pay:'Loyalty',   amount:2.600 },
+      { id:1769901, cust:'Sara',             branch:'JAB | Jabriya',   when:'2025-08-15T21:03:00Z', pay:'Cash',      amount:1.950 },
+      { id:1769810, cust:'Mo',               branch:'AHB | Abu Halifa',when:'2025-08-15T19:40:00Z', pay:'Card',      amount:4.200 },
+      { id:1769750, cust:'Mustafa',          branch:'AHB | Abu Halifa',when:'2025-08-15T09:15:00Z', pay:'Knet',      amount:5.850 },
+      { id:1769655, cust:'Reem',             branch:'SHA | Sharq',     when:'2025-08-14T14:22:00Z', pay:'Knet',      amount:2.300 },
+      { id:1769551, cust:'Ali',              branch:'JAB | Jabriya',   when:'2025-08-14T11:05:00Z', pay:'Apple Pay', amount:1.250 },
+      { id:1769402, cust:'Mustafa',          branch:'SHA | Sharq',     when:'2025-08-13T12:35:00Z', pay:'Loyalty',   amount:0.900 },
+      { id:1769200, cust:'Omar',             branch:'AHB | Abu Halifa',when:'2025-08-12T17:52:00Z', pay:'Cash',      amount:3.100 }
+    ];
+
+    // Filters
+    const byId = x => document.getElementById(x);
+    const fFrom = byId('fFrom');
+    const fTo   = byId('fTo');
+    const fCustomer = byId('fCustomer');
+    const fBranch   = byId('fBranch');
+    const fPay      = byId('fPay');
+
+    // defaults: last 7 days
+    const today = new Date();
+    const dtfmt = d => d.toISOString().slice(0,10);
+    const weekAgo = new Date(today); weekAgo.setDate(today.getDate()-7);
+    fFrom.value = dtfmt(weekAgo);
+    fTo.value   = dtfmt(today);
+
+    function within(d, from, to){
+      const t = new Date(d).getTime();
+      if (from && t < new Date(from).getTime()) return false;
+      if (to   && t > (new Date(to).getTime()+ 23*3600*1000 + 59*60*1000)) return false; // end-of-day
+      return true;
+    }
+    function applyFilters(){
+      const from = fFrom.value || '';
+      const to   = fTo.value   || '';
+      const q    = (fCustomer.value||'').trim().toLowerCase();
+      const br   = fBranch.value || '';
+      const pay  = fPay.value || '';
+
+      return ORDERS.filter(o => {
+        if (!within(o.when, from, to)) return false;
+        if (q && !(o.cust||'').toLowerCase().includes(q)) return false;
+        if (br && o.branch !== br) return false;
+        if (pay && o.pay !== pay) return false;
+        return true;
+      });
+    }
+
+    // helpers
+    const fmtKWD = v => 'KWD ' + Number(v||0).toFixed(3);
+    const sum = arr => arr.reduce((a,b)=>a+b,0);
+
+    function renderKpis(rows){
+      const rev = sum(rows.map(r=>r.amount));
+      const orders = rows.length;
+      const aov = orders ? rev/orders : 0;
+      byId('kpiRevenue').textContent = fmtKWD(rev);
+      byId('kpiOrders').textContent  = orders.toLocaleString();
+      byId('kpiAov').textContent     = fmtKWD(aov);
+      byId('kpiRevenueDelta').textContent = '';
+      byId('kpiOrdersDelta').textContent  = '';
+      byId('kpiAovNote').textContent      = 'Based on current filter';
+    }
+
+    // charts
+    let chRev, chOrd, chPay;
+    function renderCharts(rows){
+      const dayKey = d => new Date(d).toLocaleDateString([], {month:'short', day:'2-digit'});
+      const revByDay = new Map();
+      const ordByDay = new Map();
+      const paySplit = new Map();
+
+      rows.forEach(r=>{
+        const k = dayKey(r.when);
+        revByDay.set(k, (revByDay.get(k)||0) + r.amount);
+        ordByDay.set(k, (ordByDay.get(k)||0) + 1);
+        paySplit.set(r.pay, (paySplit.get(r.pay)||0) + 1);
+      });
+
+      const labels = Array.from(new Set([...revByDay.keys(), ...ordByDay.keys()]));
+      const revData = labels.map(k=> +(revByDay.get(k)||0).toFixed(3));
+      const ordData = labels.map(k=> (ordByDay.get(k)||0));
+
+      chRev?.destroy();
+      chRev = new Chart(byId('chRevenue').getContext('2d'), {
+        type:'line',
+        data:{ labels, datasets:[{ label:'Revenue', data:revData, fill:true, tension:.35 }]},
+        options:{ responsive:true, plugins:{ legend:{display:false}}, scales:{ y:{beginAtZero:true} } }
+      });
+
+      chOrd?.destroy();
+      chOrd = new Chart(byId('chOrders').getContext('2d'), {
+        type:'bar',
+        data:{ labels, datasets:[{ label:'Orders', data:ordData }]},
+        options:{ responsive:true, plugins:{ legend:{display:false}}, scales:{ y:{beginAtZero:true} } }
+      });
+
+      chPay?.destroy();
+      const pLabels = Array.from(paySplit.keys());
+      const pData   = pLabels.map(k=>paySplit.get(k)||0);
+      chPay = new Chart(byId('chPayments').getContext('2d'), {
+        type:'doughnut',
+        data:{ labels:pLabels, datasets:[{ data:pData }]},
+        options:{ responsive:true, plugins:{ legend:{position:'bottom'}}, cutout:'60%' }
+      });
+    }
+
+    function renderTopCustomers(rows){
+      const byCust = new Map();
+      rows.forEach(r=>{
+        const c = r.cust || '—';
+        const v = byCust.get(c) || { orders:0, revenue:0 };
+        v.orders += 1; v.revenue += r.amount;
+        byCust.set(c, v);
+      });
+      const top = Array.from(byCust.entries())
+        .map(([cust, v]) => ({cust, ...v}))
+        .sort((a,b)=> b.revenue - a.revenue)
+        .slice(0, 8);
+
+      byId('tbTopCust').innerHTML = top.map(t=>`
+        <tr>
+          <td class="fw-semibold">${t.cust}</td>
+          <td>${t.orders}</td>
+          <td class="text-end">${fmtKWD(t.revenue)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderLogs(rows){
+      const logs = rows
+        .map(r => ({
+          when: new Date(r.when).toLocaleString([], {month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit'}),
+          type: 'Order',
+          ref:  '#'+r.id,
+          summary: `${r.cust} · ${r.branch} · ${r.pay}`,
+          amount: r.amount
+        }))
+        .sort((a,b)=> new Date(b.when) - new Date(a.when));
+
+      byId('tbLogs').innerHTML = logs.map(l=>`
+        <tr>
+          <td>${l.when}</td>
+          <td><span class="badge-soft st-paid"> ${l.type} </span></td>
+          <td>${l.ref}</td>
+          <td>${l.summary}</td>
+          <td class="text-end">${fmtKWD(l.amount)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAll(){
+      const rows = applyFilters();
+      renderKpis(rows);
+      renderCharts(rows);
+      renderTopCustomers(rows);
+      renderLogs(rows);
+      return rows;
+    }
+
+    // First render
+    let currentRows = renderAll();
+
+    // Apply / Reset
+    document.getElementById('filterForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      currentRows = renderAll();
+    });
+    document.getElementById('btnReset').addEventListener('click', ()=>{
+      fFrom.value = dtfmt(weekAgo);
+      fTo.value   = dtfmt(today);
+      fCustomer.value = '';
+      fBranch.value   = '';
+      fPay.value      = '';
+      currentRows = renderAll();
+    });
+
+    // Export CSV
+    document.getElementById('btnExportCsv').addEventListener('click', ()=>{
+      const rows = currentRows.length ? currentRows : applyFilters();
+      const header = ['id','customer','branch','when','payment','amount'];
+      const lines = [header.join(',')].concat(
+        rows.map(r => [r.id, r.cust, r.branch, new Date(r.when).toISOString(), r.pay, r.amount]
+          .map(x=>`"${String(x).replace(/"/g,'""')}"`).join(','))
+      );
+      const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = 'reports.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+  })();
+  </script>
+    </body>
+</html>

@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Admin · Loyalty Console</title>
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sb-brand">
+                    <img src="images/DataTech.png" alt="DataTech">
+                    <span class="brand-text">Loyalty Console</span>
+                </div>
+                <nav class="sb-nav">
+                    <a class="sb-link" href="dashboard.html"><i class="fa-solid fa-gauge-high"></i><span class="sb-text">Dashboard</span></a>
+                    <a class="sb-link" href="orders.html"><i class="fa-solid fa-cart-shopping"></i><span class="sb-text">Orders</span></a>
+                    <a class="sb-link" href="members.html"><i class="fa-solid fa-users"></i><span class="sb-text">Customers</span></a>
+                    <a class="sb-link" href="messages.html"><i class="fa-solid fa-paper-plane"></i><span class="sb-text">Messages</span></a>
+                    <a class="sb-link" href="reports.html"><i class="fa-solid fa-chart-line"></i><span class="sb-text">Reports</span></a>
+                    <a class="sb-link" href="settings.html"><i class="fa-solid fa-gear"></i><span class="sb-text">Settings</span></a>
+                    <!-- Active page -->
+                    <a class="sb-link active" href="admin.html"><i class="fa-solid fa-user-shield"></i><span class="sb-text">Admin</span></a>
+                </nav>
+                <div class="sb-footer">© DataTech</div>
+            </aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <header class="dt-topbar">
+                    <div class="tb-inner container d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn-icon burger" id="burger" aria-label="Toggle menu">☰</button>
+                            <button class="btn-icon" id="collapseBtn" aria-label="Collapse sidebar">
+                                <i class="fa-solid fa-bars"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- user chip injected by js/app-user.js (optional) -->
+                        </div>
+                    </div>
+                </header>
+                <!-- Page content -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title + actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Admin</h1>
+                                <div class="text-muted small">Manage companies and invite admins</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                                    <i class="fa-solid fa-envelope-open-text me-1"></i>Invite Admin
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Create company + Companies table -->
+                        <div class="row g-2">
+                            <div class="col-12 col-lg-4">
+                                <div class="dt-card p-card h-100">
+                                    <h2 class="h6 mb-2">Create Company</h2>
+                                    <div class="text-muted small mb-2">Created companies appear in the list on the right.</div>
+                                    <form id="companyForm" class="row g-2">
+                                        <div class="col-12">
+                                            <label class="form-label small">Company Name</label>
+                                            <input type="text" id="coName" class="form-control" placeholder="e.g. Koobs Cafe" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small">Account ID / Slug</label>
+                                            <input type="text" id="coSlug" class="form-control" placeholder="e.g. koobs-cafe" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small">Default Country</label>
+                                            <select id="coCountry" class="form-select">
+                                                <option value="KW">Kuwait</option>
+                                                <option value="SA">Saudi Arabia</option>
+                                                <option value="AE">UAE</option>
+                                                <option value="QA">Qatar</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small">Logo URL (optional)</label>
+                                            <input type="url" id="coLogo" class="form-control" placeholder="https://example.com/logo.png">
+                                        </div>
+                                        <div class="col-12 d-grid">
+                                            <button class="btn btn-primary" id="btnCreateCompany" type="submit">Create</button>
+                                        </div>
+                                    </form>
+                                    <div class="alert alert-success d-none mt-2" id="coSuccess">Company created (demo).</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-8">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Companies</h2>
+                                        <div>
+                                            <button id="exportCompanies" class="btn btn-outline-secondary btn-sm">Export CSV</button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0" id="companiesTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Account ID</th>
+                                                    <th>Country</th>
+                                                    <th class="text-end">Admins</th>
+                                                    <th class="text-end">Created</th>
+                                                    <th class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="companiesBody">
+                                                <!-- injected -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Admins list -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12">
+                                <div class="dt-card p-card">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Admins</h2>
+                                        <div>
+                                            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                                                Invite Admin
+</button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0" id="adminsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Company</th>
+                                                    <th>Role</th>
+                                                    <th class="text-end">Status</th>
+                                                    <th class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="adminsBody">
+                                                <!-- injected -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Invite Admin Modal -->
+        <div class="modal fade" id="inviteModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <form class="modal-content" id="inviteForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Invite Admin</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label small">Email</label>
+                                <input type="email" id="invEmail" class="form-control" placeholder="admin@example.com" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">First Name</label>
+                                <input type="text" id="invFirst" class="form-control" placeholder="First name">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Last Name</label>
+                                <input type="text" id="invLast" class="form-control" placeholder="Last name">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small">Company</label>
+                                <select id="invCompany" class="form-select" required>
+                                    <!-- options injected -->
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Role</label>
+                                <select id="invRole" class="form-select">
+                                    <option value="owner">Owner</option>
+                                    <option value="admin" selected>Admin</option>
+                                    <option value="editor">Editor</option>
+                                    <option value="viewer">Viewer</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Expires (days)</label>
+                                <input type="number" id="invExpire" class="form-control" value="7" min="1" max="30">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="invSendnow" checked>
+                                    <label class="form-check-label small" for="invSendnow">
+                                        Send email invitation now
+</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-success d-none mt-2" id="inviteSuccess">Invite created (demo).</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Send Invite</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Bootstrap -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Optional: your user chip/guard -->
+        <script src="js/app-user.js"></script>
+        <script>
+    (function(){
+      // Optional simple guard:
+      try{
+        if (window.UserSession && !window.UserSession.isAuthenticated()){
+          sessionStorage.setItem('redirectAfterLogin','admin.html');
+          location.replace('login.html'); return;
+        }
+      }catch(_){}
+
+      // Sidebar toggle (mobile + collapse)
+      const sidebar = document.getElementById('sidebar');
+      document.getElementById('burger')?.addEventListener('click',()=> sidebar.classList.toggle('open'));
+      document.getElementById('collapseBtn')?.addEventListener('click',()=> sidebar.classList.toggle('collapsed'));
+      sidebar.querySelectorAll('a.sb-link').forEach(a=>a.addEventListener('click',()=> sidebar.classList.remove('open')));
+
+      // --- Demo data --------------------------------------------------------
+      const COMPANIES = [
+        { id:'koobs', name:'Koobs Cafe', country:'KW', admins:3, created:'2025-06-12T10:10:00Z', logo:'images/DataTech.png' },
+        { id:'al-sabah', name:'Al Sabah Bistro', country:'KW', admins:2, created:'2025-07-03T09:40:00Z', logo:'' },
+        { id:'sand-dunes', name:'Sand Dunes Grill', country:'AE', admins:1, created:'2025-07-22T11:25:00Z', logo:'' },
+      ];
+      const ADMINS = [
+        { name:'Hussain Mosawi', email:'hussain@example.com', company:'Koobs Cafe', role:'Owner',   status:'Active' },
+        { name:'Sara Ali',       email:'sara@example.com',    company:'Koobs Cafe', role:'Admin',   status:'Pending' },
+        { name:'Omar Yousef',    email:'omar@example.com',    company:'Al Sabah Bistro', role:'Viewer', status:'Active' },
+      ];
+
+      // Utilities
+      const fmtDate = iso => new Date(iso).toLocaleString([], { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+
+      // Render companies
+      function renderCompanies(){
+        const body = document.getElementById('companiesBody');
+        body.innerHTML = COMPANIES.map(c => `
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                ${c.logo ? `<img src="${c.logo}" alt="" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--dt-border)">` : `<span class="badge text-bg-secondary">${(c.name||'?').slice(0,2).toUpperCase()}</span>`}
+                <div class="fw-semibold">${c.name}</div>
+              </div>
+            </td>
+            <td>${c.id}</td>
+            <td>${c.country}</td>
+            <td class="text-end">${c.admins}</td>
+            <td class="text-end">${fmtDate(c.created)}</td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" data-action="invite" data-id="${c.id}">Invite</button>
+                <button class="btn btn-outline-secondary" data-action="open" data-id="${c.id}">Open</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        // Wire actions
+        body.querySelectorAll('[data-action="invite"]').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            const co = COMPANIES.find(x=>x.id===btn.getAttribute('data-id'));
+            if (!co) return;
+            ensureCompanyOptions();
+            document.getElementById('invCompany').value = co.id;
+            new bootstrap.Modal(document.getElementById('inviteModal')).show();
+          });
+        });
+        body.querySelectorAll('[data-action="open"]').forEach(btn=>{
+          btn.addEventListener('click', ()=> alert('Open company '+btn.getAttribute('data-id')+' (demo)'));
+        });
+      }
+
+      // Render admins
+      function renderAdmins(){
+        const body = document.getElementById('adminsBody');
+        body.innerHTML = ADMINS.map(a => `
+          <tr>
+            <td class="fw-semibold">${a.name}</td>
+            <td>${a.email}</td>
+            <td>${a.company}</td>
+            <td>${a.role}</td>
+            <td class="text-end">${badgeStatus(a.status)}</td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" onclick="alert('Resend invite to ${a.email}')">Resend</button>
+                <button class="btn btn-outline-secondary" onclick="alert('Deactivate ${a.email}')">Deactivate</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+      function badgeStatus(s){
+        const cls = s==='Active' ? 'success' : (s==='Pending' ? 'warning' : 'secondary');
+        return `<span class="badge text-bg-${cls}">${s}</span>`;
+      }
+
+      // Company form
+      document.getElementById('companyForm').addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const name  = document.getElementById('coName').value.trim();
+        const slug  = document.getElementById('coSlug').value.trim();
+        const ctry  = document.getElementById('coCountry').value;
+        const logo  = document.getElementById('coLogo').value.trim();
+        if(!name || !slug){ alert('Company name and slug are required.'); return; }
+        COMPANIES.unshift({ id:slug, name, country:ctry, admins:0, created:new Date().toISOString(), logo });
+        renderCompanies();
+        e.target.reset();
+        document.getElementById('coSuccess').classList.remove('d-none');
+        setTimeout(()=>document.getElementById('coSuccess').classList.add('d-none'), 1500);
+      });
+
+      // Export companies CSV
+      document.getElementById('exportCompanies').addEventListener('click', ()=>{
+        const header = ['Name','Account ID','Country','Admins','Created'];
+        const lines = [header.join(',')].concat(
+          COMPANIES.map(c => [c.name,c.id,c.country,c.admins, new Date(c.created).toISOString()]
+            .map(x=>`"${String(x).replace(/"/g,'""')}"`).join(','))
+        );
+        const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8;'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a'); a.href=url; a.download='companies.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      });
+
+      // Invite modal options
+      function ensureCompanyOptions(){
+        const sel = document.getElementById('invCompany');
+        sel.innerHTML = COMPANIES.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      }
+      ensureCompanyOptions();
+
+      // Invite form
+      document.getElementById('inviteForm').addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const email = document.getElementById('invEmail').value.trim();
+        const first = document.getElementById('invFirst').value.trim();
+        const last  = document.getElementById('invLast').value.trim();
+        const companyId = document.getElementById('invCompany').value;
+        const role  = document.getElementById('invRole').value;
+        const expireDays = Math.max(1, Math.min(30, parseInt(document.getElementById('invExpire').value||'7',10)));
+        const sendNow = document.getElementById('invSendnow').checked;
+
+        if(!email || !companyId){ alert('Email and Company are required.'); return; }
+
+        const company = COMPANIES.find(c=>c.id===companyId);
+        if (company){ company.admins += 1; }
+        ADMINS.unshift({
+          name: (first||'') + (last?(' '+last):''),
+          email,
+          company: company? company.name : companyId,
+          role: role[0].toUpperCase()+role.slice(1),
+          status: sendNow ? 'Pending' : 'Pending'
+        });
+        renderCompanies();
+        renderAdmins();
+
+        const msg = document.getElementById('inviteSuccess'); msg.classList.remove('d-none');
+        setTimeout(()=>{
+          msg.classList.add('d-none');
+          bootstrap.Modal.getInstance(document.getElementById('inviteModal'))?.hide();
+          e.target.reset();
+          ensureCompanyOptions();
+        }, 1200);
+      });
+
+      // Initial render
+      renderCompanies();
+      renderAdmins();
+    })();
+  </script>
+    </body>
+</html>

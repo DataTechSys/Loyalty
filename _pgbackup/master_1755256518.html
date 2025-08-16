@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" data-pgc-master="master.html">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Customers — Loyalty Console</title>
+        <!-- head is inherited from master.html -->
+        <style>
+    :root{
+      --chip-active:#5b61ff; --chip-border:#e7e9ee; --card-border:#eaecf0;
+      --head-muted:#6b7280; --row-hover:#fafbff;
+    }
+    .page-title{font-weight:700}
+    .chips{display:flex;gap:.25rem;flex-wrap:wrap}
+    .chip{border:1px solid var(--chip-border);background:#fff;padding:.4rem .75rem;
+      font-size:.875rem;border-radius:.65rem;color:#475569;transition:.15s}
+    .chip.active{border-color:var(--chip-active);color:var(--chip-active);background:#f6f7ff}
+    .card-table{border-radius:14px;border:1px solid var(--card-border)}
+    .table{margin-bottom:0}
+    .table thead th{font-size:.80rem;color:var(--head-muted);font-weight:600;letter-spacing:.02em;
+      padding-top:.9rem;padding-bottom:.7rem}
+    .table td{vertical-align:middle;padding:.85rem .75rem}
+    .table tbody tr:hover{background:var(--row-hover)}
+    .sticky-actions{position:sticky;right:0;background:#fff}
+    .name-col .sub{font-size:.75rem;color:#94a3b8}
+    .table-foot{border-top:1px solid var(--card-border)}
+    .muted{color:#6b7280}
+    .spinner-wrap{min-height:160px}
+    @media (max-width: 992px){ .hide-md{display:none!important} }
+  </style>
+        <link href="../DataTechConsole/datatechsys.github.io/css/theme.css" rel="stylesheet" type="text/css">
+        <link href="../DataTechConsole/bootstrap_theme/bootstrap.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <main class="container-fluid py-4" data-pg-slot="main-content">
+            <!-- Title row -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h1 class="h4 page-title mb-0">Customers</h1>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                            Import / Export
+</button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#" id="btnImport">Import CSV</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" id="btnExport">Export CSV</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="btnAddCustomer">Add Customer</button>
+                </div>
+            </div>
+            <!-- Top controls -->
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="chips" id="filterTabs">
+                    <button class="chip active" data-filter="all">All</button>
+                    <button class="chip" data-filter="hasOrders">Has Orders</button>
+                    <button class="chip" data-filter="negative">Has Negative Balance</button>
+                    <button class="chip" data-filter="blacklisted">Blacklisted</button>
+                    <button class="chip" data-filter="deleted">Deleted</button>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="input-group" style="max-width:320px"><span class="input-group-text bg-white border-end-0"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 
+                     3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 
+                     1.106a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+                            </svg> </span>
+                        <input class="form-control border-start-0" id="q" type="search" placeholder="Search customers…"/>
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" id="btnFilter">Filter</button>
+                </div>
+            </div>
+            <!-- Table -->
+            <div class="card card-table shadow-sm">
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th style="width:40px">
+                                    <input class="form-check-input" type="checkbox" id="checkAll"/>
+                                </th>
+                                <th style="min-width:260px">Name</th>
+                                <th class="hide-md" style="min-width:140px">Phone</th>
+                                <th class="hide-md" style="min-width:200px">Email</th>
+                                <th style="min-width:120px">Total Orders</th>
+                                <th class="hide-md" style="min-width:180px">Last Order</th>
+                                <th style="min-width:150px">Account Balance</th>
+                                <th class="text-end sticky-actions" style="width:56px"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="rows">
+                            <tr id="loadingRow">
+                                <td colspan="8">
+                                    <div class="spinner-wrap d-flex align-items-center justify-content-center py-5">
+                                        <div class="spinner-border" role="status"></div><span class="ms-2 muted">Loading…</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Footer -->
+                <div class="d-flex align-items-center justify-content-between p-3 table-foot"><small class="muted" id="showingText">Showing 0</small>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-secondary btn-sm" id="btnPrev">Previous</button>
+                        <button class="btn btn-outline-secondary btn-sm" id="btnNext">Next</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Global scripts inherited from master: config.js, rbac.js, app-auth.js, app.js, bootstrap -->
+        <script src="js/pages/members-page.js"></script>
+    </body>
+</html>

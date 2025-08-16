@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Customer Details · Loyalty Console</title>
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar (shared include) -->
+            <aside class="sidebar" data-include="sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <header class="dt-topbar">
+                    <div class="tb-inner container d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn-icon burger" id="burger" aria-label="Toggle menu">☰</button>
+                            <button class="btn-icon" id="collapseBtn" aria-label="Collapse sidebar">
+                                <i class="fa-solid fa-bars"></i>
+                            </button>
+                        </div>
+                        <!-- No brand text (kept clean) -->
+                        <div></div>
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- User/profile chip injected by js/app-user.js -->
+                            <div class="userchip-wrap"></div>
+                        </div>
+                    </div>
+                </header>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title + actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div><a href="customers.html" class="text-decoration-none small"><i class="fa-solid fa-angle-left me-1"></i>Back</a>
+                                <h1 class="h5 fw-bold mb-0 mt-1" id="custTitle">Customer</h1>
+                                <div class="text-muted small" id="custSub">—</div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-outline-secondary btn-sm" id="btnEnableLoyalty"><i class="fa-solid fa-tags me-1"></i>Enable Loyalty
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" id="btnEnableHouse"><i class="fa-regular fa-id-card me-1"></i>Enable House Account
+                                </button><a class="btn btn-primary btn-sm" href="#" id="btnEdit"> <i class="fa-regular fa-pen-to-square me-1"></i>Edit Customer </a>
+                            </div>
+                        </div>
+                        <!-- KPIs -->
+                        <div class="row g-2">
+                            <div class="col-12 col-md-4 col-xl-3">
+                                <div class="dt-card p-card">
+                                    <div class="text-muted small mb-1">Done Orders</div>
+                                    <div class="display-6 fw-bold" id="kpiOrdersDone">0</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-xl-3">
+                                <div class="dt-card p-card">
+                                    <div class="text-muted small mb-1">Total Spent (KWD)</div>
+                                    <div class="display-6 fw-bold" id="kpiSpent">KWD 0.000</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-xl-3">
+                                <div class="dt-card p-card">
+                                    <div class="text-muted small mb-1">Total Discounts (KWD)</div>
+                                    <div class="display-6 fw-bold" id="kpiDiscounts">KWD 0.000</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-xl-3">
+                                <div class="dt-card p-card">
+                                    <div class="text-muted small mb-1">Wallet Balance (KWD)</div>
+                                    <div class="display-6 fw-bold" id="kpiWallet">KWD 0.000</div>
+                                    <div class="text-muted small" id="kpiWalletPts">—</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-xl-3">
+                                <div class="dt-card p-card">
+                                    <div class="text-muted small mb-1">Membership Tier</div>
+                                    <div class="h4 fw-bold mb-0" id="kpiTier">—</div>
+                                    <div class="text-muted small" id="kpiTierSince">—</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-xl-3">
+                                <div class="dt-card p-card">
+                                    <div class="text-muted small mb-1">Favourite Product</div>
+                                    <div class="h5 fw-bold mb-0" id="kpiFavProduct">—</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-xl-3">
+                                <div class="dt-card p-card">
+                                    <div class="text-muted small mb-1">Favourite Branch</div>
+                                    <div class="h5 fw-bold mb-0" id="kpiFavBranch">—</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-xl-3">
+                                <div class="dt-card p-card">
+                                    <div class="text-muted small mb-1">Last Order</div>
+                                    <div class="h6 fw-bold mb-0" id="kpiLastOrder">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Identity / profile details -->
+                        <div class="dt-card p-card mt-2">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="text-muted small">Name</div>
+                                    <div id="f_name" class="fw-semibold">—</div>
+                                    <div class="mt-3 text-muted small">Phone</div>
+                                    <div id="f_phone">—</div>
+                                    <div class="mt-3 text-muted small">Loyalty</div>
+                                    <div id="f_loyalty">—</div>
+                                    <div class="mt-3 text-muted small">Blacklist</div>
+                                    <div id="f_blacklist">—</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text-muted small">Email</div>
+                                    <div id="f_email">—</div>
+                                    <div class="mt-3 text-muted small">Birth Date</div>
+                                    <div id="f_birth">—</div>
+                                    <div class="mt-3 text-muted small">House Accounts</div>
+                                    <div id="f_house">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- PassKit membership card -->
+                        <div class="dt-card p-card mt-2">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Membership (PassKit)</h2>
+                                <div>
+                                    <button class="btn btn-outline-secondary btn-sm" id="btnChangeTier">
+                                        <i class="fa-solid fa-crown me-1"></i>Change Tier
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <div class="border rounded p-2">
+                                        <div class="text-muted small">Tier</div>
+                                        <div class="fw-semibold" id="pkTier">—</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="border rounded p-2">
+                                        <div class="text-muted small">Member Since</div>
+                                        <div class="fw-semibold" id="pkSince">—</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="border rounded p-2">
+                                        <div class="text-muted small">Expiry</div>
+                                        <div class="fw-semibold" id="pkExpiry">—</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Points history -->
+                        <div class="dt-card p-card mt-2">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Points History</h2>
+                                <div class="text-muted small">1000 points = KWD 1.000</div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>When</th>
+                                            <th>Type</th>
+                                            <th class="text-end">Points</th>
+                                            <th class="text-end">KWD</th>
+                                            <th>Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pointsBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Coupons -->
+                        <div class="dt-card p-card mt-2">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Coupons</h2>
+                                <div>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fa-solid fa-paper-plane me-1"></i>Send Coupon
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Title</th>
+                                            <th class="text-end">Value (KWD)</th>
+                                            <th>Status</th>
+                                            <th>Sent</th>
+                                            <th>Redeemed</th>
+                                            <th>Expires</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="couponsBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Orders (recent) -->
+                        <div class="dt-card p-card mt-2">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Recent Orders</h2><a class="small" href="orders.html">See all</a>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Order</th>
+                                            <th>When</th>
+                                            <th>Payment</th>
+                                            <th class="text-end">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Tags -->
+                        <div class="dt-card p-card mt-2">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Tags</h2>
+                                <button class="btn btn-outline-secondary btn-sm">Add Tags</button>
+                            </div>
+                            <div class="text-muted small">You can add tags to this customer for filtering or promotions.</div>
+                        </div>
+                        <!-- Addresses -->
+                        <div class="dt-card p-card mt-2 mb-3">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Addresses</h2>
+                                <button class="btn btn-outline-secondary btn-sm">Add Address</button>
+                            </div>
+                            <div class="text-muted small">Add delivery addresses and assign to delivery zones.</div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/app-user.js"></script>
+        <script src="js/sidebar.js"></script>
+        <!-- Page script (demo data + rendering) -->
+        <script>
+  (function(){
+    // --- Format helpers -----------------------------------------------------
+    const fmtKWD  = v => 'KWD ' + Number(v||0).toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});
+    const fmtInt  = v => Number(v||0).toLocaleString('en-US');
+    const fmtDate = iso => new Date(iso).toLocaleString([], {year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+
+    // Conversion
+    const PTS_PER_KWD = 1000;
+
+    // --- Demo “API” payload -------------------------------------------------
+    // You will swap these with real API/PassKit responses later.
+    const CUSTOMER = {
+      id: '738868',
+      name: 'Noura Alazzaz',
+      phone: '+965 9793 5543',
+      email: '',
+      birth: '1997-08-21',
+      loyaltyEnabled: false,
+      houseEnabled: false,
+      blacklisted: false,
+
+      kpis: {
+        ordersDone: 0,
+        spent: 0.0,
+        discounts: 0.0,
+        walletKwd: 3.2,
+        walletPts: 3200,
+        favProduct: '-',
+        favBranch: '-',
+        lastOrder: null // ISO
+      },
+
+      passkit: {
+        tier: 'Green',
+        since: '2024-09-12',
+        expiry: '2026-09-12'
+      },
+
+      pointsHistory: [
+        { when:'2025-08-14T09:35:00Z', type:'Earn', pts:+150, note:'Order #1765956' },
+        { when:'2025-08-10T13:10:00Z', type:'Redeem', pts:-200, note:'Redeemed at POS' },
+        { when:'2025-08-01T08:05:00Z', type:'Earn', pts:+230, note:'Order #1764899' }
+      ],
+
+      coupons: [
+        { code:'WELCOME5', title:'Welcome 5', value: 0.500, status:'Redeemed', sent:'2025-07-01T09:00:00Z', redeemed:'2025-07-05T13:11:00Z', expires:'2025-12-31T23:59:00Z' },
+        { code:'AUG15',     title:'August 15% Off', value: 0.000, status:'Sent',     sent:'2025-08-01T08:00:00Z', redeemed:null,                          expires:'2025-08-31T23:59:00Z' },
+        { code:'JUNE10',    title:'June 10% Off',   value: 0.000, status:'Expired',  sent:'2025-06-01T08:00:00Z', redeemed:null,                          expires:'2025-06-30T23:59:00Z' }
+      ],
+
+      recentOrders: [
+        { id:1770355, when:'2025-08-16T08:05:00Z', pay:'Knet',     amount:1.400 },
+        { id:1770220, when:'2025-08-16T07:51:00Z', pay:'Apple Pay',amount:3.780 },
+        { id:1769988, when:'2025-08-15T23:10:00Z', pay:'Loyalty',  amount:2.600 }
+      ]
+    };
+
+    // --- Fill title + identity ---------------------------------------------
+    const setText = (id, v) => { const el=document.getElementById(id); if(el) el.textContent = v; };
+
+    setText('custTitle', `${CUSTOMER.name} – ${CUSTOMER.id}`);
+    setText('custSub', 'Customer profile, history and PassKit membership');
+
+    setText('f_name',  `${CUSTOMER.name} – ${CUSTOMER.id}`);
+    setText('f_phone', CUSTOMER.phone || '—');
+    setText('f_email', CUSTOMER.email || '—');
+    setText('f_birth', CUSTOMER.birth ? new Date(CUSTOMER.birth).toLocaleDateString() : '—');
+    setText('f_loyalty', CUSTOMER.loyaltyEnabled ? 'Enabled' : 'Disabled');
+    setText('f_house',   CUSTOMER.houseEnabled ? 'Enabled' : 'Disabled');
+    setText('f_blacklist', CUSTOMER.blacklisted ? 'Yes' : 'No');
+
+    // --- KPIs ---------------------------------------------------------------
+    setText('kpiOrdersDone', fmtInt(CUSTOMER.kpis.ordersDone));
+    setText('kpiSpent', fmtKWD(CUSTOMER.kpis.spent));
+    setText('kpiDiscounts', fmtKWD(CUSTOMER.kpis.discounts));
+
+    setText('kpiWallet', fmtKWD(CUSTOMER.kpis.walletKwd));
+    setText('kpiWalletPts', `${fmtInt(CUSTOMER.kpis.walletPts)} pts`);
+
+    setText('kpiTier', CUSTOMER.passkit.tier);
+    setText('kpiTierSince', `Since ${new Date(CUSTOMER.passkit.since).toLocaleDateString()}`);
+
+    setText('kpiFavProduct', CUSTOMER.kpis.favProduct);
+    setText('kpiFavBranch',  CUSTOMER.kpis.favBranch);
+    setText('kpiLastOrder',  CUSTOMER.kpis.lastOrder ? fmtDate(CUSTOMER.kpis.lastOrder) : '—');
+
+    // PassKit card
+    setText('pkTier',   CUSTOMER.passkit.tier);
+    setText('pkSince',  new Date(CUSTOMER.passkit.since).toLocaleDateString());
+    setText('pkExpiry', new Date(CUSTOMER.passkit.expiry).toLocaleDateString());
+
+    // --- Points history table ----------------------------------------------
+    const pointsBody = document.getElementById('pointsBody');
+    if (pointsBody){
+      pointsBody.innerHTML = CUSTOMER.pointsHistory.map(p=>{
+        const kwd = p.pts / PTS_PER_KWD;
+        return `
+          <tr>
+            <td>${fmtDate(p.when)}</td>
+            <td>${p.type}</td>
+            <td class="text-end ${p.pts < 0 ? 'text-danger' : 'text-success'}">${fmtInt(p.pts)}</td>
+            <td class="text-end">${fmtKWD(kwd)}</td>
+            <td>${p.note||''}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // --- Coupons table ------------------------------------------------------
+    const statusBadge = (s) => {
+      const map = { 'Sent':'secondary', 'Redeemed':'success', 'Expired':'warning' };
+      const cls = map[s] || 'secondary';
+      return `<span class="badge text-bg-${cls}">${s}</span>`;
+    };
+    const couponsBody = document.getElementById('couponsBody');
+    if (couponsBody){
+      couponsBody.innerHTML = CUSTOMER.coupons.map(c=>{
+        return `
+          <tr>
+            <td class="fw-semibold">${c.code}</td>
+            <td>${c.title}</td>
+            <td class="text-end">${fmtKWD(c.value)}</td>
+            <td>${statusBadge(c.status)}</td>
+            <td>${c.sent ? fmtDate(c.sent) : '—'}</td>
+            <td>${c.redeemed ? fmtDate(c.redeemed) : '—'}</td>
+            <td>${c.expires ? new Date(c.expires).toLocaleDateString() : '—'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // --- Recent orders table ------------------------------------------------
+    const ordBody = document.getElementById('ordersBody');
+    if (ordBody){
+      ordBody.innerHTML = CUSTOMER.recentOrders.map(r=>`
+        <tr>
+          <td><a href="order-details.html?id=${r.id}">#${r.id}</a></td>
+          <td>${fmtDate(r.when)}</td>
+          <td>${r.pay}</td>
+          <td class="text-end">${fmtKWD(r.amount)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Buttons (demo)
+    document.getElementById('btnEnableLoyalty')?.addEventListener('click',()=> alert('Enable Loyalty (demo)'));
+    document.getElementById('btnEnableHouse')?.addEventListener('click',()=> alert('Enable House Account (demo)'));
+    document.getElementById('btnChangeTier')?.addEventListener('click',()=> alert('Change Tier (demo)'));
+    document.getElementById('btnEdit')?.addEventListener('click', (e)=> { e.preventDefault(); alert('Edit Customer (demo)'); });
+  })();
+  </script>
+    </body>
+</html>

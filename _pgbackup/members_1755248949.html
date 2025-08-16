@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Customers · Loyalty Console</title>
+        <!-- Inter font + Bootstrap (same as dashboard) -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+    :root{
+      --dt-bg:#f3f5f9; --dt-card:#ffffff; --dt-text:#0f172a; --dt-muted:#6b7280;
+      --dt-primary:#1f6feb; --dt-border:#e5e7eb; --dt-radius-lg:16px;
+      --dt-shadow:0 8px 24px rgba(15,23,42,.06);
+      --chip-bg:#f3f4f6; --chip-border:#e5e7eb; --chip-active:#e8f0ff; --chip-active-border:#cfe0ff;
+      --hover:#fafbff;
+    }
+    html,body{height:100%}
+    body{
+      background:var(--dt-bg); color:var(--dt-text);
+      font-family:'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Top bar (same as dashboard) */
+    .dt-topbar{ background:var(--dt-card); border-bottom:1px solid var(--dt-border); position:sticky; top:0; z-index:1030; }
+    .dt-brand{ display:flex; align-items:center; gap:.65rem; font-weight:600; }
+    .dt-brand img{ width:22px; height:22px; border-radius:6px; }
+
+    /* Page spacing */
+    .dt-page{ padding:28px 0 56px; }
+
+    /* Card shell */
+    .dt-card{
+      background:var(--dt-card); border:1px solid var(--dt-border);
+      border-radius:var(--dt-radius-lg); box-shadow:var(--dt-shadow);
+    }
+
+    /* Chips (filters) */
+    .chips{ display:flex; gap:.5rem; flex-wrap:wrap; }
+    .chip{
+      border:1px solid var(--chip-border); background:var(--chip-bg);
+      color:#374151; padding:.35rem .75rem; border-radius:999px; font-weight:600; font-size:.9rem;
+      cursor:pointer; user-select:none;
+    }
+    .chip.active{ background:var(--chip-active); border-color:var(--chip-active-border); color:#1f3a8a; }
+
+    /* Search */
+    .search-wrap{ position:relative; max-width:320px; }
+    .search-wrap .form-control{ padding-left:2.2rem; border-radius:12px; }
+    .search-wrap svg{ position:absolute; left:.6rem; top:50%; transform:translateY(-50%); color:#94a3b8; }
+
+    /* Table */
+    .table thead th{
+      color:var(--dt-muted); font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em;
+      border-top:0;
+    }
+    .table > :not(caption) > * > * { border-color:var(--dt-border); }
+    .table td, .table th{ vertical-align:middle; }
+    .table tbody tr:hover{ background:var(--hover); }
+    .name-sub{ font-size:.8rem; color:#94a3b8; }
+
+    /* Footer/pager */
+    .pager .btn{ border-radius:12px; }
+
+    /* Buttons */
+    .btn-primary{
+      --bs-btn-bg: var(--dt-primary); --bs-btn-border-color: var(--dt-primary);
+      --bs-btn-hover-bg:#1b5ed1; --bs-btn-hover-border-color:#1b5ed1;
+      --bs-btn-active-bg:#184fb3; --bs-btn-active-border-color:#184fb3;
+      --bs-btn-shadow:0 8px 18px rgba(31,111,235,.25);
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 991.98px){
+      .dt-topbar .container{ padding-left:16px; padding-right:16px; }
+      .hide-md{ display:none !important; }
+    }
+  </style>
+    </head>
+    <body>
+        <!-- Top Bar -->
+        <nav class="dt-topbar py-2">
+            <div class="container d-flex align-items-center justify-content-between">
+                <div class="dt-brand">
+                    <img src="images/DataTech.png" alt="DataTech"><span>Loyalty Console</span>
+                </div>
+                <div class="d-flex align-items-center gap-2"><a href="dashboard.html" class="btn btn-outline-secondary btn-sm">Dashboard</a>
+                    <button id="logoutBtn" class="btn btn-outline-secondary btn-sm">Logout</button>
+                </div>
+            </div>
+        </nav>
+        <!-- Page -->
+        <main class="dt-page">
+            <div class="container">
+                <!-- Title + actions -->
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h1 class="h4 fw-bold mb-0">Customers</h1>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                Import / Export
+</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="#" id="actImport">Import CSV</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#" id="actExport">Export CSV</a>
+                                </li>
+                            </ul>
+                        </div><a id="actAdd" class="btn btn-primary btn-sm" href="#">+ Add Customer</a>
+                    </div>
+                </div>
+                <!-- Filters + Search -->
+                <div class="dt-card p-3 p-md-3 mb-3">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-12 col-lg">
+                            <div id="chips" class="chips"><span class="chip active" data-filter="all">All</span><span class="chip" data-filter="hasOrders">Has Orders</span><span class="chip" data-filter="negative">Has Negative Balance</span><span class="chip" data-filter="blacklisted">Blacklisted</span><span class="chip" data-filter="deleted">Deleted</span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-auto">
+                            <div class="search-wrap ms-lg-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M21 21l-4.35-4.35m1.1-4.65a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/>
+                                </svg>
+                                <input id="q" type="search" class="form-control" placeholder="Search customers…">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Table -->
+                <div class="dt-card">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="min-width:260px;">Name</th>
+                                    <th style="min-width:140px;" class="hide-md">Phone</th>
+                                    <th style="min-width:220px;" class="hide-md">Email</th>
+                                    <th style="min-width:120px;" class="text-end">Total Orders</th>
+                                    <th style="min-width:180px;" class="hide-md">Last Order</th>
+                                    <th style="min-width:150px;" class="text-end">Account Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rows">
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <div class="spinner-border text-primary me-2" role="status"></div><span class="text-muted">Loading…</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Footer / Pager -->
+                    <div class="d-flex align-items-center justify-content-between p-3 border-top" style="border-color: var(--dt-border) !important;"><small class="text-muted" id="showing">Showing 0 to 0 of 0</small>
+                        <div class="pager d-flex align-items-center gap-2">
+                            <button id="prev" class="btn btn-outline-secondary btn-sm">&larr; Previous</button><span id="pageInfo" class="text-muted small">Page 1 / 1</span>
+                            <button id="next" class="btn btn-outline-secondary btn-sm">Next &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+    (function () {
+      // --- Session guard (works even without your RBAC files) ---
+      try {
+        if (window.RBAC && typeof RBAC.isAuthenticated === 'function' && !RBAC.isAuthenticated()) {
+          sessionStorage.setItem('redirectAfterLogin', 'members.html');
+          location.replace('login.html');
+          return;
+        }
+      } catch(_) {}
+
+      // --- Elements ---
+      const chips = document.getElementById('chips');
+      const q = document.getElementById('q');
+      const rows = document.getElementById('rows');
+      const prev = document.getElementById('prev');
+      const next = document.getElementById('next');
+      const pageInfo = document.getElementById('pageInfo');
+      const showing = document.getElementById('showing');
+
+      // --- State ---
+      const state = { page: 1, pageSize: 10, total: 0, filter: 'all', q: '' };
+
+      // --- Mock dataset (swap with API later) ---
+      const MOCK = [
+        { name:'Mustafa - 994406', phone:'9782 0454', email:'—', orders:1, last:'Today 07:40', bal: 0 },
+        { name:'Azwa - 835789', phone:'9918 9684', email:'—', orders:0, last:'—', bal: 0 },
+        { name:'Masoud Alajmi - 576489', phone:'9415 8581', email:'—', orders:1, last:'Today 05:46', bal: 0 },
+        { name:'Ali Abdolsamad - 590639', phone:'9441 4403', email:'—', orders:0, last:'—', bal: 0 },
+        { name:'عبدالله عبدالله', phone:'552 59278', email:'—', orders:1, last:'Today 12:54', bal: 0 },
+        { name:'Waleed Damra - 267305', phone:'9987 2093', email:'—', orders:0, last:'—', bal: 0 },
+        { name:'mariam albachary - 301196', phone:'515 15204', email:'—', orders:0, last:'—', bal: 0 },
+        { name:'Nidaa Kullab - 698208', phone:'9097 4651', email:'—', orders:0, last:'—', bal: 0 },
+        { name:'Mayyar - 367981', phone:'9678 6887', email:'—', orders:0, last:'—', bal: 0 },
+        { name:'901150 - لطوفه', phone:'6573 6507', email:'—', orders:0, last:'—', bal: 0 },
+        { name:'Reem - 990647', phone:'6689 9558', email:'—', orders:0, last:'—', bal: 0 },
+      ];
+
+      // --- Data fetch (switch to your backend here) ---
+      async function fetchMembers(page, size, filter, search) {
+        // If you have a real API, replace this:
+        // const { items, total } = await API.listMembers({ page, size, filter, q: search });
+        let arr = MOCK.slice();
+
+        // filter
+        if (filter === 'hasOrders') arr = arr.filter(x => x.orders > 0);
+        if (filter === 'negative')  arr = arr.filter(x => Number(x.bal) < 0);
+        if (filter === 'blacklisted') arr = arr.filter(_ => false);
+        if (filter === 'deleted')     arr = arr.filter(_ => false);
+
+        // search
+        if (search) {
+          const s = search.toLowerCase();
+          arr = arr.filter(x =>
+            (x.name || '').toLowerCase().includes(s) ||
+            (x.phone || '').toLowerCase().includes(s) ||
+            (x.email || '').toLowerCase().includes(s)
+          );
+        }
+
+        const total = arr.length;
+        const start = (page - 1) * size;
+        const items = arr.slice(start, start + size);
+        await new Promise(r => setTimeout(r, 120)); // small delay to feel real
+        return { items, total };
+      }
+
+      // --- Render ---
+      function fmtMoney(v){ const n = Number(v||0); return (n<0?'- ':'') + 'KWD ' + Math.abs(n).toLocaleString(); }
+
+      async function load() {
+        rows.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center py-5">
+              <div class="spinner-border text-primary me-2" role="status"></div>
+              <span class="text-muted">Loading…</span>
+            </td>
+          </tr>`;
+
+        const { items, total } = await fetchMembers(state.page, state.pageSize, state.filter, state.q);
+        state.total = total;
+
+        if (!items.length) {
+          rows.innerHTML = `
+            <tr>
+              <td colspan="6" class="text-center py-5">
+                <div class="mb-1 fw-semibold">No customers found</div>
+                <div class="text-muted">Try changing filters or clearing search.</div>
+              </td>
+            </tr>`;
+        } else {
+          rows.innerHTML = items.map(i => `
+            <tr>
+              <td>
+                <div class="fw-semibold">${i.name || '—'}</div>
+                <div class="name-sub">${i.id || ''}</div>
+              </td>
+              <td class="hide-md">${i.phone || '—'}</td>
+              <td class="hide-md">${i.email || '<span class="text-muted">—</span>'}</td>
+              <td class="text-end">${i.orders ?? 0}</td>
+              <td class="hide-md">${i.last || '—'}</td>
+              <td class="text-end">${fmtMoney(i.bal)}</td>
+            </tr>
+          `).join('');
+        }
+
+        const from = total ? ((state.page - 1) * state.pageSize + 1) : 0;
+        const to = Math.min(state.page * state.pageSize, total);
+        showing.textContent = `Showing ${from} to ${to} of ${total}`;
+        const max = Math.ceil(total / state.pageSize) || 1;
+        pageInfo.textContent = `Page ${state.page} / ${max}`;
+        prev.disabled = state.page <= 1;
+        next.disabled = state.page >= max;
+      }
+
+      // --- Events ---
+      // Filter chips
+      chips.addEventListener('click', (e) => {
+        const el = e.target.closest('.chip'); if (!el) return;
+        chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        state.filter = el.dataset.filter;
+        state.page = 1;
+        load();
+      });
+
+      // Search (debounced)
+      let t;
+      q.addEventListener('input', () => {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          state.q = q.value.trim();
+          state.page = 1;
+          load();
+        }, 220);
+      });
+
+      // Pager
+      prev.addEventListener('click', () => { if (state.page > 1) { state.page--; load(); } });
+      next.addEventListener('click', () => {
+        const max = Math.ceil(state.total / state.pageSize) || 1;
+        if (state.page < max) { state.page++; load(); }
+      });
+
+      // Header actions
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        try{ sessionStorage.removeItem('RBAC_SESSION'); }catch(_){}
+        location.href = 'login.html';
+      });
+      document.getElementById('actImport').addEventListener('click', (e)=>{ e.preventDefault(); alert('Import CSV — wire this to your importer'); });
+      document.getElementById('actExport').addEventListener('click', (e)=>{ e.preventDefault(); alert('Export CSV — wire this to your exporter'); });
+      document.getElementById('actAdd').addEventListener('click', (e)=>{ e.preventDefault(); alert('Add Customer — open your create modal/page'); });
+
+      // Initial load
+      load();
+    })();
+  </script>
+    </body>
+</html>

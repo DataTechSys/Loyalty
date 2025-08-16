@@ -1,0 +1,35 @@
+<!-- partials/sidebar.html -->
+<aside class="sidebar" id="sidebar">
+    <!-- Brand -->
+    <div class="sb-brand">
+        <img src="images/DataTech.png" alt="DataTech"><span class="brand-text">Loyalty Console</span>
+    </div>
+    <!-- Navigation -->
+    <nav class="sb-nav">
+        <!-- Top-level pages --><a class="sb-link" href="dashboard.html"> <i class="fa-solid fa-gauge-high"></i><span class="sb-text">Dashboard</span> </a><a class="sb-link" href="orders.html"> <i class="fa-solid fa-cart-shopping"></i><span class="sb-text">Orders</span> </a><a class="sb-link" href="customers.html"> <i class="fa-solid fa-users"></i><span class="sb-text">Customers</span> </a><a class="sb-link" href="messages.html"> <i class="fa-solid fa-paper-plane"></i><span class="sb-text">Messages</span> </a><a class="sb-link" href="reports.html"> <i class="fa-solid fa-chart-line"></i><span class="sb-text">Reports</span> </a>
+        <!-- Settings (single page or general settings) -->
+        <div class="sb-group" data-group="settings">
+            <button class="sb-link" data-toggle="sb-group" type="button"><i class="fa-solid fa-gear"></i><span class="sb-text flex-grow-1">Settings</span><i class="fa-solid fa-chevron-down ms-auto"></i>
+            </button>
+            <div class="sb-sub"><a class="sb-sublink" href="settings.html">General Settings</a>
+            </div>
+        </div>
+        <!-- Admin (sub‑pages) -->
+        <div class="sb-group" data-group="admin">
+            <button class="sb-link" data-toggle="sb-group" type="button"><i class="fa-solid fa-user-shield"></i><span class="sb-text flex-grow-1">Admin</span><i class="fa-solid fa-chevron-down ms-auto"></i>
+            </button>
+            <div class="sb-sub"><a class="sb-sublink" href="admin-users.html">Users</a><a class="sb-sublink" href="admin-roles.html">Roles</a><a class="sb-sublink" href="admin-loyalty.html">Loyalty</a>
+            </div>
+        </div>
+        <!-- Super Admin (advanced config) -->
+        <div class="sb-group" data-group="super-admin">
+            <button class="sb-link" data-toggle="sb-group" type="button"><i class="fa-solid fa-screwdriver-wrench"></i><span class="sb-text flex-grow-1">Super Admin</span><i class="fa-solid fa-chevron-down ms-auto"></i>
+            </button>
+            <div class="sb-sub"><a class="sb-sublink" href="api-tokens.html">API Tokens</a><a class="sb-sublink" href="integrations.html">Integrations</a>
+            </div>
+        </div>
+        <!-- Login (for quick access / demo) --><a class="sb-link" href="login.html"> <i class="fa-solid fa-right-to-bracket"></i><span class="sb-text">Login</span> </a>
+    </nav>
+    <!-- Footer -->
+    <div class="sb-footer">© DataTech 2025</div>
+</aside>

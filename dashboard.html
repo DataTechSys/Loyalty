@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Dashboard · Loyalty Console</title>
+        <!-- Fonts / Bootstrap / Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <!-- App styles -->
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <!-- Charts -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    </head>
+    <!-- Add .fullpage to stretch content full width -->
+    <body class="fullpage">
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- full width due to body.fullpage -->
+                        <!-- Title / actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h1 class="h5 fw-bold mb-0">Dashboard</h1>
+                            <div class="d-flex gap-2"><a class="btn btn-outline-secondary btn-sm" href="reports.html"> <i class="fa-solid fa-chart-simple me-1"></i>Open Reports </a><a class="btn btn-primary btn-sm" href="new-campaign.html"> <i class="fa-solid fa-paper-plane me-1"></i>New Campaign </a>
+                            </div>
+                        </div>
+                        <!-- KPIs -->
+                        <div class="row g-2">
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Revenue (30d)</div>
+                                    <div class="value" id="kpiRevenue">KWD 0.000</div>
+                                    <div class="delta up small" id="kpiRevenueDelta">+5.4% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Orders</div>
+                                    <div class="value" id="kpiOrders">0</div>
+                                    <div class="delta up small" id="kpiOrdersDelta">+2.1% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">New Members</div>
+                                    <div class="value" id="kpiMembers">0</div>
+                                    <div class="delta up small" id="kpiMembersDelta">+7.9% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Redemptions</div>
+                                    <div class="value" id="kpiRedemptions">0</div>
+                                    <div class="delta down small" id="kpiRedemptionsDelta">-1.2% vs prior</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Charts row 1 -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-xl-7">
+                                <div class="dt-card p-card chart-tile">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Revenue (last 30 days)</h2><a class="small" href="reports.html">Open Reports</a>
+                                    </div>
+                                    <canvas id="chartRevenue"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-5">
+                                <div class="dt-card p-card chart-tile">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Orders by Day</h2><a class="small" href="reports.html">Open Reports</a>
+                                    </div>
+                                    <canvas id="chartOrders"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Charts row 2 + activity -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card chart-tile">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Payments Breakdown</h2>
+                                    </div>
+                                    <canvas id="chartPayments"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Recent Activity</h2><a class="small" href="orders.html">See all</a>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Ref</th>
+                                                    <th>Summary</th>
+                                                    <th class="text-end">When</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="activity"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <script>
+  (function(){
+    // --- Demo numbers (replace with API later) -----------------------------
+    const revenueKWD = 12873.450, orders = 3990, members = 410, redemptions = 780;
+    const fmtKWD = v => 'KWD ' + Number(v || 0)
+      .toLocaleString(undefined,{ minimumFractionDigits:3, maximumFractionDigits:3 });
+
+    // KPIs
+    document.getElementById('kpiRevenue').textContent = fmtKWD(revenueKWD);
+    document.getElementById('kpiOrders').textContent = orders.toLocaleString();
+    document.getElementById('kpiMembers').textContent = members.toLocaleString();
+    document.getElementById('kpiRedemptions').textContent = redemptions.toLocaleString();
+
+    // Labels = last 30 days
+    const DAYS=30;
+    const labels = Array.from({length:DAYS},(_,i)=>{
+      const d=new Date(); d.setDate(d.getDate()-(DAYS-1-i));
+      return d.toLocaleDateString([],{month:'short',day:'2-digit'});
+    });
+
+    // Fake series
+    function gen(n, base, jitter){
+      const out=[]; for(let i=0;i<n;i++){
+        out.push(Math.max(0, base + (Math.sin(i/4)*base*0.05) + (Math.random()-0.5)*jitter));
+      } return out;
+    }
+    const seriesRevenue = gen(DAYS, 260, 80).map(v=>+v.toFixed(2)); // KWD per day
+    const seriesOrders  = gen(DAYS,  80, 25).map(v=>Math.round(v));
+
+    // Charts
+    const commonOpts = {
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } }
+    };
+
+    // Revenue line
+    new Chart(document.getElementById('chartRevenue'),{
+      type:'line',
+      data:{ labels,
+        datasets:[{ label:'Revenue', data:seriesRevenue, fill:true, tension:.35 }]
+      },
+      options: commonOpts
+    });
+
+    // Orders bar
+    new Chart(document.getElementById('chartOrders'),{
+      type:'bar',
+      data:{ labels,
+        datasets:[{ label:'Orders', data:seriesOrders }]
+      },
+      options: commonOpts
+    });
+
+    // Payments breakdown (Knet, Apple Pay, Cash, Card, Loyalty)
+    const payLabels = ['Knet','Apple Pay','Cash','Card','Loyalty'];
+    const payData   = [42,20,18,12,8]; // %
+    new Chart(document.getElementById('chartPayments'),{
+      type:'doughnut',
+      data:{ labels: payLabels, datasets:[{ data: payData }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:'bottom' } },
+        cutout:'60%'
+      }
+    });
+
+    // Recent activity
+    const ACT=[
+      {type:'Order',   ref:'#1765956', summary:'Paid · Mustafa · KWD 5.000',        when:'Today 09:45'},
+      {type:'Message', ref:'July Push', summary:'Sent to All · 3,990 delivered',    when:'Yesterday'},
+      {type:'Order',   ref:'#1765007', summary:'Refunded · Reem · KWD 3.780',       when:'Yesterday'},
+      {type:'Order',   ref:'#1764989', summary:'Unpaid · Ali · KWD 2.600',          when:'Yesterday'}
+    ];
+    document.getElementById('activity').innerHTML = ACT.map(a=>`
+      <tr>
+        <td class="fw-semibold">${a.type}</td>
+        <td>${a.type==='Order'
+              ? `<a href="order-details.html?id=${a.ref.replace('#','')}">${a.ref}</a>`
+              : a.ref}</td>
+        <td>${a.summary}</td>
+        <td class="text-end">${a.when}</td>
+      </tr>`).join('');
+  })();
+  </script>
+    </body>
+</html>

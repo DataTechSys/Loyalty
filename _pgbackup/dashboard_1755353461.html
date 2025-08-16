@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Dashboard · Loyalty Console</title>
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <!-- Favicon + App CSS -->
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+        <!-- Chart height helpers -->
+        <style>
+    /* Constrain chart heights so they don't stretch vertically */
+    .chart-box{height:220px;}
+    .donut-box{height:240px;}
+    @media (min-width: 992px){
+      .chart-box{height:260px;}
+      .donut-box{height:260px;}
+    }
+  </style>
+    </head>
+    <body>
+        <div class="layout">
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <div class="main">
+                <div data-include="partials/topbar.html"></div>
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title / actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h1 class="h5 fw-bold mb-0">Dashboard</h1>
+                            <div class="d-flex gap-2"><a class="btn btn-outline-secondary btn-sm" href="reports.html"><i class="fa-solid fa-chart-simple me-1"></i>Open Reports</a><a class="btn btn-primary btn-sm" href="messages.html"><i class="fa-solid fa-paper-plane me-1"></i>New Campaign</a>
+                            </div>
+                        </div>
+                        <!-- KPIs -->
+                        <div class="row g-2">
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Revenue (30d)</div>
+                                    <div class="value" id="kpiRevenue">KWD 0.000</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Orders</div>
+                                    <div class="value" id="kpiOrders">0</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">New Members</div>
+                                    <div class="value" id="kpiMembers">0</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Redemptions</div>
+                                    <div class="value" id="kpiRedemptions">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Charts -->
+                        <div class="row g-2 mt-2">
+                            <!-- Revenue 30d -->
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Revenue (last 30 days)</h2><a class="small" href="reports.html">Open Reports</a>
+                                    </div>
+                                    <div class="chart-box">
+                                        <canvas id="chartRevenue"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Orders by day -->
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Orders by Day</h2><a class="small" href="reports.html">Open Reports</a>
+                                    </div>
+                                    <div class="chart-box">
+                                        <canvas id="chartOrders"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2 mt-2">
+                            <!-- Payment mix -->
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Payment Mix (30d)</h2>
+                                    </div>
+                                    <div class="donut-box">
+                                        <canvas id="chartPayments"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Recent activity -->
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Recent Activity</h2><a class="small" href="orders.html">See all</a>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Ref</th>
+                                                    <th>Summary</th>
+                                                    <th class="text-end">When</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="activity"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <script>
+  (function(){
+    // ----- KPIs -----
+    const fmtKWD=v=>'KWD '+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:3,maximumFractionDigits:3});
+    const revenue = 12873.450, orders = 3990, members = 410, redemptions = 780;
+    kpiRevenue.textContent = fmtKWD(revenue);
+    kpiOrders.textContent = orders.toLocaleString();
+    kpiMembers.textContent = members.toLocaleString();
+    kpiRedemptions.textContent = redemptions.toLocaleString();
+
+    // ----- Activity (demo) -----
+    const ACT=[
+      {type:'Order',ref:'#1765956',summary:'Paid · Mustafa · KWD 5.000',when:'Today 09:45'},
+      {type:'Message',ref:'July Push',summary:'Sent to All · 3,990 delivered',when:'Yesterday'},
+      {type:'Order',ref:'#1765007',summary:'Refunded · Reem · KWD 3.780',when:'Yesterday'},
+      {type:'Order',ref:'#1764989',summary:'Unpaid · Ali · KWD 2.600',when:'Yesterday'}
+    ];
+    activity.innerHTML = ACT.map(a=>`
+      <tr>
+        <td class="fw-semibold">${a.type}</td>
+        <td>${a.type==='Order'?`<a href="order-details.html?id=${a.ref.replace('#','')}">${a.ref}</a>`:a.ref}</td>
+        <td>${a.summary}</td>
+        <td class="text-end">${a.when}</td>
+      </tr>`).join('');
+
+    // ----- Charts (demo data) -----
+    const DAYS = 30;
+    const labels = Array.from({length:DAYS},(_,i)=>{
+      const d=new Date(); d.setDate(d.getDate()-(DAYS-1-i));
+      return d.toLocaleDateString([], {month:'short', day:'2-digit'});
+    });
+
+    const revSeries = labels.map((_,i)=> Math.max(600 + (Math.sin(i/3)*120) + (Math.random()*120-60), 200)).map(v=>+v.toFixed(2));
+    const ordSeries = labels.map((_,i)=> Math.max(80  + (Math.cos(i/4)*20)  + (Math.random()*25-12), 20)).map(v=>Math.round(v));
+
+    const cPrimary   = '#1f6feb';
+    const cPrimaryLt = 'rgba(31,111,235,.12)';
+    const cTeal      = '#10b981';
+    const cAmber     = '#f59e0b';
+    const cSky       = '#38bdf8';
+
+    // Revenue line (fills wrapper height)
+    new Chart(document.getElementById('chartRevenue'),{
+      type:'line',
+      data:{ labels, datasets:[{
+        label:'Revenue (KWD)',
+        data: revSeries,
+        borderColor: cPrimary,
+        backgroundColor: cPrimaryLt,
+        borderWidth: 2,
+        fill: true,
+        tension: .35,
+        pointRadius: 0
+      }]},
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,  // use .chart-box height
+        plugins:{ legend:{display:false}, tooltip:{mode:'index', intersect:false} },
+        scales:{ x:{ grid:{display:false} }, y:{ beginAtZero:true, ticks:{ callback:v=>'KWD '+v } } }
+      }
+    });
+
+    // Orders bar
+    new Chart(document.getElementById('chartOrders'),{
+      type:'bar',
+      data:{ labels, datasets:[{
+        label:'Orders',
+        data: ordSeries,
+        backgroundColor: cTeal,
+        borderRadius: 6,
+        maxBarThickness: 14
+      }]},
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,  // use .chart-box height
+        plugins:{ legend:{display:false} },
+        scales:{ x:{ grid:{display:false}, ticks:{ maxRotation:0 } }, y:{ beginAtZero:true } }
+      }
+    });
+
+    // Payment mix
+    const payLabels = ['Knet','Apple Pay','Cash','Loyalty'];
+    const payData   = [48, 22, 18, 12];
+    new Chart(document.getElementById('chartPayments'),{
+      type:'doughnut',
+      data:{ labels: payLabels, datasets:[{ data: payData, backgroundColor:[cPrimary,cSky,cAmber,cTeal] }]},
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,  // use .donut-box height
+        plugins:{ legend:{ position:'bottom' } },
+        cutout:'58%'
+      }
+    });
+  })();
+  </script>
+    </body>
+</html>

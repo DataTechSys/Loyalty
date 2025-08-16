@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Customers · Loyalty Console</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="layout">
+            <aside class="sidebar" id="sidebar">
+                <div class="sb-brand">
+                    <img src="images/DataTech.png" alt="DataTech"><span>Loyalty Console</span>
+                </div>
+                <nav class="sb-nav">
+                    <a class="sb-link" href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+                    <a class="sb-link" href="orders.html"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
+                    <a class="sb-link active" href="members.html"><i class="fa-solid fa-users"></i> Customers</a>
+                    <a class="sb-link" href="messages.html"><i class="fa-solid fa-paper-plane"></i> Messages</a>
+                    <a class="sb-link" href="reports.html"><i class="fa-solid fa-chart-line"></i> Reports</a>
+                    <a class="sb-link" href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+                    <a class="sb-link" href="super-admin.html"><i class="fa-solid fa-user-shield"></i> Super Admin</a>
+                    <a class="sb-link" href="admin-invite.html"><i class="fa-solid fa-envelope-open-text"></i> Admin Invite</a>
+                    <a class="sb-link" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                </nav>
+                <div class="sb-footer">© DataTech</div>
+            </aside>
+            <div class="main">
+                <header class="dt-topbar">
+                    <div class="tb-inner container d-flex align-items-center justify-content-between">
+                        <button class="burger btn btn-outline-secondary btn-sm" id="burger">☰</button>
+                        <div class="dt-brand">
+                            <img src="images/DataTech.png" alt="DataTech"><span>Loyalty Console</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2"></div>
+                    </div>
+                </header>
+                <main class="page">
+                    <div class="container-narrow">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Customers</h1>
+                                <div class="text-muted small">Browse, filter, and manage members</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-secondary btn-sm" id="btnExport">Export CSV</button>
+                                <button class="btn btn-primary btn-sm" id="btnNew">Add Customer</button>
+                            </div>
+                        </div>
+                        <div class="dt-card p-card mb-2 filter">
+                            <div class="row g-2">
+                                <div class="col-12 col-md-5">
+                                    <input id="q" class="form-control" placeholder="Search name, phone, email, wallet ID…">
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <select id="tier" class="form-select">
+                                        <option value="">All Tiers</option>
+                                        <option value="silver">Silver</option>
+                                        <option value="gold">Gold</option>
+                                        <option value="platinum">Platinum</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <select id="wallet" class="form-select">
+                                        <option value="">Any Wallet</option>
+                                        <option value="active">Wallet Active</option>
+                                        <option value="inactive">Wallet Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-2">
+                                    <input id="joined" type="date" class="form-control" title="Joined After">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dt-card p-card">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email / Phone</th>
+                                            <th>Tier</th>
+                                            <th class="text-end">Orders</th>
+                                            <th class="text-end">Spend (KWD)</th>
+                                            <th class="text-end">Wallet</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody"></tbody>
+                                </table>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-2">
+                                <div class="text-muted small" id="countInfo">0 customers</div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <button class="btn btn-outline-secondary btn-sm" id="prevPage">Prev</button><span class="small" id="pageInfo">1 / 1</span>
+                                    <button class="btn btn-outline-secondary btn-sm" id="nextPage">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Drawer -->
+        <aside class="drawer" id="drawer">
+            <div class="drawer-header">
+                <div class="fw-semibold" id="drawerTitle">Customer</div>
+                <button class="btn btn-sm btn-outline-secondary" id="drawerClose">Close</button>
+            </div>
+            <div class="drawer-body">
+                <div class="mb-3">
+                    <div class="text-muted small">Member</div>
+                    <div class="fs-5 fw-bold" id="dName">—</div>
+                    <div class="text-muted" id="dEmail">—</div>
+                    <div class="text-muted" id="dPhone">—</div>
+                </div>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="dt-card p-card">
+                            <div class="text-muted small">Tier</div>
+                            <div class="fw-bold" id="dTier">—</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="dt-card p-card">
+                            <div class="text-muted small">Wallet</div>
+                            <div class="fw-bold" id="dWallet">—</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="dt-card p-card">
+                            <div class="text-muted small">Orders</div>
+                            <div class="fw-bold" id="dOrders">—</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="dt-card p-card">
+                            <div class="text-muted small">Spend (KWD)</div>
+                            <div class="fw-bold" id="dSpend">—</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 d-grid gap-2">
+                    <button class="btn btn-primary">Open in Pass (Wallet)</button>
+                    <button class="btn btn-outline-secondary">Send Push</button>
+                    <button class="btn btn-outline-secondary">Refund Last Order</button>
+                </div>
+            </div>
+        </aside>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/app-user.js"></script>
+        <script>
+    (function(){
+      if (window.UserSession && !window.UserSession.isAuthenticated()){ sessionStorage.setItem('redirectAfterLogin','members.html'); location.replace('login.html'); return; }
+      const sidebar=document.getElementById('sidebar'), burger=document.getElementById('burger'); burger?.addEventListener('click',()=>sidebar.classList.toggle('open')); sidebar.querySelectorAll('a.sb-link').forEach(a=>a.addEventListener('click',()=>sidebar.classList.remove('open')));
+      const MEMBERS=[{id:'m01',name:'Mustafa',email:'mustafa@example.com',phone:'+965 5xx xxxx',tier:'gold',orders:42,spend:186.40,wallet:'active',joined:'2025-05-11'},{id:'m02',name:'Reem',email:'reem@example.com',phone:'+965 6xx xxxx',tier:'silver',orders:35,spend:159.10,wallet:'inactive',joined:'2025-06-02'},{id:'m03',name:'Ali',email:'ali@example.com',phone:'+965 9xx xxxx',tier:'platinum',orders:31,spend:142.25,wallet:'active',joined:'2025-04-27'},{id:'m04',name:'Fatima',email:'fatima@example.com',phone:'+965 5xx xxxx',tier:'gold',orders:27,spend:136.70,wallet:'active',joined:'2025-07-10'},{id:'m05',name:'Laila',email:'laila@example.com',phone:'+965 6xx xxxx',tier:'silver',orders:24,spend:121.30,wallet:'inactive',joined:'2025-07-18'},{id:'m06',name:'Omar',email:'omar@example.com',phone:'+965 9xx xxxx',tier:'gold',orders:18,spend:98.10,wallet:'active',joined:'2025-07-25'},{id:'m07',name:'Zain',email:'zain@example.com',phone:'+965 5xx xxxx',tier:'platinum',orders:12,spend:77.90,wallet:'active',joined:'2025-07-28'},{id:'m08',name:'Hadi',email:'hadi@example.com',phone:'+965 9xx xxxx',tier:'silver',orders:10,spend:61.45,wallet:'inactive',joined:'2025-08-01'},{id:'m09',name:'Noura',email:'noura@example.com',phone:'+965 6xx xxxx',tier:'gold',orders:9,spend:55.20,wallet:'active',joined:'2025-08-06'},{id:'m10',name:'Yousef',email:'yousef@example.com',phone:'+965 5xx xxxx',tier:'silver',orders:8,spend:47.15,wallet:'active',joined:'2025-08-08'}];
+      const PAGE={size:8,index:1}; let query='',tier='',wallet='',joined=''; const tbody=document.getElementById('tbody'),countInfo=document.getElementById('countInfo'),pageInfo=document.getElementById('pageInfo'),prevPage=document.getElementById('prevPage'),nextPage=document.getElementById('nextPage');
+      const drawer=document.getElementById('drawer'), drawerClose=document.getElementById('drawerClose');
+      const tierBadge=t=>`<span class="badge text-bg-${{silver:'secondary',gold:'warning',platinum:'dark'}[t]||'secondary'}">${t[0].toUpperCase()+t.slice(1)}</span>`;
+      const walletBadge=w=>w==='active'?'<span class="badge text-bg-success">Active</span>':'<span class="badge text-bg-secondary">Inactive</span>';
+      function applyFilters(){
+        let rows=MEMBERS.filter(m=>{
+          const q=query.trim().toLowerCase(); const okQ=!q||m.name.toLowerCase().includes(q)||m.email.toLowerCase().includes(q)||m.phone.toLowerCase().includes(q);
+          const okT=!tier||m.tier===tier; const okW=!wallet||m.wallet===wallet; const okJ=!joined||new Date(m.joined).getTime()>=new Date(joined).getTime();
+          return okQ&&okT&&okW&&okJ;
+        });
+        const total=rows.length, pages=Math.max(1,Math.ceil(total/PAGE.size)); if(PAGE.index>pages) PAGE.index=pages;
+        const pageRows=rows.slice((PAGE.index-1)*PAGE.size,(PAGE.index-1)*PAGE.size+PAGE.size);
+        tbody.innerHTML=pageRows.length? pageRows.map(m=>`
+          <tr>
+            <td class="fw-semibold">${m.name}</td>
+            <td><div class="text-muted small">${m.email}</div><div class="text-muted small">${m.phone}</div></td>
+            <td>${tierBadge(m.tier)}</td>
+            <td class="text-end">${m.orders}</td>
+            <td class="text-end">KWD ${m.spend.toFixed(3)}</td>
+            <td class="text-end">${walletBadge(m.wallet)}</td>
+            <td class="text-end"><div class="btn-group btn-group-sm"><button class="btn btn-outline-secondary" data-id="${m.id}" data-action="view">View</button><button class="btn btn-outline-secondary" onclick="alert('Push to ${m.name}')">Push</button></div></td>
+          </tr>`).join('') : `<tr><td colspan="7" class="text-center text-muted py-4">No customers found</td></tr>`;
+        countInfo.textContent=`${total} customer${total!==1?'s':''}`; pageInfo.textContent=`${PAGE.index} / ${pages}`;
+        tbody.querySelectorAll('[data-action="view"]').forEach(btn=>btn.addEventListener('click',()=>{const m=MEMBERS.find(x=>x.id===btn.getAttribute('data-id')); if(m) openDrawer(m);}));
+      }
+      function openDrawer(m){document.getElementById('drawerTitle').textContent=m.name; dName.textContent=m.name; dEmail.textContent=m.email; dPhone.textContent=m.phone; dTier.innerHTML=tierBadge(m.tier); dWallet.innerHTML=walletBadge(m.wallet); dOrders.textContent=m.orders; dSpend.textContent='KWD '+m.spend.toFixed(3); drawer.classList.add('open');}
+      drawerClose.addEventListener('click',()=>drawer.classList.remove('open'));
+      const dName=document.getElementById('dName'),dEmail=document.getElementById('dEmail'),dPhone=document.getElementById('dPhone'),dTier=document.getElementById('dTier'),dWallet=document.getElementById('dWallet'),dOrders=document.getElementById('dOrders'),dSpend=document.getElementById('dSpend');
+      document.getElementById('q').addEventListener('input',e=>{query=e.target.value;PAGE.index=1;applyFilters();});
+      document.getElementById('tier').addEventListener('change',e=>{tier=e.target.value;PAGE.index=1;applyFilters();});
+      document.getElementById('wallet').addEventListener('change',e=>{wallet=e.target.value;PAGE.index=1;applyFilters();});
+      document.getElementById('joined').addEventListener('change',e=>{joined=e.target.value;PAGE.index=1;applyFilters();});
+      document.getElementById('prevPage')?.addEventListener('click',()=>{if(PAGE.index>1){PAGE.index--;applyFilters();}});
+      document.getElementById('nextPage')?.addEventListener('click',()=>{PAGE.index++;applyFilters();});
+      document.getElementById('btnExport').addEventListener('click',()=>{
+        let rows=MEMBERS.filter(m=>{const q=query.trim().toLowerCase();const okQ=!q||m.name.toLowerCase().includes(q)||m.email.toLowerCase().includes(q)||m.phone.toLowerCase().includes(q);const okT=!tier||m.tier===tier;const okW=!wallet||m.wallet===wallet;const okJ=!joined||new Date(m.joined).getTime()>=new Date(joined).getTime();return okQ&&okT&&okW&&okJ;});
+        const header=['Name','Email','Phone','Tier','Orders','Spend (KWD)','Wallet','Joined']; const lines=[header.join(',')].concat(rows.map(m=>[m.name,m.email,m.phone,m.tier,m.orders,m.spend.toFixed(3),m.wallet,m.joined].map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')));
+        const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='customers.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      });
+      document.getElementById('btnNew').addEventListener('click',()=>alert('Open Create Customer modal'));
+      applyFilters();
+    })();
+  </script>
+    </body>
+</html>

@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Admin · Loyalty Console</title>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Fonts + Bootstrap + Icons + App CSS -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sb-brand">
+                    <img src="images/DataTech.png" alt="DataTech">
+                    <span class="brand-text">Loyalty Console</span>
+                </div>
+                <nav class="sb-nav"><a class="sb-link" href="dashboard.html"><i class="fa-solid fa-gauge-high"></i><span class="sb-text">Dashboard</span></a><a class="sb-link" href="orders.html"><i class="fa-solid fa-cart-shopping"></i><span class="sb-text">Orders</span></a><a class="sb-link" href="members.html"><i class="fa-solid fa-users"></i><span class="sb-text">Customers</span></a><a class="sb-link" href="messages.html"><i class="fa-solid fa-paper-plane"></i><span class="sb-text">Messages</span></a><a class="sb-link" href="reports.html"><i class="fa-solid fa-chart-line"></i><span class="sb-text">Reports</span></a><a class="sb-link" href="settings.html"><i class="fa-solid fa-gear"></i><span class="sb-text">Settings</span></a>
+                    <!-- Active --><a class="sb-link active" href="admin.html"><i class="fa-solid fa-user-shield"></i><span class="sb-text">Admin</span></a><a class="sb-link" href="super-admin.html"><i class="fa-solid fa-screwdriver-wrench"></i><span class="sb-text">Super Admin</span></a><a class="sb-link" href="login.html"><i class="fa-solid fa-right-to-bracket"></i><span class="sb-text">Login</span></a>
+                </nav>
+                <div class="sb-footer">© DataTech 2025</div>
+            </aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <header class="dt-topbar">
+                    <div class="tb-inner container d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn-icon burger" id="burger" aria-label="Toggle menu">☰</button>
+                            <button class="btn-icon" id="collapseBtn" aria-label="Collapse sidebar">
+                                <i class="fa-solid fa-bars"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- user chip injected by js/app-user.js -->
+                        </div>
+                    </div>
+                </header>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title + actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Admin</h1>
+                                <div class="text-muted small">Manage users, roles and loyalty tiers</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-secondary btn-sm" id="btnImport">
+                                    <i class="fa-solid fa-file-arrow-down me-1"></i>Import / Export
+                                </button>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                                    <i class="fa-solid fa-user-plus me-1"></i>Add User
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Section Tabs -->
+                        <ul class="nav nav-pills mb-2" id="adminTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">
+                                    Users
+</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button" role="tab">
+                                    Roles
+</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="loyalty-tab" data-bs-toggle="tab" data-bs-target="#loyalty" type="button" role="tab">
+                                    Loyalty
+</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- USERS -->
+                            <section class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
+                                <div class="dt-card p-card">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Users</h2>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-secondary btn-sm" id="filterUsers">
+                                                <i class="fa-solid fa-filter"></i> Filter
+                                            </button>
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                                                <i class="fa-solid fa-envelope-open-text me-1"></i>Invite
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:32px"></th>
+                                                    <th>Name</th>
+                                                    <th>Console Access</th>
+                                                    <th>App Access</th>
+                                                    <th>Roles</th>
+                                                    <th class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="usersBody">
+                                                <!-- injected by js/admin.js -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <!-- ROLES -->
+                            <section class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h2 class="h6 mb-0">Roles</h2>
+                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#roleModal"><i class="fa-solid fa-plus me-1"></i>Create Role
+                                    </button>
+                                </div>
+                                <div class="row g-2" id="rolesGrid">
+                                    <!-- injected -->
+                                </div>
+                            </section>
+                            <!-- LOYALTY -->
+                            <section class="tab-pane fade" id="loyalty" role="tabpanel" aria-labelledby="loyalty-tab">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h2 class="h6 mb-0">Loyalty Tiers</h2>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-secondary btn-sm" id="loyaltySettings">
+                                            <i class="fa-solid fa-gear me-1"></i>Settings
+                                        </button>
+                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tierModal"><i class="fa-solid fa-plus me-1"></i>New Tier
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="dt-card p-card">
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tier Name</th>
+                                                    <th>Minimum Points</th>
+                                                    <th>Maximum Points</th>
+                                                    <th>Collection</th>
+                                                    <th>Redemption</th>
+                                                    <th class="text-end">Customers</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tiersBody">
+                                                <!-- injected -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Invite User Modal -->
+        <div class="modal fade" id="inviteModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <form class="modal-content" id="inviteForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Invite User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label small">Email</label>
+                                <input type="email" id="invEmail" class="form-control" placeholder="user@example.com" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">First Name</label>
+                                <input type="text" id="invFirst" class="form-control">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Last Name</label>
+                                <input type="text" id="invLast" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small">Role</label>
+                                <select id="invRole" class="form-select">
+                                    <!-- filled by js -->
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="invSend" checked>
+                                    <label class="form-check-label small" for="invSend">Send email invitation now</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-success d-none mt-2" id="inviteSuccess">Invite created (demo).</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Send Invite</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Create/Edit Role Modal -->
+        <div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <form class="modal-content" id="roleForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create Role</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-2">
+                            <label class="form-label small">Name</label>
+                            <input class="form-control" id="roleName" placeholder="e.g. Cashier" required>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="dt-card p-card">
+                                    <div class="fw-semibold mb-1">Order Authorities</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rReadOrders" checked>
+                                        <label class="form-check-label small" for="rReadOrders">Read Orders</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rManageOrders">
+                                        <label class="form-check-label small" for="rManageOrders">Manage Orders</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="dt-card p-card">
+                                    <div class="fw-semibold mb-1">Customer Authorities</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rReadCustomers" checked>
+                                        <label class="form-check-label small" for="rReadCustomers">Read Customers</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rManageCustomers">
+                                        <label class="form-check-label small" for="rManageCustomers">Manage Customers</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rManageLoyalty">
+                                        <label class="form-check-label small" for="rManageLoyalty">Manage Loyalty</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-success d-none mt-2" id="roleSuccess">Role saved (demo).</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- New Tier Modal -->
+        <div class="modal fade" id="tierModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <form class="modal-content" id="tierForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Loyalty Tier</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label small">Tier Name</label>
+                                <input class="form-control" id="tierName" placeholder="e.g. Silver" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Min Points</label>
+                                <input type="number" class="form-control" id="tierMin" value="0">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Max Points</label>
+                                <input type="number" class="form-control" id="tierMax" value="1000">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Collect</label>
+                                <input class="form-control" id="tierCollect" placeholder="5 points / KWD 10">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Redeem</label>
+                                <input class="form-control" id="tierRedeem" placeholder="KWD 1 / 1000 points">
+                            </div>
+                        </div>
+                        <div class="alert alert-success d-none mt-2" id="tierSuccess">Tier added (demo).</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Save Tier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/app-user.js"></script>
+        <script src="js/admin.js"></script>
+    </body>
+</html>

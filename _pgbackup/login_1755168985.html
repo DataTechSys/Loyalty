@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" data-pgc-master="master.html">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Sign in</title>
+    </head>
+    <body>
+        <main id="main-content" class="container py-5" data-pg-slot="main-content">
+            <div class="row justify-content-center">
+                <div class="col-sm-8 col-md-6 col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="text-center mb-3">
+                                <img src="images/DataTech.png" width="40" height="40" alt="logo" class="mb-2">
+                                <h1 class="h5 mb-0">Sign in</h1>
+                            </div>
+                            <form id="loginForm" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label">Company / Account ID</label>
+                                    <input id="tenantId" class="form-control" placeholder="Enter company/account ID" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input id="email" type="email" class="form-control" placeholder="you@example.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input id="password" type="password" class="form-control" placeholder="••••••••" required>
+                                </div>
+                                <button id="btnSignIn" type="submit" class="btn btn-primary w-100">Sign in</button>
+                            </form>
+                        </div>
+                        <div class="card-footer text-center small text-muted">© 2025 DataTech</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script>
+    (function () {
+      const form = document.getElementById('loginForm');
+      const btn  = document.getElementById('btnSignIn');
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        btn.disabled = true;
+
+        const tenantId = document.getElementById('tenantId').value.trim();
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        try {
+          const session = await API.login(email, password, tenantId);
+          RBAC.login(session);
+
+          const redirect = sessionStorage.getItem('redirectAfterLogin') || 'dashboard.html';
+          sessionStorage.removeItem('redirectAfterLogin');
+          location.replace(redirect);
+        } catch (err) {
+          alert(err.message || 'Unable to sign in');
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    }());
+  </script>
+    </body>
+</html>

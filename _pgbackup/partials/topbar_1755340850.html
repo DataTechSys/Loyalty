@@ -1,0 +1,47 @@
+<!-- partials/topbar.html -->
+<header class="dt-topbar">
+    <div class="tb-inner container d-flex align-items-center justify-content-between">
+        <!-- Left: nav controls -->
+        <div class="d-flex align-items-center gap-2">
+            <!-- Mobile burger (shows/hides sidebar on small screens) -->
+            <button class="btn-icon burger" id="burger" aria-label="Toggle menu">☰</button>
+            <!-- Collapse/expand sidebar (desktop) -->
+            <button class="btn-icon" id="collapseBtn" aria-label="Collapse sidebar"><i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        <!-- Center: (brand hidden to avoid duplication) -->
+        <div class="d-none d-md-flex align-items-center gap-2">
+            <!-- Keep empty or add quick breadcrumbs if you like -->
+        </div>
+        <!-- Right: avatar dropdown (rendered by js/app-user.js into this placeholder) -->
+        <div class="d-flex align-items-center gap-2">
+            <!-- Optional: notification icon -->
+            <!-- <button class="btn-icon" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+      </button> -->
+            <!-- User chip mount point: app-user.js injects the avatar + dropdown here -->
+            <div class="userchip-wrap"></div>
+        </div>
+    </div>
+</header>
+<!-- Optional tiny helper: mark active page after includes load -->
+<script>
+  // Fire a custom event so pages can mark active nav if they want
+  document.dispatchEvent(new CustomEvent('partials:ready'));
+</script>
+<style>
+  /* Minor topbar polish (fits your style.css token names) */
+  .dt-topbar {
+    background: var(--dt-card, #fff);
+    border-bottom: 1px solid var(--dt-border, #e5e7eb);
+    position: sticky; top: 0; z-index: 1030;
+  }
+  .tb-inner.container { max-width: calc(var(--maxw, 1180px) + 32px); padding: 8px 16px; }
+  .btn-icon {
+    width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--dt-border, #e5e7eb); border-radius: 8px; background: #fff;
+  }
+  @media (max-width: 991.98px) {
+    .burger { display: inline-flex !important; }
+  }
+</style>

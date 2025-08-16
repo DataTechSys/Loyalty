@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Loyalty Console • Loading…</title>
+        <!-- (optional) your favicon / brand -->
+        <link rel="preload" as="image" href="images/DataTech.png"/>
+        <style>
+    :root { color-scheme: light dark; }
+    html,body{height:100%}
+    body{
+      margin:0;display:flex;align-items:center;justify-content:center;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:#f7f7f9;
+    }
+    #app{text-align:center;color:#444}
+    .muted{opacity:.6;font-size:.9rem;margin-top:.25rem}
+    a{color:#0d6efd;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .error{color:#c00;margin-top:.5rem;font-weight:600}
+  </style>
+    </head>
+    <body>
+        <main id="app">
+            <div>Loading…</div>
+            <div class="muted">If this takes long, refresh the page.</div>
+        </main>
+        <!-- Your app scripts (order matters) -->
+        <script src="js/config.js"></script>
+        <script src="js/rbac.js"></script>
+        <script src="js/app-auth.js"></script>
+        <script src="js/app.js"></script>
+        <!-- Safe redirect orchestrator with hard fallbacks -->
+        <script>
+    (function () {
+      const el = document.getElementById('app');
+      const base = location.pathname.replace(/[^/]+$/, '');
+
+      function hardFail(msg) {
+        el.innerHTML =
+          '<div class="error">' + (msg || 'Could not redirect.') + '</div>' +
+          '<div style="margin-top:.5rem">Open ' +
+          '<a href="' + base + 'login.html">login.html</a> or ' +
+          '<a href="' + base + 'dashboard.html">dashboard.html</a>.</div>';
+      }
+
+      // Try redirect quickly once DOM is ready
+      window.addEventListener('DOMContentLoaded', function () {
+        try {
+          if (window.app && typeof window.app.redirectFromIndex === 'function') {
+            window.app.redirectFromIndex({ base, timeoutMs: 1200, onError: hardFail });
+          } else {
+            // Minimal no‑deps fallback
+            const authed = !!(window.RBAC && typeof RBAC.isAuthenticated === 'function' && RBAC.isAuthenticated());
+            location.replace(base + (authed ? 'dashboard.html' : 'login.html'));
+          }
+        } catch (err) {
+          console.error(err);
+          hardFail('Could not redirect (JS error).');
+        }
+      });
+
+      // Last‑chance safety after 3s
+      setTimeout(function () {
+        // If we’re still here, present manual links
+        if (!document.hidden && location.pathname.endsWith('/index.html')) {
+          hardFail('Could not redirect (timeout).');
+        }
+      }, 3000);
+    })();
+  </script>
+    </body>
+</html>

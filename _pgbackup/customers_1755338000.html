@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Customers - DataTech Dashboard</title>
+        <!-- Keep your original styles for the same look -->
+        <link rel="stylesheet" href="css/styles.css"/>
+        <!-- (Optional) Bootstrap helpers for table/layout, like your old page -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <style>
+    /* Keep layout consistent with your working page */
+    .main-content { margin-left: 240px; } /* matches sidebar width */
+    .card { border: 1px solid #e5e7eb; border-radius: 12px; }
+    .table thead th { white-space: nowrap; }
+  </style>
+    </head>
+    <body>
+        <!-- Sidebar (partial) -->
+        <div class="sidebar" data-include="partials/sidebar.html"></div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Topbar (partial) -->
+            <div class="topbar" data-include="partials/topbar.html"></div>
+            <div class="container-fluid mt-4">
+                <h2 class="mb-3">Customers</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <!-- simple tools -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-auto">
+                                <input id="q" type="search" class="form-control form-control-sm" placeholder="Search name, phone, or ID">
+                            </div>
+                            <div class="col-auto">
+                                <button id="btnExport" class="btn btn-outline-secondary btn-sm">Export CSV</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Customer ID</th>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Membership</th>
+                                        <th class="text-end">Wallet (KWD)</th>
+                                        <th class="text-end">Points</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="custBody">
+                                    <!-- rows injected by script -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted">
+                            <div id="count">Showing 0</div>
+                            <div class="btn-group btn-group-sm">
+                                <button id="prev" class="btn btn-outline-secondary" disabled>Previous</button>
+                                <button id="next" class="btn btn-outline-secondary" disabled>Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer (partial) -->
+            <div class="sb-footer" data-include="partials/footer.html"></div>
+        </div>
+        <!-- Partials loader (same approach as your working page) -->
+        <script src="js/include.js"></script>
+        <!-- (Optional) Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+    // Mark "Customers" as active in the sidebar after partials load
+    document.addEventListener('partials:ready', function () {
+      if (typeof window.__markActive === 'function') {
+        window.__markActive('customers.html');
+      }
+    });
+
+    // --- Demo data (replace with your API when ready) ---
+    const DATA = [
+      { id:'CUST001', name:'Ali Ahmed',       phone:'+965 60000001', email:'ali@example.com',    membership:'Gold',   wallet:12.500, points:12500 },
+      { id:'CUST002', name:'Maryam Saleh',    phone:'+965 60000002', email:'maryam@example.com', membership:'Silver', wallet:3.750,  points:3750  },
+      { id:'CUST003', name:'Noura Alazzaz',   phone:'+965 97935543', email:'',                   membership:'Green',  wallet:1.200,  points:1200  },
+      { id:'CUST004', name:'Osama',           phone:'+965 97771914', email:'',                   membership:'Green',  wallet:0.000,  points:0     },
+      { id:'CUST005', name:'Bader Ben Awadh', phone:'+965 99179977', email:'',                   membership:'Silver', wallet:0.200,  points:200   }
+    ];
+
+    const body = document.getElementById('custBody');
+    const count = document.getElementById('count');
+    const q = document.getElementById('q');
+
+    const fmtKWD = v => Number(v).toLocaleString(undefined,{minimumFractionDigits:3, maximumFractionDigits:3});
+
+    function render(rows) {
+      body.innerHTML = rows.map(r => `
+        <tr>
+          <td>${r.id}</td>
+          <td>${r.name}</td>
+          <td>${r.phone || '—'}</td>
+          <td>${r.email || '—'}</td>
+          <td>${r.membership || '—'}</td>
+          <td class="text-end">${fmtKWD(r.wallet)}</td>
+          <td class="text-end">${Number(r.points || 0).toLocaleString()}</td>
+          <td><a class="btn btn-sm btn-primary" href="customer-details.html?id=${encodeURIComponent(r.id)}">View</a></td>
+        </tr>
+      `).join('');
+      count.textContent = `Showing ${rows.length} of ${DATA.length}`;
+    }
+    render(DATA);
+
+    // search
+    q.addEventListener('input', (e) => {
+      const s = e.target.value.toLowerCase().trim();
+      const rows = DATA.filter(r =>
+        !s ||
+        r.id.toLowerCase().includes(s) ||
+        r.name.toLowerCase().includes(s) ||
+        (r.phone || '').replace(/\s+/g,'').includes(s.replace(/\s+/g,'')));
+      render(rows);
+    });
+
+    // export demo
+    document.getElementById('btnExport').addEventListener('click', () => {
+      const header = ['Customer ID','Name','Phone','Email','Membership','Wallet','Points'];
+      const lines = [header.join(',')].concat(
+        DATA.map(r => [r.id, r.name, r.phone, r.email, r.membership, r.wallet, r.points]
+          .map(x => `"${String(x ?? '').replace(/"/g,'""')}"`).join(','))
+      );
+      const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'customers.csv';
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+  </script>
+    </body>
+</html>

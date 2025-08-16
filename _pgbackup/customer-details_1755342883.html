@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Customer Details - DataTech Dashboard</title>
+        <link rel="stylesheet" href="css/styles.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <style>
+    .main-content { margin-left: 240px; }
+    .card { border:1px solid #e5e7eb; border-radius:12px; }
+    .stat { border:1px solid #e5e7eb; border-radius:12px; padding:14px; background:#fff; }
+    .stat .label{ color:#707272; font-size:.82rem }
+    .stat .value{ font-weight:800; font-size:1.25rem }
+    .mono{ font-variant-numeric: tabular-nums; }
+  </style>
+    </head>
+    <body>
+        <!-- Sidebar -->
+        <div class="sidebar" data-include="partials/sidebar.html"></div>
+        <div class="main-content">
+            <!-- Topbar -->
+            <div class="topbar" data-include="partials/topbar.html"></div>
+            <div class="container-fluid mt-4"><a href="customers.html" class="small text-decoration-none"><i class="bi bi-chevron-left"></i> Back to Customers</a>
+                <h2 id="custTitle" class="mb-1">Customer</h2>
+                <div class="text-muted mb-3">Profile, wallet and membership</div>
+                <!-- Stats -->
+                <div class="row g-2 mb-2">
+                    <div class="col-6 col-lg-3">
+                        <div class="stat">
+                            <div class="label">Done Orders</div>
+                            <div id="stOrders" class="value mono">0</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="stat">
+                            <div class="label">Total Spent (KWD)</div>
+                            <div id="stSpent" class="value mono">KWD 0.000</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="stat">
+                            <div class="label">Discounts (KWD)</div>
+                            <div id="stDisc" class="value mono">KWD 0.000</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="stat">
+                            <div class="label">Wallet (KWD)</div>
+                            <div id="stWallet" class="value mono">KWD 0.000</div>
+                            <div id="stPts" class="small text-muted">0 pts</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Profile -->
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="small text-muted">Name</div>
+                                <div id="pfName" class="fw-semibold">—</div>
+                                <div class="small text-muted mt-2">Phone</div>
+                                <div id="pfPhone">—</div>
+                                <div class="small text-muted mt-2">Loyalty</div>
+                                <div id="pfLoyalty">Disabled</div>
+                                <div class="small text-muted mt-2">Blacklist</div>
+                                <div id="pfBlack">No</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="small text-muted">Email</div>
+                                <div id="pfEmail">—</div>
+                                <div class="small text-muted mt-2">Birth Date</div>
+                                <div id="pfBirth">—</div>
+                                <div class="small text-muted mt-2">House Accounts</div>
+                                <div id="pfHouse">Disabled</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Membership -->
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0">Membership (PassKit)</h5>
+                            <button class="btn btn-outline-secondary btn-sm">Change Tier</button>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <div class="small text-muted">Tier</div>
+                                <div id="pkTier" class="fw-semibold">—</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="small text-muted">Member Since</div>
+                                <div id="pkSince">—</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="small text-muted">Expiry</div>
+                                <div id="pkExpiry">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Points History -->
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0">Points History</h5>
+                            <div class="small text-muted">1000 points = KWD 1.000</div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>When</th>
+                                        <th>Type</th>
+                                        <th class="text-end">Points</th>
+                                        <th class="text-end">KWD</th>
+                                        <th>Note</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ptBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Coupons -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0">Coupons</h5>
+                            <button class="btn btn-outline-secondary btn-sm">Send Coupon</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Title</th>
+                                        <th class="text-end">Value (KWD)</th>
+                                        <th>Status</th>
+                                        <th>Sent</th>
+                                        <th>Redeemed</th>
+                                        <th>Expires</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cpBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="sb-footer" data-include="partials/footer.html"></div>
+        </div>
+        <script src="js/include.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+    // Mark Customers as active when includes are ready
+    document.addEventListener('partials:ready', function(){
+      window.__markActive && window.__markActive('customers.html');
+    });
+
+    // Demo data render (replace with real API)
+    (function(){
+      const params = new URLSearchParams(location.search);
+      const id = params.get('id') || 'CUST001';
+
+      const C = {
+        id, name:'Ali Ahmed', phone:'+965 60000001', email:'ali@example.com',
+        birth:'1992-05-18', loyalty:true, house:false, black:false,
+        orders:12, spent:128.250, disc:4.500, wallet:12.500, points:12500,
+        tier:'Gold', since:'2024-07-12', expiry:'2026-07-12'
+      };
+
+      const PTS = [
+        { when:'2025-08-14 12:35', type:'Earn',   pts:+150, kwd:+0.150, note:'Order #1765956' },
+        { when:'2025-08-10 16:10', type:'Redeem', pts:-200, kwd:-0.200, note:'Redeemed at POS' },
+        { when:'2025-08-01 11:05', type:'Earn',   pts:+230, kwd:+0.230, note:'Order #1764899' }
+      ];
+      const CPS = [
+        { code:'WELCOME5', title:'Welcome 5', value:0.500, status:'Redeemed', sent:'2025-07-01 12:00', redeemed:'2025-07-05 18:21', expires:'2026-01-01' },
+        { code:'AUG10',    title:'August 10% Off', value:1.000, status:'Sent', sent:'2025-08-01 09:00', redeemed:'—', expires:'2025-08-31' }
+      ];
+
+      const fmtKWD = v => 'KWD ' + Number(v).toLocaleString(undefined,{minimumFractionDigits:3, maximumFractionDigits:3});
+      const fmtPts = v => Number(v).toLocaleString() + ' pts';
+
+      // Header / stats
+      document.getElementById('custTitle').textContent = `${C.name} - ${C.id}`;
+      document.getElementById('stOrders').textContent = C.orders.toLocaleString();
+      document.getElementById('stSpent').textContent  = fmtKWD(C.spent);
+      document.getElementById('stDisc').textContent   = fmtKWD(C.disc);
+      document.getElementById('stWallet').textContent = fmtKWD(C.wallet);
+      document.getElementById('stPts').textContent    = fmtPts(C.points);
+
+      // Profile
+      document.getElementById('pfName').textContent   = `${C.name} - ${C.id}`;
+      document.getElementById('pfPhone').textContent  = C.phone || '—';
+      document.getElementById('pfEmail').textContent  = C.email || '—';
+      document.getElementById('pfBirth').textContent  = C.birth || '—';
+      document.getElementById('pfLoyalty').textContent= C.loyalty ? 'Enabled' : 'Disabled';
+      document.getElementById('pfHouse').textContent  = C.house ? 'Enabled' : 'Disabled';
+      document.getElementById('pfBlack').textContent  = C.black ? 'Yes' : 'No';
+
+      // Membership
+      document.getElementById('pkTier').textContent   = C.tier;
+      document.getElementById('pkSince').textContent  = C.since;
+      document.getElementById('pkExpiry').textContent = C.expiry;
+
+      // Points
+      document.getElementById('ptBody').innerHTML = PTS.map(r => `
+        <tr>
+          <td>${r.when}</td>
+          <td>${r.type}</td>
+          <td class="text-end mono">${r.pts>0?'+':''}${r.pts.toLocaleString()}</td>
+          <td class="text-end mono">${r.kwd>0?'+':''}${Number(Math.abs(r.kwd)).toFixed(3)}</td>
+          <td>${r.note}</td>
+        </tr>
+      `).join('');
+
+      // Coupons
+      document.getElementById('cpBody').innerHTML = CPS.map(c => `
+        <tr>
+          <td class="mono">${c.code}</td>
+          <td>${c.title}</td>
+          <td class="text-end mono">${c.value.toFixed(3)}</td>
+          <td>${c.status}</td>
+          <td>${c.sent}</td>
+          <td>${c.redeemed}</td>
+          <td>${c.expires}</td>
+        </tr>
+      `).join('');
+    })();
+  </script>
+    </body>
+</html>

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Loading…</title>
+  <script src="js/app-auth.js"></script>
+</head>
+<body>
+<script>
+  (function(){
+    try {
+      if (RBAC.session()) window.location.replace('dashboard.html');
+      else window.location.replace('login.html');
+    } catch(e) { window.location.replace('login.html'); }
+  })();
+</script>
+</body>
+</html>

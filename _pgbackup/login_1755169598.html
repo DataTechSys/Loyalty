@@ -1,0 +1,22 @@
+<!-- inside <body> of login.html -->
+<div id="loginAlert" hidden style="margin:16px auto;max-width:400px;color:#c62828;"></div>
+<form id="loginForm" style="max-width:400px;margin:24px auto;">
+    <div class="mb-3">
+        <label>Company / Account ID</label>
+        <input name="tenantId" class="form-control" placeholder="Enter company/account ID">
+    </div>
+    <div class="mb-3">
+        <label>Email</label>
+        <input name="email" type="email" class="form-control" placeholder="you@example.com">
+    </div>
+    <div class="mb-3">
+        <label>Password</label>
+        <input name="password" type="password" class="form-control" placeholder="••••••••">
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Sign in</button>
+</form>
+<script src="js/config.js"></script>
+<script src="js/rbac.js"></script>
+<script src="js/app-auth.js"></script>
+<script src="js/app.js"></script>
+<script>App.initLoginForm();</script>

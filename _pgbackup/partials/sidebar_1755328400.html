@@ -1,0 +1,15 @@
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("[data-toggle='sb-group']").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const parent = this.closest(".sb-group");
+
+      // Close other groups (optional, if you want accordion style)
+      // document.querySelectorAll(".sb-group").forEach(g => {
+      //   if (g !== parent) g.classList.remove("open");
+      // });
+
+      // Toggle current
+      parent.classList.toggle("open");
+    });
+  });
+});

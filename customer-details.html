@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Customer Details · Loyalty Console</title>
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Your app styles -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <style>
+      /* page-only touches */
+      .avatar-lg{
+        width:64px;height:64px;border-radius:50%;
+        background:#e8eefc;border:1px solid #cfe0ff;
+        display:inline-flex;align-items:center;justify-content:center;
+        font-weight:700;color:#39557a;overflow:hidden;
+      }
+      .chip{border:1px solid var(--dt-border);border-radius:999px;padding:.25rem .55rem;font-weight:600;font-size:.75rem}
+      .chip.success{background:#ecfdf5;color:#065f46;border-color:#a7f3d0}
+      .chip.warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
+      .chip.muted{background:#f3f5f9;color:#4b5563}
+      .table tr td .muted{color:#6b7280}
+      .section-actions{gap:.5rem}
+    </style>
+    </head>
+    <body class="fullpage">
+        <div class="layout">
+            <!-- Sidebar include -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar include -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Header row -->
+                        <div class="d-flex align-items-start justify-content-between mb-2">
+                            <div class="d-flex align-items-center gap-3"><a href="customers.html" class="btn btn-outline-secondary btn-sm"> <i class="fa-solid fa-angle-left me-1"></i> Back </a>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div id="custAvatar" class="avatar-lg">CU</div>
+                                    <div>
+                                        <h1 class="h5 fw-bold mb-0" id="custTitle">Customer · —</h1>
+                                        <div class="text-muted small" id="custSubtitle">Customer profile, history and PassKit membership</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex section-actions">
+                                <button class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-id-badge me-1"></i> Enable Loyalty
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-regular fa-credit-card me-1"></i> Enable House Account
+                                </button>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fa-solid fa-pen-to-square me-1"></i> Edit Customer
+                                </button>
+                            </div>
+                        </div>
+                        <!-- KPI row -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-12 col-lg-3">
+                                <div class="dt-card p-card h-100">
+                                    <div class="text-muted small">Done Orders</div>
+                                    <div class="display-6 fw-bold" id="kpiOrders">0</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <div class="dt-card p-card h-100">
+                                    <div class="text-muted small">Total Spent (KWD)</div>
+                                    <div class="display-6 fw-bold" id="kpiSpent">0</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <div class="dt-card p-card h-100">
+                                    <div class="text-muted small">Total Discounts (KWD)</div>
+                                    <div class="display-6 fw-bold" id="kpiDiscounts">0</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <div class="text-muted small">Wallet Balance (KWD)</div>
+                                            <div class="display-6 fw-bold" id="kpiWallet">0.000</div>
+                                        </div><span id="walletType" class="chip muted">Wallet</span>
+                                    </div>
+                                    <div class="text-muted small mt-1" id="walletPts">— pts</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- quick facts -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-12 col-lg-4">
+                                <div class="dt-card p-card h-100">
+                                    <div class="text-muted small">Last Order</div>
+                                    <div id="lastOrder" class="fw-semibold">—</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="dt-card p-card h-100">
+                                    <div class="text-muted small">Favourite Product</div>
+                                    <div id="favProduct" class="fw-semibold">—</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="dt-card p-card h-100">
+                                    <div class="text-muted small">Favourite Branch</div>
+                                    <div id="favBranch" class="fw-semibold">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Profile block -->
+                        <div class="dt-card p-card mb-2">
+                            <div class="row g-2">
+                                <div class="col-12 col-lg-6">
+                                    <div class="text-muted small">Name</div>
+                                    <div id="f_name" class="mb-2">—</div>
+                                    <div class="text-muted small">Phone</div>
+                                    <div id="f_phone" class="mb-2">—</div>
+                                    <div class="text-muted small">Loyalty</div>
+                                    <div id="f_loyalty" class="mb-2">—</div>
+                                    <div class="text-muted small">Blacklist</div>
+                                    <div id="f_blacklist" class="mb-2">—</div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <div class="text-muted small">Email</div>
+                                    <div id="f_email" class="mb-2">—</div>
+                                    <div class="text-muted small">Birth Date</div>
+                                    <div id="f_birth" class="mb-2">—</div>
+                                    <div class="text-muted small">House Accounts</div>
+                                    <div id="f_house" class="mb-2">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- PassKit Membership -->
+                        <div class="dt-card p-card mb-2">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Membership (PassKit)</h2>
+                                <button class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-arrows-rotate me-1"></i> Change Tier
+                                </button>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-12 col-lg-3">
+                                    <div class="text-muted small">Tier</div>
+                                    <div id="m_tier" class="fw-semibold">—</div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="text-muted small">Member Since</div>
+                                    <div id="m_since" class="fw-semibold">—</div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="text-muted small">Expiry</div>
+                                    <div id="m_expiry" class="fw-semibold">—</div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="text-muted small">Wallet Pass Type</div>
+                                    <div id="m_walletType" class="fw-semibold">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Points history -->
+                        <div class="dt-card p-card mb-2">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Points History</h2>
+                                <div class="d-flex align-items-center section-actions">
+                                    <div class="text-muted small me-2">1000 pts = KWD 1.000</div>
+                                    <button id="pointsToggle" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-down me-1"></i> Show more
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>When</th>
+                                            <th>Type</th>
+                                            <th class="text-end">Points</th>
+                                            <th class="text-end">KWD</th>
+                                            <th>Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pointsBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Coupons -->
+                        <div class="dt-card p-card mb-2">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Coupons</h2>
+                                <div class="section-actions d-flex">
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fa-solid fa-ticket me-1"></i> Send Coupon
+                                    </button>
+                                    <button id="couponsToggle" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-down me-1"></i> Show more
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Title</th>
+                                            <th class="text-end">Value (KWD)</th>
+                                            <th>Status</th>
+                                            <th>Sent</th>
+                                            <th>Redeemed</th>
+                                            <th>Expires</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="couponsBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Messages (campaigns) -->
+                        <div class="dt-card p-card">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Messages</h2>
+                                <button id="messagesToggle" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-down me-1"></i> Show more
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Channel</th>
+                                            <th>Sent</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="messagesBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Edit Customer Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <form class="modal-content" id="editForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Customer</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label small">Full Name</label>
+                                <input type="text" class="form-control" id="e_name" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Mobile</label>
+                                <input type="text" class="form-control" id="e_phone">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Email</label>
+                                <input type="email" class="form-control" id="e_email">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Birth Date</label>
+                                <input type="date" class="form-control" id="e_birth">
+                            </div>
+                        </div>
+                        <div class="alert alert-success d-none mt-2" id="editSuccess">Saved (demo).</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <script>
+      // ---------- DEMO DATA / helpers ----------
+      (function(){
+        const params = new URLSearchParams(location.search);
+        const custId = params.get('id') || '738868';
+
+        const CUST = {
+          id: custId,
+          name: 'Noura Alazzaz',
+          phone: '+965 9793 5543',
+          email: '',
+          birth: '1997-08-21',
+          loyaltyEnabled: false,
+          blacklisted: false,
+          houseAccounts: false,
+          avatar: '', // if present, photo shown; otherwise initials
+          favProduct: '—',
+          favBranch: '—',
+          lastOrder: '—',
+          kpi: { orders: 0, spent: 0.000, discounts: 0.000, walletKwd: 3.200, walletPts: 3200, walletType: 'Apple Wallet' },
+          membership: { tier: 'Green', since: '12/09/2024', expiry: '12/09/2026', walletType: 'Apple Wallet' },
+          points: [
+            { when:'14 Aug 2025, 12:35', type:'Earn',   pts:+150, kwd:+0.150, note:'Order #1765956'},
+            { when:'10 Aug 2025, 16:10', type:'Redeem', pts:-200, kwd:-0.200, note:'Redeemed at POS'},
+            { when:'01 Aug 2025, 11:05', type:'Earn',   pts:+230, kwd:+0.230, note:'Order #1764899'},
+            { when:'25 Jul 2025, 09:40', type:'Earn',   pts:+120, kwd:+0.120, note:'App purchase'},
+            { when:'11 Jul 2025, 15:20', type:'Redeem', pts:-100, kwd:-0.100, note:'Redeemed at POS'},
+            { when:'02 Jun 2025, 18:01', type:'Earn',   pts:+300, kwd:+0.300, note:'Order #1759900'},
+          ],
+          coupons: [
+            { code:'WELCOME5', title:'Welcome 5', kwd:0.500, status:'Redeemed', sent:'01 Jul 2025, 12:00', redeemed:'05 Jul 2025, 16:11', expires:'01 Oct 2025' },
+            { code:'BDAY10',   title:'Birthday 10', kwd:1.000, status:'Sent',     sent:'20 Aug 2025, 09:00', redeemed:'—',                    expires:'20 Sep 2025' },
+            { code:'WEEKEND',  title:'Weekend 3',   kwd:0.300, status:'Expired',  sent:'10 Jun 2025, 10:00', redeemed:'—',                    expires:'10 Jul 2025' },
+            { code:'LOYAL15',  title:'Loyalty 15',  kwd:1.500, status:'Sent',     sent:'05 May 2025, 09:00', redeemed:'—',                    expires:'05 Jun 2025' },
+          ],
+          messages: [
+            { title:'July Push',      channel:'Push / Wallet', sent:'Yesterday',  status:'Delivered' },
+            { title:'Weekend Promo',  channel:'SMS',           sent:'Last week',  status:'Delivered'  },
+            { title:'Survey Invite',  channel:'Email',         sent:'Last month', status:'Opened'     },
+            { title:'New Drinks',     channel:'Push',          sent:'2 months',   status:'Delivered'  },
+            { title:'Ramadan Promo',  channel:'SMS',           sent:'5 months',   status:'Delivered'  },
+          ]
+        };
+
+        const fmtKWD = v => 'KWD ' + Number(v).toFixed(3).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        const chip = (txt, kind='muted') => `<span class="chip ${kind}">${txt}</span>`;
+        const statusChip = s => (s==='Redeemed'?chip('Redeemed','success'): s==='Expired'?chip('Expired','warn'):chip('Sent','muted'));
+
+        // Title + avatar
+        document.getElementById('custTitle').textContent = `${CUST.name} - ${CUST.id}`;
+        document.getElementById('custSubtitle').textContent = 'Customer profile, history and PassKit membership';
+
+        const av = document.getElementById('custAvatar');
+        if (CUST.avatar){
+          av.innerHTML = `<img src="${CUST.avatar}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+        } else {
+          const initials = CUST.name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+          av.textContent = initials || 'CU';
+        }
+
+        // KPIs
+        document.getElementById('kpiOrders').textContent = CUST.kpi.orders;
+        document.getElementById('kpiSpent').textContent  = fmtKWD(CUST.kpi.spent);
+        document.getElementById('kpiDiscounts').textContent = fmtKWD(CUST.kpi.discounts);
+        document.getElementById('kpiWallet').textContent = Number(CUST.kpi.walletKwd).toFixed(3);
+        document.getElementById('walletType').textContent = CUST.kpi.walletType;
+        document.getElementById('walletPts').textContent  = `${CUST.kpi.walletPts.toLocaleString()} pts`;
+
+        // quick facts
+        document.getElementById('lastOrder').textContent = CUST.lastOrder;
+        document.getElementById('favProduct').textContent = CUST.favProduct;
+        document.getElementById('favBranch').textContent  = CUST.favBranch;
+
+        // profile fields
+        function renderProfile(){
+          document.getElementById('f_name').textContent      = `${CUST.name} - ${CUST.id}`;
+          document.getElementById('f_phone').textContent     = CUST.phone || '—';
+          document.getElementById('f_loyalty').textContent   = CUST.loyaltyEnabled ? 'Enabled' : 'Disabled';
+          document.getElementById('f_blacklist').textContent = CUST.blacklisted ? 'Yes' : 'No';
+          document.getElementById('f_email').textContent     = CUST.email || '—';
+          document.getElementById('f_birth').textContent     = CUST.birth || '—';
+          document.getElementById('f_house').textContent     = CUST.houseAccounts ? 'Enabled' : 'Disabled';
+        }
+        renderProfile();
+
+        // membership
+        document.getElementById('m_tier').textContent       = CUST.membership.tier;
+        document.getElementById('m_since').textContent      = CUST.membership.since;
+        document.getElementById('m_expiry').textContent     = CUST.membership.expiry;
+        document.getElementById('m_walletType').textContent = CUST.membership.walletType;
+
+        // ------- Expand / collapse renderers -------
+        const LIMIT = 5;
+        let pointsExpanded = false, couponsExpanded = false, messagesExpanded = false;
+
+        function renderPoints(){
+          const src = pointsExpanded ? CUST.points : CUST.points.slice(0, LIMIT);
+          document.getElementById('pointsBody').innerHTML = src.map(p => `
+            <tr>
+              <td>${p.when}</td>
+              <td>${p.type}</td>
+              <td class="text-end ${p.pts<0?'text-danger':'text-success'}">${p.pts>0?'+':''}${p.pts.toLocaleString()}</td>
+              <td class="text-end ${p.kwd<0?'text-danger':'text-success'}">${p.kwd>0?'+':''}${Number(p.kwd).toFixed(3)}</td>
+              <td class="muted">${p.note}</td>
+            </tr>`).join('');
+          document.getElementById('pointsToggle').innerHTML =
+            `<i class="fa-solid fa-chevron-${pointsExpanded?'up':'down'} me-1"></i> ${pointsExpanded?'Show less':'Show more'}`;
+        }
+        function renderCoupons(){
+          const src = couponsExpanded ? CUST.coupons : CUST.coupons.slice(0, LIMIT);
+          document.getElementById('couponsBody').innerHTML = src.map(c => `
+            <tr>
+              <td>${c.code}</td>
+              <td>${c.title}</td>
+              <td class="text-end">${Number(c.kwd).toFixed(3)}</td>
+              <td>${statusChip(c.status)}</td>
+              <td>${c.sent}</td>
+              <td>${c.redeemed}</td>
+              <td>${c.expires}</td>
+            </tr>`).join('');
+          document.getElementById('couponsToggle').innerHTML =
+            `<i class="fa-solid fa-chevron-${couponsExpanded?'up':'down'} me-1"></i> ${couponsExpanded?'Show less':'Show more'}`;
+        }
+        function renderMessages(){
+          const src = messagesExpanded ? CUST.messages : CUST.messages.slice(0, LIMIT);
+          document.getElementById('messagesBody').innerHTML = src.map(m => `
+            <tr>
+              <td>${m.title}</td>
+              <td>${m.channel}</td>
+              <td>${m.sent}</td>
+              <td>${m.status}</td>
+            </tr>`).join('');
+          document.getElementById('messagesToggle').innerHTML =
+            `<i class="fa-solid fa-chevron-${messagesExpanded?'up':'down'} me-1"></i> ${messagesExpanded?'Show less':'Show more'}`;
+        }
+
+        renderPoints(); renderCoupons(); renderMessages();
+
+        // Toggle handlers
+        document.getElementById('pointsToggle').addEventListener('click', ()=>{ pointsExpanded=!pointsExpanded; renderPoints(); });
+        document.getElementById('couponsToggle').addEventListener('click', ()=>{ couponsExpanded=!couponsExpanded; renderCoupons(); });
+        document.getElementById('messagesToggle').addEventListener('click', ()=>{ messagesExpanded=!messagesExpanded; renderMessages(); });
+
+        // -------- Edit modal wiring (demo local update) --------
+        const e_name  = document.getElementById('e_name');
+        const e_phone = document.getElementById('e_phone');
+        const e_email = document.getElementById('e_email');
+        const e_birth = document.getElementById('e_birth');
+
+        // prefill when modal opens
+        const editModalEl = document.getElementById('editModal');
+        editModalEl.addEventListener('show.bs.modal', ()=>{
+          e_name.value  = CUST.name;
+          e_phone.value = CUST.phone;
+          e_email.value = CUST.email;
+          e_birth.value = (CUST.birth||'').slice(0,10);
+          document.getElementById('editSuccess').classList.add('d-none');
+        });
+
+        // save
+        document.getElementById('editForm').addEventListener('submit', (e)=>{
+          e.preventDefault();
+          CUST.name  = e_name.value.trim() || CUST.name;
+          CUST.phone = e_phone.value.trim();
+          CUST.email = e_email.value.trim();
+          CUST.birth = e_birth.value || CUST.birth;
+
+          // reflect in UI
+          document.getElementById('custTitle').textContent = `${CUST.name} - ${CUST.id}`;
+          const av = document.getElementById('custAvatar');
+          if (!CUST.avatar){
+            const initials = CUST.name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+            av.textContent = initials || 'CU';
+          }
+          renderProfile();
+
+          const ok = document.getElementById('editSuccess');
+          ok.classList.remove('d-none');
+          setTimeout(()=>{
+            const modal = bootstrap.Modal.getInstance(editModalEl);
+            modal?.hide();
+          }, 700);
+        });
+      })();
+    </script>
+    </body>
+</html>

@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Reports · Loyalty Console</title>
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Your shared styles -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <!-- Page-scoped tweaks for the filters row -->
+        <style>
+    /* Compact, aligned filter controls */
+    .reports-filters {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:.5rem;
+      margin-bottom:.5rem;
+    }
+    .reports-filters .form-select {
+      max-width: 220px;
+      min-width: 160px;
+      width: auto;
+    }
+    .reports-filters .btn {
+      height: 38px;           /* match default select height */
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+    }
+    /* Keep charts a comfortable height on desktop */
+    .chart-holder {
+      height: 240px;
+    }
+    @media (max-width: 991.98px){
+      .chart-holder { height: 220px; }
+    }
+  </style>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar include -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar include -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title + filters -->
+                        <div class="d-flex align-items-start justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-1">Reports</h1>
+                                <div class="text-muted small">Sales, orders, payments, and loyalty performance</div>
+                            </div>
+                        </div>
+                        <div class="reports-filters">
+                            <select id="branchSelect" class="form-select form-select-sm">
+                                <option selected>All Branches</option>
+                                <option>SLB | Salmiya</option>
+                                <option>JRB | Jahra</option>
+                                <option>ADB | Ardiya</option>
+                                <option>AHB | Abu Halifa</option>
+                            </select>
+                            <select id="rangeSelect" class="form-select form-select-sm">
+                                <option>Last 7 days</option>
+                                <option selected>Last 30 days</option>
+                                <option>Last 90 days</option>
+                                <option>Year to date</option>
+                            </select>
+                            <button class="btn btn-outline-secondary btn-sm" id="btnExport"><i class="fa-solid fa-file-export"></i> Export
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" id="btnReset"><i class="fa-solid fa-rotate-right"></i> Reset
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" id="btnFilter"><i class="fa-solid fa-filter"></i> Filter
+                            </button>
+                        </div>
+                        <!-- KPI tiles (optional quick summary) -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Revenue</div>
+                                    <div class="value" id="kpiRevenue">KWD 0.000</div>
+                                    <div class="delta up small" id="kpiRevDelta">+0.0% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Orders</div>
+                                    <div class="value" id="kpiOrders">0</div>
+                                    <div class="delta up small" id="kpiOrdDelta">+0.0% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Redemptions</div>
+                                    <div class="value" id="kpiRedeem">0</div>
+                                    <div class="delta down small" id="kpiRedDelta">-0.0% vs prior</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">New Members</div>
+                                    <div class="value" id="kpiMembers">0</div>
+                                    <div class="delta up small" id="kpiMemDelta">+0.0% vs prior</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Charts -->
+                        <div class="row g-2">
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Revenue (last 30 days)</h2><a class="small" href="#">Details</a>
+                                    </div>
+                                    <div class="chart-holder">
+                                        <canvas id="chRevenue"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Orders by Day</h2><a class="small" href="#">Details</a>
+                                    </div>
+                                    <div class="chart-holder">
+                                        <canvas id="chOrders"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">Payments Mix</h2><a class="small" href="#">Details</a>
+                                    </div>
+                                    <div class="chart-holder">
+                                        <canvas id="chPayments"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0">New Members</h2><a class="small" href="#">Details</a>
+                                    </div>
+                                    <div class="chart-holder">
+                                        <canvas id="chMembers"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Logs (folded into Reports page) -->
+                        <div class="dt-card p-card mt-2">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <h2 class="h6 mb-0">Logs</h2><a class="small" href="#">See all</a>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>When</th>
+                                            <th>Actor</th>
+                                            <th>Action</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="logsBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- JS libs -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+        <!-- Your helpers -->
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <!-- Page logic -->
+        <script>
+  (function(){
+    // --- Small demo data ---------------------------------------------------
+    const DAYS = 30;
+    const labels = Array.from({length: DAYS}, (_,i)=>{
+      const d=new Date(); d.setDate(d.getDate()-(DAYS-1-i));
+      return d.toLocaleDateString([], {month:'short', day:'2-digit'});
+    });
+    const rnd = (min,max)=> Math.random()*(max-min)+min;
+
+    const revenue = labels.map(()=> +(rnd(180,380).toFixed(2)));
+    const orders  = labels.map(()=> Math.round(rnd(40,120)));
+    const members = labels.map(()=> Math.round(rnd(4,20)));
+    const payMix  = { Knet:46, "Apple Pay":22, Cash:18, Card:9, Loyalty:5 };
+
+    // KPIs
+    const sum = arr => arr.reduce((a,b)=>a+b,0);
+    const fmtKWD = v => 'KWD ' + Number(v).toLocaleString(undefined,{minimumFractionDigits:3,maximumFractionDigits:3});
+    document.getElementById('kpiRevenue').textContent  = fmtKWD(sum(revenue));
+    document.getElementById('kpiOrders').textContent   = sum(orders).toLocaleString();
+    document.getElementById('kpiMembers').textContent  = sum(members).toLocaleString();
+    document.getElementById('kpiRedeem').textContent   = '780'; // demo
+    document.getElementById('kpiRevDelta').textContent = '+5.4% vs prior';
+    document.getElementById('kpiOrdDelta').textContent = '+2.1% vs prior';
+    document.getElementById('kpiMemDelta').textContent = '+7.9% vs prior';
+    document.getElementById('kpiRedDelta').textContent = '-1.2% vs prior';
+
+    // --- Charts ------------------------------------------------------------
+    const baseOpts = {
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true } }
+    };
+
+    new Chart(document.getElementById('chRevenue'), {
+      type:'line',
+      data:{ labels, datasets:[{ label:'Revenue', data:revenue, fill:true, tension:.35 }] },
+      options: baseOpts
+    });
+
+    new Chart(document.getElementById('chOrders'), {
+      type:'bar',
+      data:{ labels, datasets:[{ label:'Orders', data:orders }] },
+      options: baseOpts
+    });
+
+    new Chart(document.getElementById('chPayments'), {
+      type:'doughnut',
+      data:{
+        labels:Object.keys(payMix),
+        datasets:[{ data:Object.values(payMix) }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:'bottom' } },
+        cutout:'60%'
+      }
+    });
+
+    new Chart(document.getElementById('chMembers'), {
+      type:'line',
+      data:{ labels, datasets:[{ label:'New members', data:members, tension:.35 }] },
+      options: baseOpts
+    });
+
+    // Logs demo
+    const LOGS = [
+      { when:'Today 10:22', actor:'System', action:'Report export', details:'CSV: revenue_30d.csv' },
+      { when:'Today 08:51', actor:'Demo Admin', action:'Filter applied', details:'Branch: All, Range: 30d' },
+      { when:'Yesterday', actor:'System', action:'Daily snapshot', details:'Metrics archived' }
+    ];
+    document.getElementById('logsBody').innerHTML = LOGS.map(l=>`
+      <tr><td>${l.when}</td><td>${l.actor}</td><td>${l.action}</td><td>${l.details}</td></tr>
+    `).join('');
+
+    // Buttons (demo only)
+    btnExport.addEventListener('click', ()=> alert('Exporting… (demo)'));
+    btnReset.addEventListener('click', ()=>{
+      branchSelect.selectedIndex = 0;
+      rangeSelect.selectedIndex = 1; // 30d
+      alert('Filters reset (demo)');
+    });
+    btnFilter.addEventListener('click', ()=> alert('Filter applied (demo)'));
+  })();
+  </script>
+    </body>
+</html>

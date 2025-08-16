@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Super Admin · Loyalty Console</title>
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sb-brand">
+                    <img src="images/DataTech.png" alt="DataTech">
+                    <span class="brand-text">Loyalty Console</span>
+                </div>
+                <nav class="sb-nav"><a class="sb-link" href="dashboard.html"><i class="fa-solid fa-gauge-high"></i><span class="sb-text">Dashboard</span></a><a class="sb-link" href="orders.html"><i class="fa-solid fa-cart-shopping"></i><span class="sb-text">Orders</span></a><a class="sb-link" href="members.html"><i class="fa-solid fa-users"></i><span class="sb-text">Customers</span></a><a class="sb-link" href="messages.html"><i class="fa-solid fa-paper-plane"></i><span class="sb-text">Messages</span></a><a class="sb-link" href="reports.html"><i class="fa-solid fa-chart-line"></i><span class="sb-text">Reports</span></a><a class="sb-link" href="settings.html"><i class="fa-solid fa-gear"></i><span class="sb-text">Settings</span></a><a class="sb-link" href="admin.html"><i class="fa-solid fa-user-shield"></i><span class="sb-text">Admin</span></a>
+                    <!-- Active page --><a class="sb-link active" href="super-admin.html"><i class="fa-solid fa-screwdriver-wrench"></i><span class="sb-text">Super Admin</span></a><a class="sb-link" href="login.html"><i class="fa-solid fa-right-to-bracket"></i><span class="sb-text">Login</span></a>
+                </nav>
+                <div class="sb-footer">© DataTech 2025</div>
+            </aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <header class="dt-topbar">
+                    <div class="tb-inner container d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn-icon burger" id="burger" aria-label="Toggle menu">☰</button>
+                            <button class="btn-icon" id="collapseBtn" aria-label="Collapse sidebar">
+                                <i class="fa-solid fa-bars"></i>
+                            </button>
+                        </div>
+                        <div></div>
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- user chip injected by js/app-user.js -->
+                            <div class="userchip-wrap"></div>
+                        </div>
+                    </div>
+                </header>
+                <!-- Page content -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Super Admin</h1>
+                                <div class="text-muted small">Platform‑level configuration: API endpoints & tokens</div>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <!-- API Settings -->
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0"><i class="fa-solid fa-plug-circle-bolt me-1"></i>API Settings</h2>
+                                    </div>
+                                    <form id="apiForm" class="row g-2">
+                                        <div class="col-12">
+                                            <label class="form-label small">API Base URL</label>
+                                            <input id="apiBase" class="form-control" placeholder="https://api.example.com" value="https://api.demo.datatech.local">
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label small">Client ID</label>
+                                            <input id="clientId" class="form-control" value="demo-client">
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label small">Client Secret</label>
+                                            <div class="input-group">
+                                                <input id="clientSecret" class="form-control" type="password" value="••••••••••••">
+                                                <button class="btn btn-outline-secondary" type="button" id="toggleSecret">
+                                                    <i class="fa-regular fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small">Webhook URL (optional)</label>
+                                            <input id="webhook" class="form-control" placeholder="https://console.example.com/webhooks/orders">
+                                        </div>
+                                        <div class="col-12 d-grid">
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="fa-solid fa-floppy-disk me-1"></i>Save Settings
+                                            </button>
+                                        </div>
+                                        <div id="apiSaved" class="alert alert-success d-none mt-2">Saved (demo).</div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Token Settings -->
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0"><i class="fa-solid fa-key me-1"></i>Token Settings</h2>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-secondary btn-sm" id="rotateAll" type="button">
+                                                <i class="fa-solid fa-arrows-rotate me-1"></i>Rotate All
+                                            </button>
+                                            <button class="btn btn-primary btn-sm" id="newToken" type="button">
+                                                <i class="fa-solid fa-plus me-1"></i>Generate Token
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0" id="tokTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Scopes</th>
+                                                    <th>Created</th>
+                                                    <th class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- injected -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="alert alert-info mt-2 mb-0 small">
+                                        Tokens are shown once on creation. Store them securely. Use scopes to limit access (orders:read, orders:write, customers:read, messages:send, admin:*).
+</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- System / Diagnostics -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12">
+                                <div class="dt-card p-card">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h2 class="h6 mb-0"><i class="fa-solid fa-heart-pulse me-1"></i>Service Status</h2>
+                                        <div>
+                                            <button class="btn btn-outline-secondary btn-sm" id="pingApi" type="button">
+                                                <i class="fa-solid fa-signal me-1"></i>Ping API
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="statusWrap" class="small text-muted">API: <span id="apiStatus">Unknown</span> · Last check: <span id="apiWhen">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Bootstrap -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Your user chip / auth helper -->
+        <script src="js/app-user.js"></script>
+        <script>
+(function(){
+  // Guard
+  try{
+    if (window.UserSession && !window.UserSession.isAuthenticated()){
+      sessionStorage.setItem('redirectAfterLogin','super-admin.html');
+      location.replace('login.html'); return;
+    }
+  }catch(_){}
+
+  // Sidebar toggles
+  const sidebar = document.getElementById('sidebar');
+  document.getElementById('burger')?.addEventListener('click',()=> sidebar.classList.toggle('open'));
+  document.getElementById('collapseBtn')?.addEventListener('click',()=> sidebar.classList.toggle('collapsed'));
+  sidebar.querySelectorAll('a.sb-link').forEach(a=>a.addEventListener('click',()=> sidebar.classList.remove('open')));
+
+  // Toggle secret visibility
+  const secret = document.getElementById('clientSecret');
+  document.getElementById('toggleSecret').addEventListener('click', ()=>{
+    secret.type = secret.type === 'password' ? 'text' : 'password';
+  });
+
+  // Save API settings (demo)
+  document.getElementById('apiForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    document.getElementById('apiSaved').classList.remove('d-none');
+    setTimeout(()=>document.getElementById('apiSaved').classList.add('d-none'), 1500);
+  });
+
+  // Demo token store (in-memory)
+  const TOKENS = [
+    { name:'Server-to-Server', scopes:['orders:read','orders:write','customers:read'], created: new Date(Date.now()-864e5*8) },
+    { name:'Reporting', scopes:['orders:read','customers:read'], created: new Date(Date.now()-864e5*2) },
+  ];
+
+  function fmtDate(d){ return new Date(d).toLocaleString([], {year:'numeric',month:'short',day:'2-digit', hour:'2-digit',minute:'2-digit'}); }
+
+  function renderTokens(){
+    const body = document.querySelector('#tokTable tbody');
+    body.innerHTML = TOKENS.map((t,i)=>`
+      <tr>
+        <td class="fw-semibold">${t.name}</td>
+        <td>${t.scopes.join(', ')}</td>
+        <td>${fmtDate(t.created)}</td>
+        <td class="text-end">
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" data-act="reveal" data-i="${i}"><i class="fa-regular fa-eye me-1"></i>Reveal</button>
+            <button class="btn btn-outline-secondary" data-act="revoke" data-i="${i}"><i class="fa-solid fa-ban me-1"></i>Revoke</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    body.querySelectorAll('button[data-act="reveal"]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const tok = 'dt_' + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+        alert('Copy your token now (demo):\\n\\n' + tok);
+      });
+    });
+    body.querySelectorAll('button[data-act="revoke"]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = +btn.getAttribute('data-i');
+        TOKENS.splice(i,1);
+        renderTokens();
+      });
+    });
+  }
+  renderTokens();
+
+  document.getElementById('newToken').addEventListener('click', ()=>{
+    const name = prompt('Token name (e.g., Mobile App)');
+    if(!name) return;
+    TOKENS.unshift({ name, scopes:['orders:read'], created: new Date() });
+    renderTokens();
+    setTimeout(()=>alert('Copy your token now (demo):\\n\\n' + 'dt_' + Math.random().toString(36).slice(2)), 50);
+  });
+
+  document.getElementById('rotateAll').addEventListener('click', ()=>{
+    alert('All tokens rotated (demo). Remember to update client apps.');
+  });
+
+  // Ping API (demo)
+  document.getElementById('pingApi').addEventListener('click', ()=>{
+    const ok = Math.random() > .15;
+    document.getElementById('apiStatus').textContent = ok ? 'OK' : 'DOWN';
+    document.getElementById('apiStatus').className = ok ? 'text-success fw-semibold' : 'text-danger fw-semibold';
+    document.getElementById('apiWhen').textContent = new Date().toLocaleString();
+  });
+})();
+</script>
+    </body>
+</html>

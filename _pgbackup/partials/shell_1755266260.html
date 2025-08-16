@@ -1,0 +1,33 @@
+<!-- partials/shell.html -->
+<div class="layout" data-shell>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sb-brand">
+            <img src="images/DataTech.png" alt="DataTech"><span class="brand-text">Loyalty Console</span>
+        </div>
+        <nav class="sb-nav" id="sb-nav"><a class="sb-link" href="dashboard.html"> <i class="fa-solid fa-gauge-high"></i><span class="sb-text">Dashboard</span> </a><a class="sb-link" href="orders.html"> <i class="fa-solid fa-cart-shopping"></i><span class="sb-text">Orders</span> </a><a class="sb-link" href="members.html"> <i class="fa-solid fa-users"></i><span class="sb-text">Customers</span> </a><a class="sb-link" href="messages.html"> <i class="fa-solid fa-paper-plane"></i><span class="sb-text">Messages</span> </a><a class="sb-link" href="reports.html"> <i class="fa-solid fa-chart-line"></i><span class="sb-text">Reports</span> </a><a class="sb-link" href="settings.html"> <i class="fa-solid fa-gear"></i><span class="sb-text">Settings</span> </a><a class="sb-link" href="admin.html"> <i class="fa-solid fa-user-shield"></i><span class="sb-text">Admin</span> </a><a class="sb-link" href="login.html"> <i class="fa-solid fa-right-to-bracket"></i><span class="sb-text">Login</span> </a>
+        </nav>
+        <div class="sb-footer">© DataTech</div>
+    </aside>
+    <!-- Main -->
+    <div class="main">
+        <!-- Topbar -->
+        <header class="dt-topbar">
+            <div class="tb-inner container d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn-icon burger" id="burger" aria-label="Toggle menu">☰</button>
+                    <button class="btn-icon" id="collapseBtn" aria-label="Collapse sidebar"><i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+                <div class="dt-brand">
+                    <img src="images/DataTech.png" alt="DataTech"><span>Loyalty Console</span>
+                </div>
+                <div class="d-flex align-items-center gap-2" id="userChip">
+                    <!-- optional user chip injected by js/app-user.js -->
+                </div>
+            </div>
+        </header>
+        <!-- Page content slot (your page’s [data-page] moves here) -->
+        <div class="page-slot"></div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Loading…</title>
+        <!-- MUST load before we call RBAC -->
+        <script defer src="js/app-auth.js"></script>
+    </head>
+    <body style="font-family:system-ui; padding:2rem">
+        <div id="msg">Loading…</div>
+        <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      function baseHref(to){ return location.pathname.replace(/[^\/]*$/, '') + to; }
+      function goto(to){ location.replace(baseHref(to)); } // avoids back-button loops
+      function showError(e){
+        console.error(e);
+        document.getElementById('msg').innerHTML =
+          'Could not redirect. Open <a href="login.html">login.html</a> or ' +
+          '<a href="dashboard.html">dashboard.html</a>.';
+      }
+      try {
+        if (!window.RBAC || !RBAC.session) throw new Error('RBAC missing (app-auth.js not loaded?)');
+        const s = RBAC.session();
+        goto(s ? 'dashboard.html' : 'login.html');
+      } catch (e) { showError(e); }
+    });
+  </script>
+    </body>
+</html>

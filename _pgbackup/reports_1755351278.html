@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Reports · Loyalty Console</title>
+        <!-- Fonts / Bootstrap / Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <!-- Your styles -->
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+        <style>
+    /* page-specific small tweaks */
+    .filters .form-select,
+    .filters .form-control {
+      min-width: 200px;
+    }
+    .report-card h2 {
+      font-size: .95rem;
+      font-weight: 700;
+      margin-bottom: .25rem;
+    }
+    /* compact charts – avoid tall stretch */
+    .chart-wrap{ position:relative; height: 260px; }       /* desktop */
+    @media (max-width: 991.98px){ .chart-wrap{ height:220px; } } /* mobile */
+    .legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.4rem;vertical-align:middle}
+    .tab-pane .table th{white-space:nowrap}
+  </style>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title + filters -->
+                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-2 gap-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Reports</h1>
+                                <div class="text-muted small">Sales, orders, payments, and loyalty performance</div>
+                            </div>
+                            <div class="filters d-flex flex-wrap align-items-center gap-2">
+                                <select id="branchSel" class="form-select form-select-sm">
+                                    <option value="all" selected>All Branches</option>
+                                    <option value="Jahra">JRB · Jahra</option>
+                                    <option value="Salmiya">SLB · Salmiya</option>
+                                    <option value="Ardiya">ADB · Ardiya</option>
+                                    <option value="AbuHalifa">AHB · Abu Halifa</option>
+                                </select>
+                                <select id="rangeSel" class="form-select form-select-sm">
+                                    <option value="30" selected>Last 30 days</option>
+                                    <option value="60">Last 60 days</option>
+                                    <option value="90">Last 90 days</option>
+                                </select>
+                                <button id="btnExport" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-file-arrow-down me-1"></i>Export
+                                </button>
+                                <button id="btnReset" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-rotate me-1"></i>Reset
+                                </button>
+                                <button id="btnFilter" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-filter me-1"></i>Filter
+                                </button>
+                            </div>
+                        </div>
+                        <!-- KPIs -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Revenue</div>
+                                    <div class="value" id="kpiRevenue">KWD 0.000</div>
+                                    <div class="delta up small" id="kpiRevenueDelta">—</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Orders</div>
+                                    <div class="value" id="kpiOrders">0</div>
+                                    <div class="delta up small" id="kpiOrdersDelta">—</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">Redemptions</div>
+                                    <div class="value" id="kpiRedeems">0</div>
+                                    <div class="delta down small" id="kpiRedeemsDelta">—</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi">
+                                    <div class="label">New Members</div>
+                                    <div class="value" id="kpiMembers">0</div>
+                                    <div class="delta up small" id="kpiMembersDelta">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Charts row 1 -->
+                        <div class="row g-2">
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card report-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <h2 class="mb-1">Revenue (by day)</h2><a href="#" class="small text-decoration-none" id="revExpand">Expand</a>
+                                    </div>
+                                    <div class="chart-wrap">
+                                        <canvas id="chRevenue"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card report-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <h2 class="mb-1">Orders (by day)</h2><a href="#" class="small text-decoration-none" id="ordExpand">Expand</a>
+                                    </div>
+                                    <div class="chart-wrap">
+                                        <canvas id="chOrders"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Charts row 2 -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card report-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <h2 class="mb-1">Payment Types</h2><span class="small text-muted"> <span class="legend-dot" style="background:#60a5fa"></span>Knet <span class="legend-dot" style="background:#34d399"></span>Cash <span class="legend-dot" style="background:#fbbf24"></span>Apple Pay <span class="legend-dot" style="background:#f472b6"></span>Loyalty </span>
+                                    </div>
+                                    <div class="chart-wrap">
+                                        <canvas id="chPayments"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card report-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <h2 class="mb-1">Redemptions (by day)</h2><a href="#" class="small text-decoration-none" id="redExpand">Expand</a>
+                                    </div>
+                                    <div class="chart-wrap">
+                                        <canvas id="chRedeems"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Tabs: Tables + Logs -->
+                        <ul class="nav nav-tabs mt-3" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabSummary" type="button" role="tab">Summary</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabLogs" type="button" role="tab">Logs</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content dt-card p-card">
+                            <!-- Summary table -->
+                            <div class="tab-pane fade show active" id="tabSummary" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th class="text-end">Value</th>
+                                                <th class="text-end">Δ vs prior</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="sumBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- Logs -->
+                            <div class="tab-pane fade" id="tabLogs" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="small text-muted">System & user activity (demo data)</div>
+                                    <button class="btn btn-outline-secondary btn-sm" id="btnMoreLogs">Load more</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>When</th>
+                                                <th>Type</th>
+                                                <th>Details</th>
+                                                <th class="text-end">User</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="logBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <script>
+  (function(){
+    // ------- helper formatting -------
+    const fmtKWD = v => 'KWD ' + Number(v||0).toLocaleString(undefined,{minimumFractionDigits:3,maximumFractionDigits:3});
+    const pct = v => (v>0?'+':'') + v.toFixed(1) + '%';
+
+    // ------- demo data generator -------
+    function buildDays(n){
+      const labels=[], today=new Date();
+      for(let i=n-1;i>=0;i--){
+        const d=new Date(today); d.setDate(today.getDate()-i);
+        labels.push(d.toLocaleDateString([], {month:'short', day:'2-digit'}));
+      }
+      return labels;
+    }
+    function jitter(base, amp, n){ return Array.from({length:n}, (_,i)=> Math.max(0, base + (Math.sin(i/4)*amp) + (Math.random()*amp*0.6-amp*0.3))); }
+    function sum(a){return a.reduce((x,y)=>x+y,0);}
+
+    // ------- page state -------
+    const rangeSel = document.getElementById('rangeSel');
+    let charts = {};
+
+    function renderAll(){
+      const days = parseInt(rangeSel.value,10);
+      const labels = buildDays(days);
+
+      // series
+      const revenue = jitter(420, 120, days).map(v=>+v.toFixed(2));
+      const orders  = jitter( 80,  28, days).map(v=>Math.round(v));
+      const redeems = jitter( 18,   8, days).map(v=>Math.round(v));
+
+      const paySplits = { knet:46, cash:28, apple:18, loyalty:8 };
+
+      // KPIs
+      document.getElementById('kpiRevenue').textContent  = fmtKWD(sum(revenue));
+      document.getElementById('kpiOrders').textContent   = sum(orders).toLocaleString();
+      document.getElementById('kpiRedeems').textContent  = sum(redeems).toLocaleString();
+      document.getElementById('kpiMembers').textContent  = (350+Math.round(Math.random()*120)).toLocaleString();
+
+      document.getElementById('kpiRevenueDelta').textContent = pct( (Math.random()*8-1) );
+      document.getElementById('kpiOrdersDelta').textContent  = pct( (Math.random()*5-1) );
+      document.getElementById('kpiRedeemsDelta').textContent = pct( (Math.random()*3-2) );
+      document.getElementById('kpiMembersDelta').textContent = pct( (Math.random()*6-1) );
+
+      // destroy previous charts (to avoid memory leaks)
+      Object.values(charts).forEach(c=>c?.destroy());
+      charts = {};
+
+      // Revenue chart
+      charts.rev = new Chart(document.getElementById('chRevenue'), {
+        type:'line',
+        data:{ labels, datasets:[{ label:'Revenue', data:revenue, fill:true, tension:.35 }]},
+        options:{
+          maintainAspectRatio:true, aspectRatio: 2.0,
+          plugins:{ legend:{display:false}, tooltip:{mode:'index', intersect:false} },
+          scales:{ y:{ beginAtZero:true, ticks:{ callback:(v)=> 'KWD '+v } } }
+        }
+      });
+
+      // Orders chart
+      charts.ord = new Chart(document.getElementById('chOrders'), {
+        type:'bar',
+        data:{ labels, datasets:[{ label:'Orders', data:orders }]},
+        options:{
+          maintainAspectRatio:true, aspectRatio: 2.0,
+          plugins:{ legend:{display:false} },
+          scales:{ y:{ beginAtZero:true } }
+        }
+      });
+
+      // Payment types
+      charts.pay = new Chart(document.getElementById('chPayments'), {
+        type:'doughnut',
+        data:{
+          labels:['Knet','Cash','Apple Pay','Loyalty'],
+          datasets:[{ data:[paySplits.knet, paySplits.cash, paySplits.apple, paySplits.loyalty] }]
+        },
+        options:{
+          maintainAspectRatio:true, aspectRatio: 1.6,
+          plugins:{ legend:{ position:'bottom' } }, cutout:'60%'
+        }
+      });
+
+      // Redemptions
+      charts.red = new Chart(document.getElementById('chRedeems'), {
+        type:'line',
+        data:{ labels, datasets:[{ label:'Redemptions', data:redeems, fill:false, tension:.35 }]},
+        options:{
+          maintainAspectRatio:true, aspectRatio: 2.0,
+          plugins:{ legend:{display:false} },
+          scales:{ y:{ beginAtZero:true } }
+        }
+      });
+
+      // Summary table
+      const rows = [
+        { m:'Total Revenue', v: fmtKWD(sum(revenue)), d: pct( (Math.random()*8-1) ) },
+        { m:'Total Orders',  v: sum(orders).toLocaleString(), d: pct( (Math.random()*5-1) ) },
+        { m:'Avg Order',     v: fmtKWD(sum(revenue)/Math.max(1,sum(orders))), d: pct( (Math.random()*3-1) ) },
+        { m:'Redemptions',   v: sum(redeems).toLocaleString(), d: pct( (Math.random()*3-2) ) },
+      ];
+      document.getElementById('sumBody').innerHTML = rows.map(r=>`
+        <tr><td>${r.m}</td><td class="text-end">${r.v}</td><td class="text-end">${r.d}</td></tr>
+      `).join('');
+    }
+
+    // Logs (demo)
+    const LOGS = [
+      { when:'Today 09:45', type:'Order',   who:'mustafa@datatech', details:'Order #1765956 paid (KWD 5.000)' },
+      { when:'Today 08:05', type:'Message', who:'sara@datatech',    details:'“July Push” sent: 3,990 delivered' },
+      { when:'Yesterday',   type:'Refund',  who:'reem@datatech',    details:'Order #1765007 refunded (KWD 3.780)' },
+      { when:'Yesterday',   type:'Order',   who:'ali@datatech',     details:'Order #1764989 unpaid (KWD 2.600)' },
+    ];
+    function renderLogs(more=false){
+      const body = document.getElementById('logBody');
+      const items = more ? LOGS.concat(LOGS) : LOGS;
+      body.innerHTML = items.map(l=>`
+        <tr>
+          <td>${l.when}</td><td>${l.type}</td><td>${l.details}</td>
+          <td class="text-end">${l.who}</td>
+        </tr>`).join('');
+    }
+
+    // controls
+    document.getElementById('btnReset').addEventListener('click', ()=>{ rangeSel.value='30'; renderAll(); });
+    document.getElementById('btnFilter').addEventListener('click', ()=> renderAll());
+    document.getElementById('btnExport').addEventListener('click', ()=>{
+      const csv = 'metric,value\nrevenue,'+document.getElementById('kpiRevenue').textContent.replace('KWD ','');
+      const blob = new Blob([csv],{type:'text/csv'}); const url = URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='reports.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+    document.getElementById('btnMoreLogs').addEventListener('click', ()=> renderLogs(true));
+
+    // “expand” links just toggle card body height
+    function hookExpand(id){
+      const link = document.getElementById(id);
+      link?.addEventListener('click',(e)=>{
+        e.preventDefault();
+        const card = e.target.closest('.report-card');
+        card.classList.toggle('expanded');
+        const wrap = card.querySelector('.chart-wrap');
+        wrap.style.height = card.classList.contains('expanded') ? '420px' : (window.innerWidth>992?'260px':'220px');
+      });
+    }
+    hookExpand('revExpand'); hookExpand('ordExpand'); hookExpand('redExpand');
+
+    // initial render
+    renderAll(); renderLogs(false);
+  })();
+  </script>
+    </body>
+</html>

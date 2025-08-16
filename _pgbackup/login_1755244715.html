@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Sign in — Loyalty Console</title>
+        <!-- Nice, neutral UI face -->
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <style>
+    :root{
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --ink: #111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --brand:#2563ff;
+      --brand-ink:#ffffff;
+      --ring:#c7d2fe;
+      --error-bg:#fde8e8;
+      --error-ink:#b91c1c;
+      --shadow: 0 10px 18px rgba(28,40,80,.08), 0 4px 10px rgba(28,40,80,.06);
+      --radius-xl:20px; --radius-lg:14px; --radius-md:12px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg);
+      color:var(--ink); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Top bar */
+    .topbar{
+      height:56px; display:flex; align-items:center; padding:0 20px;
+      background:#fff; border-bottom:1px solid var(--line);
+    }
+    .brand-row{display:flex; gap:10px; align-items:center;}
+    .brand-row img{width:22px;height:22px;object-fit:contain; border-radius:6px}
+    .brand-title{font-weight:700; font-size:15px; letter-spacing:.2px}
+
+    /* Shell centers card */
+    .shell{
+      min-height:calc(100% - 56px);
+      display:grid; place-items:center; padding:40px 20px;
+      background:
+        radial-gradient(1200px 600px at 80% -20%, rgba(37,99,255,.06), transparent 60%),
+        radial-gradient(900px 600px at -10% 120%, rgba(16,185,129,.06), transparent 60%),
+        var(--bg);
+    }
+
+    /* Card */
+    .card{
+      width:min(560px, 92vw);
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+      padding:28px 28px 24px;
+    }
+
+    .card-head{
+      display:flex; gap:14px; align-items:center; margin-bottom:18px;
+    }
+    .logo-wrap{
+      width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
+      background:#eef3ff; border:1px solid #dbe4ff;
+    }
+    .logo-wrap img{width:34px;height:34px;object-fit:contain}
+    .head-text h1{
+      margin:0; font-size:22px; font-weight:800; letter-spacing:.2px;
+    }
+    .head-text p{
+      margin:4px 0 0; color:var(--muted); font-size:14px;
+    }
+
+    /* Form */
+    form{margin-top:8px}
+    .row{display:grid; gap:14px}
+    label{display:block; font-size:13px; color:#374151; margin:2px 0 6px}
+    .input{
+      width:100%; height:46px; padding:10px 14px; border-radius:12px;
+      border:1px solid var(--line); background:#fff; color:var(--ink);
+      font-size:15px; outline:none; transition:border-color .18s, box-shadow .18s, background .18s;
+    }
+    .input::placeholder{color:#9ca3af}
+    .input:focus{
+      border-color:#94a3ff; box-shadow:0 0 0 4px var(--ring);
+    }
+
+    .field-inline{position:relative}
+    .toggle{
+      position:absolute; inset:0 8px 0 auto; display:grid; place-items:center;
+      width:40px; color:#6b7280; cursor:pointer; user-select:none;
+    }
+
+    .meta-row{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-top:4px; gap:10px; flex-wrap:wrap;
+    }
+    .check{
+      display:flex; align-items:center; gap:8px; font-size:14px; color:#374151;
+      user-select:none;
+    }
+    .check input{width:16px;height:16px}
+
+    .btn{
+      display:inline-flex; justify-content:center; align-items:center; gap:8px;
+      width:100%; height:46px; border-radius:12px; border:0; cursor:pointer;
+      font-weight:700; letter-spacing:.2px; transition:transform .04s ease, box-shadow .18s;
+    }
+    .btn-primary{background:var(--brand); color:var(--brand-ink); box-shadow:0 6px 14px rgba(37,99,255,.25)}
+    .btn-primary:active{transform:translateY(1px)}
+    .btn[disabled]{opacity:.6; cursor:not-allowed}
+
+    .links{
+      margin-top:14px; display:flex; gap:14px; flex-wrap:wrap; justify-content:space-between;
+      font-size:14px;
+    }
+    .links a{ color:var(--brand); text-decoration:none }
+    .links a:hover{text-decoration:underline}
+
+    .error{
+      display:none; margin:4px 0 6px; padding:10px 12px;
+      background:var(--error-bg); color:var(--error-ink);
+      border:1px solid #fecaca; border-radius:12px; font-size:14px;
+    }
+
+    /* Small screens */
+    @media (max-width:420px){
+      .card{padding:22px 18px}
+      .logo-wrap{width:46px;height:46px}
+      .head-text h1{font-size:20px}
+    }
+  </style>
+    </head>
+    <body>
+        <!-- Top bar -->
+        <header class="topbar">
+            <div class="brand-row">
+                <img src="images/DataTech.png" alt="DataTech">
+                <div class="brand-title">Loyalty Console</div>
+            </div>
+        </header>
+        <!-- Centered content -->
+        <main class="shell">
+            <section class="card" aria-labelledby="title">
+                <div class="card-head">
+                    <div class="logo-wrap">
+                        <img src="images/DataTech.png" alt="">
+                    </div>
+                    <div class="head-text">
+                        <h1 id="title">Sign in</h1>
+                        <p>Access your loyalty dashboard and tools</p>
+                    </div>
+                </div>
+                <div id="err" class="error" role="alert"></div>
+                <form id="loginForm" novalidate>
+                    <div class="row">
+                        <div>
+                            <label for="tenantId">Company / Account ID</label>
+                            <input id="tenantId" class="input" type="text" placeholder="Enter company/account ID" autocomplete="organization" required>
+                        </div>
+                        <div>
+                            <label for="email">Email</label>
+                            <input id="email" class="input" type="email" placeholder="you@example.com" autocomplete="username" required>
+                        </div>
+                        <div>
+                            <label for="password">Password</label>
+                            <div class="field-inline">
+                                <input id="password" class="input" type="password" placeholder="••••" autocomplete="current-password" required>
+                                <button type="button" class="toggle" aria-label="Show password" id="togglePw">👁</button>
+                            </div>
+                        </div>
+                        <div class="meta-row">
+                            <label class="check">
+                                <input id="remember" type="checkbox"> Remember me
+                            </label><a href="reset-password.html" style="color:var(--brand); text-decoration:none;">Forgot password?</a>
+                        </div>
+                        <button id="btn" class="btn btn-primary" type="submit">Sign in</button>
+                        <div class="links" aria-label="auth links"><a href="create-account.html">Create account</a><a href="index.html">Back</a>
+                        </div>
+                        <div style="color:var(--muted); font-size:12px; margin-top:6px;">
+                            Demo mode tip: any password accepted; try <b>1234</b>. In production this uses your auth API.
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </main>
+        <script>
+    (function () {
+      const $ = (id) => document.getElementById(id);
+      const params = new URLSearchParams(location.search);
+
+      // Elements
+      const form = $('loginForm');
+      const tenantId = $('tenantId');
+      const email = $('email');
+      const password = $('password');
+      const remember = $('remember');
+      const btn = $('btn');
+      const err = $('err');
+
+      // Prefill from URL if provided
+      tenantId.value = params.get('tenantId') || params.get('tenant') || tenantId.value;
+      email.value    = params.get('email') || email.value;
+      password.value = params.get('password') || password.value;
+
+      // Show/Hide password
+      $('togglePw').addEventListener('click', () => {
+        const is = password.type === 'password';
+        password.type = is ? 'text' : 'password';
+      });
+
+      // If already authenticated (RBAC present), bounce to dashboard
+      try {
+        if (window.RBAC && typeof RBAC.isAuthenticated === 'function' && RBAC.isAuthenticated()) {
+          location.replace('dashboard.html');
+          return;
+        }
+      } catch(_) {}
+
+      function showError(message){
+        err.textContent = message;
+        err.style.display = 'block';
+      }
+      function hideError(){ err.style.display = 'none'; }
+
+      function setRemembered(){
+        try {
+          if (remember.checked) {
+            localStorage.setItem('remember_email', email.value);
+            localStorage.setItem('remember_tenant', tenantId.value);
+          } else {
+            localStorage.removeItem('remember_email');
+            localStorage.removeItem('remember_tenant');
+          }
+        } catch(_){}
+      }
+      // Restore remembered
+      try {
+        const rE = localStorage.getItem('remember_email');
+        const rT = localStorage.getItem('remember_tenant');
+        if (rE) email.value = email.value || rE;
+        if (rT) tenantId.value = tenantId.value || rT;
+      } catch(_){}
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideError();
+
+        if (!tenantId.value.trim() || !email.value.trim() || !password.value) {
+          showError('Please fill in company, email, and password.');
+          return;
+        }
+
+        // Btn loading state
+        const original = btn.textContent;
+        btn.textContent = 'Signing in…';
+        btn.disabled = true;
+
+        try {
+          if (window.API && typeof API.login === 'function') {
+            // Your real login; should set RBAC session internally
+            await API.login(tenantId.value.trim(), email.value.trim(), password.value);
+          } else {
+            // Mock session for local UI work
+            const session = {
+              token:'demo-token',
+              tenantId: tenantId.value.trim(),
+              email: email.value.trim(),
+              name: email.value.split('@')[0]
+            };
+            sessionStorage.setItem('RBAC_SESSION', JSON.stringify(session));
+          }
+
+          setRemembered();
+
+          const next = params.get('next') || 'dashboard.html';
+          location.replace(next);
+        } catch (ex) {
+          console.error(ex);
+          showError(ex?.message || 'Unable to sign in. Please check your details and try again.');
+          btn.textContent = original;
+          btn.disabled = false;
+        }
+      });
+    })();
+  </script>
+    </body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Super Admin · Loyalty Console</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <div class="layout">
+            <div id="inject-sidebar"></div>
+            <div class="main">
+                <div id="inject-topbar"></div>
+                <main class="page">
+                    <div class="container-narrow">
+                        <h1 class="h5 fw-bold mb-2">Super Admin</h1>
+                        <div id="tokens" class="dt-card p-card mb-2">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h2 class="h6 mb-0">API Tokens</h2>
+                                <button class="btn btn-primary btn-sm">Create Token</button>
+                            </div>
+                            <div class="table-responsive mt-2">
+                                <table class="table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Scope</th>
+                                            <th>Created</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Backend</td>
+                                            <td>read/write</td>
+                                            <td>2025-07-01</td>
+                                            <td class="text-end">
+                                                <button class="btn btn-outline-secondary btn-sm">Revoke</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="integrations" class="dt-card p-card">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h2 class="h6 mb-0">Integrations</h2>
+                                <button class="btn btn-outline-secondary btn-sm">Add Integration</button>
+                            </div>
+                            <ul class="mt-2 mb-0">
+                                <li>Webhook: Order Created (active)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/partials.js"></script>
+    </body>
+</html>

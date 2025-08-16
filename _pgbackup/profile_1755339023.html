@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Profile · Loyalty Console</title>
+        <!-- Fonts / Bootstrap / Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Your styles -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <!-- Cropper.js (CDN) -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+        <style>
+    .avatar-lg {
+      width: 96px; height: 96px; border-radius: 50%;
+      object-fit: cover; border: 1px solid var(--dt-border, #e5e7eb);
+      background: #f8f9fa;
+    }
+    .cropper-container {
+      max-width: 100%;
+    }
+    .crop-wrap {
+      width: 100%; max-height: 60vh; overflow: hidden; background: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .crop-wrap img { max-width: 100%; }
+  </style>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <div class="main">
+                <!-- Topbar -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Profile</h1>
+                                <div class="text-muted small">Update your avatar and personal details</div>
+                            </div>
+                            <div><a href="settings.html" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-gear me-1"></i>Settings</a>
+                            </div>
+                        </div>
+                        <!-- Profile Card -->
+                        <div class="dt-card p-card">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-auto">
+                                    <img id="pfAvatar" class="avatar-lg" alt="Avatar">
+                                </div>
+                                <div class="col">
+                                    <div class="fw-semibold" id="pfName">—</div>
+                                    <div class="text-muted small" id="pfEmail">—</div>
+                                    <div class="text-muted small" id="pfRole">—</div>
+                                </div>
+                                <div class="col-auto">
+                                    <button id="btnChangePhoto" class="btn btn-primary btn-sm"><i class="fa-solid fa-image me-1"></i>Change Photo
+                                    </button>
+                                    <input id="filePicker" type="file" accept="image/*" class="d-none">
+                                </div>
+                            </div>
+                            <hr class="my-3">
+                            <form class="row g-2" id="profileForm">
+                                <div class="col-md-6">
+                                    <label class="form-label small">Full Name</label>
+                                    <input id="inpName" type="text" class="form-control" placeholder="Your name">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small">Email</label>
+                                    <input id="inpEmail" type="email" class="form-control" placeholder="you@example.com">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small">Phone</label>
+                                    <input id="inpPhone" type="tel" class="form-control" placeholder="+965 5xxxxxxx">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small">Role</label>
+                                    <input id="inpRole" type="text" class="form-control" placeholder="Owner / Admin / Viewer">
+                                </div>
+                                <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                                    <button class="btn btn-outline-secondary" type="reset">Discard</button>
+                                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                                </div>
+                            </form>
+                            <div id="saveMsg" class="alert alert-success d-none mt-2">Profile saved.</div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Cropper Modal -->
+        <div class="modal fade" id="cropperModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa-solid fa-crop me-2"></i>Crop Profile Photo</h5>
+                        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div class="crop-wrap">
+                            <img id="cropImg" alt="To crop"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group me-auto">
+                            <button class="btn btn-outline-secondary btn-sm" id="zoomIn" type="button" title="Zoom In">
+                                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" id="zoomOut" type="button" title="Zoom Out">
+                                <i class="fa-solid fa-magnifying-glass-minus"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" id="rotateL" type="button" title="Rotate Left">
+                                <i class="fa-solid fa-rotate-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" id="rotateR" type="button" title="Rotate Right">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" id="reset" type="button" title="Reset">
+                                <i class="fa-solid fa-arrow-rotate-left"></i>
+                            </button>
+                        </div>
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                        <button class="btn btn-primary" id="btnSaveCrop" type="button">Save Photo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <script>
+  (function(){
+    const sess = (window.UserSession && window.UserSession.get && window.UserSession.get()) || {
+      user: { name:'Demo Admin', email:'demo@datatech.local', role:'Owner', phone:'', avatar:'' }
+    };
+
+    // Fill profile fields
+    const pfAvatar = document.getElementById('pfAvatar');
+    const pfName   = document.getElementById('pfName');
+    const pfEmail  = document.getElementById('pfEmail');
+    const pfRole   = document.getElementById('pfRole');
+
+    const inpName  = document.getElementById('inpName');
+    const inpEmail = document.getElementById('inpEmail');
+    const inpPhone = document.getElementById('inpPhone');
+    const inpRole  = document.getElementById('inpRole');
+
+    function refreshFromSession(){
+      const u = (window.UserSession.get() || sess).user || {};
+      pfAvatar.src = u.avatar || 'images/avatar-placeholder.png';
+      pfName.textContent  = u.name  || '—';
+      pfEmail.textContent = u.email || '—';
+      pfRole.textContent  = u.role  || '—';
+
+      inpName.value  = u.name  || '';
+      inpEmail.value = u.email || '';
+      inpPhone.value = u.phone || '';
+      inpRole.value  = u.role  || '';
+    }
+    refreshFromSession();
+
+    // Save profile text fields
+    document.getElementById('profileForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const cur = window.UserSession.get() || { user:{} };
+      cur.user.name  = inpName.value.trim();
+      cur.user.email = inpEmail.value.trim();
+      cur.user.phone = inpPhone.value.trim();
+      cur.user.role  = inpRole.value.trim();
+      window.UserSession.set(cur);
+      refreshFromSession();
+      // Also nudge the topbar/userchip to re-render next page load; for now show success
+      const msg = document.getElementById('saveMsg');
+      msg.classList.remove('d-none');
+      setTimeout(()=>msg.classList.add('d-none'), 1200);
+    });
+
+    // --- Photo crop flow ----------------------------------------------------
+    const picker = document.getElementById('filePicker');
+    const btnChange = document.getElementById('btnChangePhoto');
+    const cropImg = document.getElementById('cropImg');
+    const modalEl = document.getElementById('cropperModal');
+    const modal = new bootstrap.Modal(modalEl);
+    let cropper = null;
+
+    btnChange.addEventListener('click', ()=> picker.click());
+    picker.addEventListener('change', (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      const url = URL.createObjectURL(file);
+      cropImg.src = url;
+      modal.show();
+    });
+
+    modalEl.addEventListener('shown.bs.modal', ()=>{
+      // Init cropper with square aspect
+      cropper = new Cropper(cropImg, {
+        aspectRatio: 1,
+        viewMode: 1,
+        dragMode: 'move',
+        autoCropArea: 0.9,
+        background: false,
+        movable: true,
+        zoomable: true,
+        rotatable: true,
+        responsive: true,
+      });
+    });
+    modalEl.addEventListener('hidden.bs.modal', ()=>{
+      if (cropper) { cropper.destroy(); cropper = null; }
+      // reset file input so user can re-pick the same file later
+      picker.value = '';
+    });
+
+    // Controls
+    document.getElementById('zoomIn').addEventListener('click', ()=> cropper && cropper.zoom(0.1));
+    document.getElementById('zoomOut').addEventListener('click',()=> cropper && cropper.zoom(-0.1));
+    document.getElementById('rotateL').addEventListener('click',()=> cropper && cropper.rotate(-90));
+    document.getElementById('rotateR').addEventListener('click',()=> cropper && cropper.rotate(90));
+    document.getElementById('reset').addEventListener('click',  ()=> cropper && cropper.reset());
+
+    // Save cropped image
+    document.getElementById('btnSaveCrop').addEventListener('click', async ()=>{
+      if(!cropper) return;
+      // Export as 512x512 PNG (good quality for avatars)
+      const canvas = cropper.getCroppedCanvas({ width: 512, height: 512 });
+      if(!canvas){ return; }
+
+      canvas.toBlob(async (blob)=>{
+        if(!blob) return;
+
+        // Try to upload to backend
+        let uploadedUrl = null;
+        try{
+          const form = new FormData();
+          const filename = 'avatar_' + Date.now() + '.png';
+          form.append('file', blob, filename);
+
+          // Adjust this endpoint in your backend
+          const res = await fetch('/api/profile/upload', { method:'POST', body: form });
+          if (res.ok) {
+            const data = await res.json();
+            // Expecting { url: '/photos/your-file.png' }
+            uploadedUrl = data && data.url ? data.url : null;
+          }
+        }catch(e){
+          // ignore and fall back to local
+        }
+
+        // If no backend or failed, fall back to local blob URL + offer download
+        let finalUrl = uploadedUrl;
+        if(!finalUrl){
+          finalUrl = URL.createObjectURL(blob);
+          // Offer a download so user can manually place into /photos if needed
+          const a = document.createElement('a');
+          a.href = finalUrl;
+          a.download = 'avatar.png';
+          document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        // Persist in session & update UI
+        const cur = window.UserSession.get() || { user:{} };
+        cur.user.avatar = finalUrl;
+        window.UserSession.set(cur);
+        pfAvatar.src = finalUrl;
+
+        // Also update the topbar/userchip avatar in-place if present
+        document.querySelectorAll('.userchip img').forEach(img => img.src = finalUrl);
+
+        modal.hide();
+      }, 'image/png', 0.92);
+    });
+
+    // Mark active menu when partials are loaded
+    document.addEventListener('partials:ready', function(){
+      if (typeof window.__markActive === 'function') {
+        window.__markActive('profile.html');
+      }
+    });
+  })();
+  </script>
+    </body>
+</html>

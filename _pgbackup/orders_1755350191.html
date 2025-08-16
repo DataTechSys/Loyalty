@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Orders · Loyalty Console</title>
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Project styles -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <style>
+    /* ===========================
+       Orders page (scoped styles)
+       =========================== */
+    .orders-page .toolbar {
+      gap:.5rem;
+      align-items:center;
+      padding:.25rem 0 .5rem;
+    }
+    .orders-page .toolbar .form-select,
+    .orders-page .toolbar .form-control{
+      height:32px; padding:.25rem .5rem; font-size:.9rem; line-height:1.1;
+    }
+    .orders-page .toolbar .btn{
+      --bs-btn-padding-y:.25rem; --bs-btn-padding-x:.5rem; --bs-btn-font-size:.9rem;
+      height:32px;
+    }
+
+    .orders-page .table{
+      --cell-y: .4rem;
+      font-size:.92rem;
+    }
+    .orders-page .table thead th{
+      text-transform:uppercase; letter-spacing:.04em; font-size:.74rem; color:#6b7280;
+      border-top:0;
+    }
+    .orders-page .table > :not(caption) > * > *{
+      padding-top:var(--cell-y); padding-bottom:var(--cell-y);
+      border-color:var(--dt-border);
+    }
+
+    .orders-page .status-pill{
+      display:inline-flex; align-items:center; gap:.35rem;
+      border:1px solid #a7f3d0; background:#ecfdf5; color:#065f46;
+      border-radius:999px; padding:.15rem .5rem; font-weight:700; font-size:.72rem;
+    }
+    .orders-page .money{ white-space:nowrap; }
+
+    .orders-page .cell-customer small{
+      color:#6b7280; display:block; line-height:1.15;
+    }
+
+    .orders-page .dt-card{ padding:12px 14px; }
+    .orders-page .pager{ color:#6b7280; }
+  </style>
+    </head>
+    <body>
+        <div class="container-fluid"> 
+            <!-- use container-fluid instead of container -->
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    ...
+</table>
+            </div>
+        </div>
+        <div class="layout">
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <div class="main">
+                <div data-include="partials/topbar.html"></div>
+                <main class="page orders-page">
+                    <div class="container-narrow">
+                        <h1 class="h6 fw-bold mb-2">Orders</h1>
+                        <div class="dt-card p-card">
+                            <!-- toolbar -->
+                            <div class="d-flex flex-wrap toolbar">
+                                <select id="filterBranch" class="form-select" style="max-width:220px">
+                                    <option value="">All Branches</option>
+                                    <option>AHB | Abu Halifa</option>
+                                    <option>SLB | Salmiya</option>
+                                    <option>JRB | Jahra</option>
+                                    <option>ADB | Ardiya</option>
+                                </select>
+                                <input id="filterBizDate" type="date" class="form-control" style="max-width:160px" placeholder="dd/mm/yyyy">
+                                <div class="ms-auto d-flex gap-2">
+                                    <button id="btnExport" class="btn btn-outline-secondary">
+                                        <i class="fa-solid fa-file-export me-1"></i>Export
+                                    </button>
+                                    <button id="btnRefresh" class="btn btn-outline-secondary">
+                                        <i class="fa-solid fa-rotate me-1"></i>Refresh
+                                    </button>
+                                    <button id="btnFilter" class="btn btn-outline-secondary">
+                                        <i class="fa-solid fa-filter me-1"></i>Filter
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- table -->
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:26px;"></th>
+                                            <th>Reference</th>
+                                            <th>Number</th>
+                                            <th>Branch</th>
+                                            <th>Customer</th>
+                                            <th>Status</th>
+                                            <th>Source</th>
+                                            <th class="text-end">Total</th>
+                                            <th>Business Date</th>
+                                            <th>Opened At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersBody"></tbody>
+                                </table>
+                            </div>
+                            <!-- pager -->
+                            <div class="d-flex justify-content-between align-items-center mt-2 small pager">
+                                <div id="pagerText">Showing 1 to 10 of 10</div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm" disabled>Previous</button>
+                                    <button class="btn btn-outline-secondary btn-sm" disabled>Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <script>
+  (function(){
+    // Snapshot data matched to your screenshot layout
+    const ROWS = [
+      { ref:1770662, number:35,  branch:'AHB | Abu Halifa', customerName:'Khwaja koti - 253218', phone:'6586 1990',        status:'Done', source:'Cashier', total:0.000, biz:'2025-08-16', opened:'August 16, 03:32pm' },
+      { ref:1770661, number:31,  branch:'ADB | Ardiya',     customerName:'—',                     phone:'',                status:'Done', source:'Cashier', total:4.400, biz:'2025-08-16', opened:'August 16, 03:29pm' },
+      { ref:1770660, number:137, branch:'SLB | Salmiya',    customerName:'mohammed aburumuh - 397548', phone:'6633 1534', status:'Done', source:'Cashier', total:1.500, biz:'2025-08-16', opened:'August 16, 03:28pm' },
+      { ref:1770659, number:81,  branch:'JRB | Jahra',      customerName:'Bader - 401516',        phone:'6616 7722',       status:'Done', source:'Cashier', total:1.250, biz:'2025-08-16', opened:'August 16, 03:23pm' },
+      { ref:1770658, number:136, branch:'SLB | Salmiya',    customerName:'—',                     phone:'',                status:'Done', source:'Cashier', total:1.750, biz:'2025-08-16', opened:'August 16, 03:23pm' },
+      { ref:1770657, number:135, branch:'SLB | Salmiya',    customerName:'—',                     phone:'',                status:'Done', source:'Cashier', total:4.450, biz:'2025-08-16', opened:'August 16, 03:22pm' },
+      { ref:1770656, number:134, branch:'SLB | Salmiya',    customerName:'—',                     phone:'',                status:'Done', source:'Cashier', total:0.950, biz:'2025-08-16', opened:'August 16, 03:21pm' },
+      { ref:1770655, number:68,  branch:'SLB | Salmiya',    customerName:'Fuad Majed Al_Ghazali - 839164', phone:'588 81127', status:'Done', source:'Cashier', total:1.950, biz:'2025-08-16', opened:'August 16, 03:18pm' },
+      { ref:1770654, number:133, branch:'SLB | Salmiya',    customerName:'—',                     phone:'',                status:'Done', source:'Cashier', total:4.200, biz:'2025-08-16', opened:'August 16, 03:20pm' },
+      { ref:1770652, number:48,  branch:'AHB | Abu Halifa', customerName:'•Dana bofteen - 288821', phone:'6600 4908',       status:'Done', source:'Cashier', total:2.250, biz:'2025-08-16', opened:'August 16, 03:18pm' }
+    ];
+
+    const ordersBody = document.getElementById('ordersBody');
+    const fmtKWD = v => 'KWD ' + Number(v||0).toLocaleString(undefined,{minimumFractionDigits:3, maximumFractionDigits:3});
+
+    const statusPill = s => `<span class="status-pill">${s}</span>`;
+
+    function row(r){
+      const cust = r.customerName && r.customerName !== '—'
+        ? `<div class="cell-customer"><span>${r.customerName}</span>${r.phone?`<small>${r.phone}</small>`:''}</div>`
+        : '—';
+
+      return `
+        <tr>
+          <td><input type="checkbox" aria-label="select row"></td>
+          <td><a href="order-details.html?id=${r.ref}">${r.ref}</a></td>
+          <td>${r.number}</td>
+          <td>${r.branch}</td>
+          <td>${cust}</td>
+          <td>${statusPill(r.status)}</td>
+          <td>${r.source}</td>
+          <td class="text-end money">${fmtKWD(r.total)}</td>
+          <td>${r.biz}</td>
+          <td>${r.opened}</td>
+        </tr>`;
+    }
+
+    function render(){
+      const branch = document.getElementById('filterBranch').value;
+      const biz    = document.getElementById('filterBizDate').value;
+      let data = ROWS.slice();
+      if (branch) data = data.filter(x => x.branch === branch);
+      if (biz)    data = data.filter(x => x.biz === biz);
+      ordersBody.innerHTML = data.map(row).join('');
+      document.getElementById('pagerText').textContent = `Showing 1 to ${data.length} of ${data.length}`;
+    }
+
+    // Actions
+    document.getElementById('filterBranch').addEventListener('change', render);
+    document.getElementById('filterBizDate').addEventListener('change', render);
+    document.getElementById('btnRefresh').addEventListener('click', ()=>{
+      document.getElementById('filterBranch').value = '';
+      document.getElementById('filterBizDate').value = '';
+      render();
+    });
+    document.getElementById('btnFilter').addEventListener('click', ()=>{
+      document.getElementById('filterBizDate').focus();
+    });
+    document.getElementById('btnExport').addEventListener('click', ()=>{
+      const branch = document.getElementById('filterBranch').value;
+      const biz    = document.getElementById('filterBizDate').value;
+      let data = ROWS.slice();
+      if (branch) data = data.filter(x => x.branch === branch);
+      if (biz)    data = data.filter(x => x.biz === biz);
+      const header = ['Reference','Number','Branch','Customer','Status','Source','Total','Business Date','Opened At'];
+      const lines = [header.join(',')].concat(
+        data.map(r => [
+          r.ref, r.number, r.branch, `${r.customerName}${r.phone?(' '+r.phone):''}`.trim(),
+          r.status, r.source, r.total, r.biz, r.opened
+        ].map(x=>`"${String(x).replace(/"/g,'""')}"`).join(','))
+      );
+      const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='orders.csv';
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    render();
+  })();
+  </script>
+    </body>
+</html>

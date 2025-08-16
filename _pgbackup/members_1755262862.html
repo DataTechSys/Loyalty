@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Customers · Loyalty Console</title>
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    </head>
+    <body>
+        <div class="layout">
+            <aside class="sidebar" id="sidebar">
+                <div class="sb-brand">
+                    <img src="images/DataTech.png" alt="DataTech">
+                    <span class="brand-text">Loyalty Console</span>
+                </div>
+                <nav class="sb-nav"><a class="sb-link" href="dashboard.html"><i class="fa-solid fa-gauge-high"></i><span class="sb-text">Dashboard</span></a><a class="sb-link" href="orders.html"><i class="fa-solid fa-cart-shopping"></i><span class="sb-text">Orders</span></a><a class="sb-link active" href="members.html"><i class="fa-solid fa-users"></i><span class="sb-text">Customers</span></a><a class="sb-link" href="messages.html"><i class="fa-solid fa-paper-plane"></i><span class="sb-text">Messages</span></a><a class="sb-link" href="reports.html"><i class="fa-solid fa-chart-line"></i><span class="sb-text">Reports</span></a><a class="sb-link" href="settings.html"><i class="fa-solid fa-gear"></i><span class="sb-text">Settings</span></a><a class="sb-link" href="admin.html"><i class="fa-solid fa-user-shield"></i><span class="sb-text">Admin</span></a><a class="sb-link" href="login.html"><i class="fa-solid fa-right-to-bracket"></i><span class="sb-text">Login</span></a>
+                </nav>
+                <div class="sb-footer">© DataTech</div>
+            </aside>
+            <div class="main">
+                <header class="dt-topbar">
+                    <div class="tb-inner container d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn-icon burger" id="burger" aria-label="Toggle menu">☰</button>
+                            <button class="btn-icon" id="collapseBtn" aria-label="Collapse sidebar">
+                                <i class="fa-solid fa-bars"></i>
+                            </button>
+                        </div>
+                        <div class="dt-brand">
+                            <img src="images/DataTech.png" alt="DataTech">
+                            <span>Loyalty Console</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2"></div>
+                    </div>
+                </header>
+                <main class="page">
+                    <div class="container-narrow">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Customers</h1>
+                                <div class="text-muted small">Manage loyalty members</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary btn-sm" id="btnAdd">
+                                    <i class="fa-solid fa-user-plus me-1"></i>Add Member
+                                </button>
+                            </div>
+                        </div>
+                        <div class="dt-card p-card mb-2">
+                            <form class="row g-2 align-items-end" id="mFilter">
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small">Search</label>
+                                    <input class="form-control" id="q" placeholder="Name / Mobile / Email">
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small">Status</label>
+                                    <select class="form-select" id="mStatus">
+                                        <option value="">Any</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small">Min Points</label>
+                                    <input type="number" class="form-control" id="minPts" placeholder="0">
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small">Max Points</label>
+                                    <input type="number" class="form-control" id="maxPts" placeholder="10000">
+                                </div>
+                                <div class="col-12 d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm" type="submit">Apply</button>
+                                    <button class="btn btn-outline-secondary btn-sm" type="button" id="mReset">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="dt-card p-card">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0" id="mTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Member</th>
+                                            <th>Mobile</th>
+                                            <th>Email</th>
+                                            <th class="text-end">Points</th>
+                                            <th class="text-end">Last Active</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="mBody">
+                                        <!-- injected -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/app-user.js"></script>
+        <script>
+    (function(){
+      try{
+        if (window.UserSession && !window.UserSession.isAuthenticated()){
+          sessionStorage.setItem('redirectAfterLogin','members.html'); location.replace('login.html'); return;
+        }
+      }catch(_){}
+      const sidebar=document.getElementById('sidebar');
+      document.getElementById('burger')?.addEventListener('click',()=> sidebar.classList.toggle('open'));
+      document.getElementById('collapseBtn')?.addEventListener('click',()=> sidebar.classList.toggle('collapsed'));
+      sidebar.querySelectorAll('a.sb-link').forEach(a=>a.addEventListener('click',()=> sidebar.classList.remove('open')));
+
+      const MEMBERS = [
+        {name:'Mustafa', mobile:'+96550000001', email:'mustafa@example.com', points:320, last:'2025-08-13T09:45:00Z'},
+        {name:'Reem',    mobile:'+96550000002', email:'reem@example.com',    points:150, last:'2025-08-11T17:10:00Z'},
+        {name:'Ali',     mobile:'+96550000003', email:'ali@example.com',     points:40,  last:'2025-07-29T12:02:00Z'},
+        {name:'Noura',   mobile:'+96550000004', email:'noura@example.com',   points:980, last:'2025-08-12T14:02:00Z'}
+      ];
+      const fmt = d => new Date(d).toLocaleString([], { year:'numeric', month:'short', day:'2-digit' });
+
+      function render(list){
+        document.getElementById('mBody').innerHTML = list.map(m => `
+          <tr>
+            <td class="fw-semibold">${m.name}</td>
+            <td>${m.mobile}</td>
+            <td>${m.email}</td>
+            <td class="text-end">${m.points.toLocaleString()}</td>
+            <td class="text-end">${fmt(m.last)}</td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" onclick="alert('Open ${m.name}')">Open</button>
+                <button class="btn btn-outline-secondary" onclick="alert('Message ${m.name}')">Message</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+      render(MEMBERS);
+
+      function apply(){
+        const q = (document.getElementById('q').value||'').toLowerCase();
+        const st = document.getElementById('mStatus').value;
+        const min = parseInt(document.getElementById('minPts').value||'0',10);
+        const max = parseInt(document.getElementById('maxPts').value||'9999999',10);
+        let out = MEMBERS.slice();
+        if (q) out = out.filter(m => (m.name+m.mobile+m.email).toLowerCase().includes(q));
+        if (st==='active') out = out.filter(m => (new Date()-new Date(m.last)) < 1000*60*60*24*30);
+        if (st==='inactive') out = out.filter(m => (new Date()-new Date(m.last)) >= 1000*60*60*24*30);
+        out = out.filter(m => m.points>=min && m.points<=max);
+        render(out);
+      }
+
+      document.getElementById('mFilter').addEventListener('submit', (e)=>{ e.preventDefault(); apply(); });
+      document.getElementById('mReset').addEventListener('click', ()=>{ document.getElementById('mFilter').reset(); render(MEMBERS); });
+      document.getElementById('btnAdd').addEventListener('click', ()=> alert('Add member (demo)'));
+    })();
+  </script>
+    </body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body>
+<main data-pg-slot="main-content">
+  <div class="d-flex justify-content-between align-items-center mb-3 border-bottom">
+    <h1 class="h3">Members</h1>
+    <div class="d-flex gap-2">
+      <input id="q" class="form-control form-control-sm" placeholder="Search name or phone…">
+      <button class="btn btn-sm btn-outline-secondary" id="export">Export CSV</button>
+    </div>
+  </div>
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="small text-muted"><tr>
+          <th>Name</th><th>Phone</th><th>Email</th><th>Points</th><th>Last Visit</th><th></th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+  <nav class="mt-2 d-flex justify-content-between small">
+    <button class="btn btn-sm btn-outline-secondary" id="prev">Previous</button>
+    <button class="btn btn-sm btn-outline-secondary" id="next">Next</button>
+  </nav>
+</main>
+<script>
+(function(){
+  const tid = RBAC.getActiveTenantId(); if(!tid) return;
+  let page=1, q='';
+  async function load(){
+    const data = await API.listMembers(tid,{page,q});
+    const rows=document.getElementById('rows'); rows.innerHTML='';
+    (data.items||[]).forEach(m=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${m.name||'—'}</td><td>${m.phone||'—'}</td><td>${m.email||'—'}</td>
+        <td>${m.points??0}</td><td>${m.lastVisit||'—'}</td>
+        <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="#" data-edit="${m.id}">Edit</a></td>`;
+      rows.appendChild(tr);
+    });
+  }
+  document.getElementById('q').addEventListener('input',(e)=>{q=e.target.value;page=1;load();});
+  document.getElementById('prev').addEventListener('click',()=>{ if(page>1){page--;load();}});
+  document.getElementById('next').addEventListener('click',()=>{ page++;load(); });
+  document.getElementById('export').addEventListener('click',()=>{ API.exportMembers?.(tid); });
+  document.getElementById('rows').addEventListener('click', async (e)=>{
+    const id = e.target.closest('[data-edit]')?.getAttribute('data-edit'); if(!id) return;
+    const m = await API.getMember(tid,id).catch(()=>null); if(!m) return alert('Not found');
+    const newPhone = prompt('Edit phone', m.phone||''); if(newPhone==null) return;
+    await API.updateMember(tid,id,{ phone:newPhone }).catch(err=>alert(err.message));
+    load();
+  });
+  load();
+})();
+</script>
+</body></html>
