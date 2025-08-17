@@ -12,7 +12,21 @@
         <!-- Your app styles -->
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/sidebar.css">
-        <style>/* page-only touches */.avatar-lg { width: 64px; height: 64px; border-radius: 50%; background: #e8eefc; border: 1px solid #cfe0ff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; color: #39557a; overflow: hidden; } .chip { border: 1px solid var(--dt-border); border-radius: 999px; padding: .25rem .55rem; font-weight: 600; font-size: .75rem; } .chip.success { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; } .chip.warn { background: #fff7ed; color: #9a3412; border-color: #fed7aa; } .chip.muted { background: #f3f5f9; color: #4b5563; } .table tr td .muted { color: #6b7280; } .section-actions { gap: .5rem; }</style>
+        <style>
+      /* page-only touches */
+      .avatar-lg{
+        width:64px;height:64px;border-radius:50%;
+        background:#e8eefc;border:1px solid #cfe0ff;
+        display:inline-flex;align-items:center;justify-content:center;
+        font-weight:700;color:#39557a;overflow:hidden;
+      }
+      .chip{border:1px solid var(--dt-border);border-radius:999px;padding:.25rem .55rem;font-weight:600;font-size:.75rem}
+      .chip.success{background:#ecfdf5;color:#065f46;border-color:#a7f3d0}
+      .chip.warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
+      .chip.muted{background:#f3f5f9;color:#4b5563}
+      .table tr td .muted{color:#6b7280}
+      .section-actions{gap:.5rem}
+    </style>
     </head>
     <body class="fullpage">
         <div class="layout">
@@ -27,8 +41,7 @@
                     <div class="container-narrow">
                         <!-- Header row -->
                         <div class="d-flex align-items-start justify-content-between mb-2">
-                            <div class="d-flex align-items-center gap-3">
-                                <a href="customers.html" class="btn btn-outline-secondary btn-sm"> <i class="fa-solid fa-angle-left me-1"></i> Back </a>
+                            <div class="d-flex align-items-center gap-3"><a href="customers.html" class="btn btn-outline-secondary btn-sm"> <i class="fa-solid fa-angle-left me-1"></i> Back </a>
                                 <div class="d-flex align-items-center gap-2">
                                     <div id="custAvatar" class="avatar-lg">CU</div>
                                     <div>
@@ -38,12 +51,13 @@
                                 </div>
                             </div>
                             <div class="d-flex section-actions">
-                                <button class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-id-badge me-1"></i> Enable Loyalty
+                                <button class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-id-badge me-1"></i> Enable Loyalty
                                 </button>
-                                <button class="btn btn-outline-secondary btn-sm"><i class="fa-regular fa-credit-card me-1"></i> Enable House Account
+                                <button class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-regular fa-credit-card me-1"></i> Enable House Account
                                 </button>
-                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal">
-                                    <i class="fa-solid fa-pen-to-square me-1"></i> Edit Customer
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fa-solid fa-pen-to-square me-1"></i> Edit Customer
                                 </button>
                             </div>
                         </div>
@@ -73,8 +87,7 @@
                                         <div>
                                             <div class="text-muted small">Wallet Balance (KWD)</div>
                                             <div class="display-6 fw-bold" id="kpiWallet">0.000</div>
-                                        </div>
-                                        <span id="walletType" class="chip muted">Wallet</span>
+                                        </div><span id="walletType" class="chip muted">Wallet</span>
                                     </div>
                                     <div class="text-muted small mt-1" id="walletPts">— pts</div>
                                 </div>
@@ -128,7 +141,8 @@
                         <div class="dt-card p-card mb-2">
                             <div class="d-flex align-items-center justify-content-between mb-1">
                                 <h2 class="h6 mb-0">Membership (PassKit)</h2>
-                                <button class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrows-rotate me-1"></i> Change Tier
+                                <button class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-arrows-rotate me-1"></i> Change Tier
                                 </button>
                             </div>
                             <div class="row g-2">
@@ -156,8 +170,7 @@
                                 <h2 class="h6 mb-0">Points History</h2>
                                 <div class="d-flex align-items-center section-actions">
                                     <div class="text-muted small me-2">1000 pts = KWD 1.000</div>
-                                    <button id="pointsToggle" class="btn btn-outline-secondary btn-sm">
-                                        <i class="fa-solid fa-chevron-down me-1"></i> Show more
+                                    <button id="pointsToggle" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-down me-1"></i> Show more
                                     </button>
                                 </div>
                             </div>
@@ -181,10 +194,10 @@
                             <div class="d-flex align-items-center justify-content-between mb-1">
                                 <h2 class="h6 mb-0">Coupons</h2>
                                 <div class="section-actions d-flex">
-                                    <button class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-ticket me-1"></i> Send Coupon
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fa-solid fa-ticket me-1"></i> Send Coupon
                                     </button>
-                                    <button id="couponsToggle" class="btn btn-outline-secondary btn-sm">
-                                        <i class="fa-solid fa-chevron-down me-1"></i> Show more
+                                    <button id="couponsToggle" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-down me-1"></i> Show more
                                     </button>
                                 </div>
                             </div>
@@ -209,8 +222,7 @@
                         <div class="dt-card p-card">
                             <div class="d-flex align-items-center justify-content-between mb-1">
                                 <h2 class="h6 mb-0">Messages</h2>
-                                <button id="messagesToggle" class="btn btn-outline-secondary btn-sm">
-                                    <i class="fa-solid fa-chevron-down me-1"></i> Show more
+                                <button id="messagesToggle" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-down me-1"></i> Show more
                                 </button>
                             </div>
                             <div class="table-responsive">

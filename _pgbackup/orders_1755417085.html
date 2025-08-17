@@ -12,9 +12,51 @@
         <!-- Project styles -->
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/sidebar.css">
-        <style>/* ===========================
+        <style>
+    /* ===========================
        Orders page (scoped styles)
-       =========================== */.orders-page .toolbar { gap: .5rem; align-items: center; padding: .25rem 0 .5rem; } .orders-page .toolbar .form-select, .orders-page .toolbar .form-control { height: 32px; padding: .25rem .5rem; font-size: .9rem; line-height: 1.1; } .orders-page .toolbar .btn { --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem; height: 32px; } .orders-page .table { --cell-y: .4rem; font-size: .92rem; } .orders-page .table thead th { text-transform: uppercase; letter-spacing: .04em; font-size: .74rem; color: #6b7280; border-top: 0; } .orders-page .table > :not(caption) > * > * { padding-top: var(--cell-y); padding-bottom: var(--cell-y); border-color: var(--dt-border); } .orders-page .status-pill { display: inline-flex; align-items: center; gap: .35rem; border: 1px solid #a7f3d0; background: #ecfdf5; color: #065f46; border-radius: 999px; padding: .15rem .5rem; font-weight: 700; font-size: .72rem; } .orders-page .money { white-space: nowrap; } .orders-page .cell-customer small { color: #6b7280; display: block; line-height: 1.15; } .orders-page .dt-card { padding: 12px 14px; } .orders-page .pager { color: #6b7280; }</style>
+       =========================== */
+    .orders-page .toolbar {
+      gap:.5rem;
+      align-items:center;
+      padding:.25rem 0 .5rem;
+    }
+    .orders-page .toolbar .form-select,
+    .orders-page .toolbar .form-control{
+      height:32px; padding:.25rem .5rem; font-size:.9rem; line-height:1.1;
+    }
+    .orders-page .toolbar .btn{
+      --bs-btn-padding-y:.25rem; --bs-btn-padding-x:.5rem; --bs-btn-font-size:.9rem;
+      height:32px;
+    }
+
+    .orders-page .table{
+      --cell-y: .4rem;
+      font-size:.92rem;
+    }
+    .orders-page .table thead th{
+      text-transform:uppercase; letter-spacing:.04em; font-size:.74rem; color:#6b7280;
+      border-top:0;
+    }
+    .orders-page .table > :not(caption) > * > *{
+      padding-top:var(--cell-y); padding-bottom:var(--cell-y);
+      border-color:var(--dt-border);
+    }
+
+    .orders-page .status-pill{
+      display:inline-flex; align-items:center; gap:.35rem;
+      border:1px solid #a7f3d0; background:#ecfdf5; color:#065f46;
+      border-radius:999px; padding:.15rem .5rem; font-weight:700; font-size:.72rem;
+    }
+    .orders-page .money{ white-space:nowrap; }
+
+    .orders-page .cell-customer small{
+      color:#6b7280; display:block; line-height:1.15;
+    }
+
+    .orders-page .dt-card{ padding:12px 14px; }
+    .orders-page .pager{ color:#6b7280; }
+  </style>
         <body class="fullpage">
             <div class="layout">
                 <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
@@ -35,11 +77,14 @@
                                     </select>
                                     <input id="filterBizDate" type="date" class="form-control" style="max-width:160px" placeholder="dd/mm/yyyy">
                                     <div class="ms-auto d-flex gap-2">
-                                        <button id="btnExport" class="btn btn-outline-secondary"><i class="fa-solid fa-file-export me-1"></i>Export
+                                        <button id="btnExport" class="btn btn-outline-secondary">
+                                            <i class="fa-solid fa-file-export me-1"></i>Export
                                         </button>
-                                        <button id="btnRefresh" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate me-1"></i>Refresh
+                                        <button id="btnRefresh" class="btn btn-outline-secondary">
+                                            <i class="fa-solid fa-rotate me-1"></i>Refresh
                                         </button>
-                                        <button id="btnFilter" class="btn btn-outline-secondary"><i class="fa-solid fa-filter me-1"></i>Filter
+                                        <button id="btnFilter" class="btn btn-outline-secondary">
+                                            <i class="fa-solid fa-filter me-1"></i>Filter
                                         </button>
                                     </div>
                                 </div>

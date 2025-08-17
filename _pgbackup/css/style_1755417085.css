@@ -51,7 +51,7 @@ body {
    ========= */
 .sidebar {
     width: var(--sidebar-w);
-    background: #e8e8ea;
+    background: #f2f2f7;
     color: #555657;
     position: sticky;
     top: 0;

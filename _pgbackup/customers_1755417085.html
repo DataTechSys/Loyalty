@@ -12,9 +12,55 @@
         <!-- Project styles -->
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/sidebar.css">
-        <style>/* ===========================
+        <style>
+      /* ===========================
          Customers page (scoped styles)
-         =========================== */.customers-page .toolbar { gap: .5rem; align-items: center; padding: .25rem 0 .5rem; } .customers-page .toolbar .form-select, .customers-page .toolbar .form-control { height: 32px; padding: .25rem .5rem; font-size: .9rem; line-height: 1.1; } .customers-page .toolbar .btn { --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem; height: 32px; } .customers-page .table { --cell-y: .4rem; font-size: .92rem; } .customers-page .table thead th { text-transform: uppercase; letter-spacing: .04em; font-size: .74rem; color: #6b7280; border-top: 0; } .customers-page .table > :not(caption) > * > * { padding-top: var(--cell-y); padding-bottom: var(--cell-y); border-color: var(--dt-border); } .customers-page .tier-pill { display: inline-flex; align-items: center; gap: .35rem; border: 1px solid #c7d2fe; background: #eef2ff; color: #3730a3; border-radius: 999px; padding: .15rem .5rem; font-weight: 700; font-size: .72rem; } .customers-page .tier-gold { border-color: #fde68a; background: #fffbeb; color: #92400e; } .customers-page .tier-silver { border-color: #e5e7eb; background: #f9fafb; color: #374151; } .customers-page .tier-bronze { border-color: #fcd34d; background: #fff7ed; color: #7c2d12; } .customers-page .money { white-space: nowrap; } .customers-page .cell-customer small { color: #6b7280; display: block; line-height: 1.15; } .customers-page .dt-card { padding: 12px 14px; } .customers-page .pager { color: #6b7280; }</style>
+         =========================== */
+      .customers-page .toolbar {
+        gap:.5rem; align-items:center; padding:.25rem 0 .5rem;
+      }
+      .customers-page .toolbar .form-select,
+      .customers-page .toolbar .form-control{
+        height:32px; padding:.25rem .5rem; font-size:.9rem; line-height:1.1;
+      }
+      .customers-page .toolbar .btn{
+        --bs-btn-padding-y:.25rem; --bs-btn-padding-x:.5rem; --bs-btn-font-size:.9rem;
+        height:32px;
+      }
+
+      .customers-page .table{
+        --cell-y: .4rem;
+        font-size:.92rem;
+      }
+      .customers-page .table thead th{
+        text-transform:uppercase; letter-spacing:.04em; font-size:.74rem; color:#6b7280;
+        border-top:0;
+      }
+      .customers-page .table > :not(caption) > * > *{
+        padding-top:var(--cell-y); padding-bottom:var(--cell-y);
+        border-color:var(--dt-border);
+      }
+
+      .customers-page .tier-pill{
+        display:inline-flex; align-items:center; gap:.35rem;
+        border:1px solid #c7d2fe; background:#eef2ff; color:#3730a3;
+        border-radius:999px; padding:.15rem .5rem; font-weight:700; font-size:.72rem;
+      }
+      .customers-page .tier-gold{
+        border-color:#fde68a; background:#fffbeb; color:#92400e;
+      }
+      .customers-page .tier-silver{
+        border-color:#e5e7eb; background:#f9fafb; color:#374151;
+      }
+      .customers-page .tier-bronze{
+        border-color:#fcd34d; background:#fff7ed; color:#7c2d12;
+      }
+
+      .customers-page .money{ white-space:nowrap; }
+      .customers-page .cell-customer small{ color:#6b7280; display:block; line-height:1.15; }
+      .customers-page .dt-card{ padding:12px 14px; }
+      .customers-page .pager{ color:#6b7280; }
+    </style>
     </head>
     <body class="fullpage">
         <div class="layout">
@@ -47,14 +93,11 @@
                                 <input id="filterQuery" type="search" class="form-control" style="max-width:260px" placeholder="Search name, phone, or email">
                                 <input id="filterJoinedAfter" type="date" class="form-control" style="max-width:160px" title="Joined After">
                                 <div class="ms-auto d-flex gap-2">
-                                    <button id="btnExport" class="btn btn-outline-secondary">
-                                        <i class="fa-solid fa-file-export me-1"></i>Export
+                                    <button id="btnExport" class="btn btn-outline-secondary"><i class="fa-solid fa-file-export me-1"></i>Export
                                     </button>
-                                    <button id="btnRefresh" class="btn btn-outline-secondary">
-                                        <i class="fa-solid fa-rotate me-1"></i>Refresh
+                                    <button id="btnRefresh" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate me-1"></i>Refresh
                                     </button>
-                                    <button id="btnFilter" class="btn btn-outline-secondary">
-                                        <i class="fa-solid fa-filter me-1"></i>Filter
+                                    <button id="btnFilter" class="btn btn-outline-secondary"><i class="fa-solid fa-filter me-1"></i>Filter
                                     </button>
                                 </div>
                             </div>

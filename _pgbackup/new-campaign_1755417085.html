@@ -12,7 +12,17 @@
         <!-- Shared styles -->
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/sidebar.css">
-        <style>.form-hint { color: #6b7280; font-size: .85rem; } .chips { display: flex; flex-wrap: wrap; gap: .35rem; } .chip { background: #eef2ff; border: 1px solid #dbeafe; border-radius: 999px; padding: .25rem .6rem; font-weight: 600; } .chip .x { cursor: pointer; margin-left: .35rem; } .section-title { font-weight: 700; margin-bottom: .35rem; } .split { display: grid; grid-template-columns: 1fr; gap: .75rem; } @media (min-width: 992px){ .split {  grid-template-columns: 1.2fr .8fr; } } .counter { font-variant-numeric: tabular-nums; } .hidden { display: none!important; }</style>
+        <style>
+    .form-hint{color:#6b7280;font-size:.85rem}
+    .chips{display:flex;flex-wrap:wrap;gap:.35rem}
+    .chip{background:#eef2ff;border:1px solid #dbeafe;border-radius:999px;padding:.25rem .6rem;font-weight:600}
+    .chip .x{cursor:pointer;margin-left:.35rem}
+    .section-title{font-weight:700;margin-bottom:.35rem}
+    .split {display:grid;grid-template-columns:1fr;gap:.75rem}
+    @media (min-width: 992px){ .split{grid-template-columns: 1.2fr .8fr} }
+    .counter{font-variant-numeric:tabular-nums}
+    .hidden{display:none!important}
+  </style>
     </head>
     <body>
         <div class="layout">
@@ -31,9 +41,11 @@
                                 <div class="text-muted small">Send a Wallet notification or WhatsApp message to customers.</div>
                             </div>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-outline-secondary btn-sm" id="btnDraft"><i class="fa-regular fa-floppy-disk me-1"></i>Save draft
+                                <button class="btn btn-outline-secondary btn-sm" id="btnDraft">
+                                    <i class="fa-regular fa-floppy-disk me-1"></i>Save draft
                                 </button>
-                                <button class="btn btn-primary btn-sm" id="btnSend"><i class="fa-solid fa-paper-plane me-1"></i>Send
+                                <button class="btn btn-primary btn-sm" id="btnSend">
+                                    <i class="fa-solid fa-paper-plane me-1"></i>Send
                                 </button>
                             </div>
                         </div>
@@ -60,8 +72,7 @@
                                         <div class="tab-content">
                                             <!-- Customers search/add -->
                                             <div class="tab-pane fade show active" id="pane-customers" role="tabpanel">
-                                                <div class="input-group input-group-sm mb-1">
-                                                    <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                                <div class="input-group input-group-sm mb-1"><span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
                                                     <input id="custSearch" type="text" class="form-control" placeholder="Search customers by name or phone (demo list)"/>
                                                     <button class="btn btn-outline-secondary" type="button" id="btnAddCust">Add</button>
                                                 </div>
@@ -96,12 +107,14 @@
                                         <div class="d-flex gap-3">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="cmpType" id="typeWallet" value="wallet" checked>
-                                                <label class="form-check-label" for="typeWallet"><i class="fa-solid fa-wallet me-1"></i>Wallet
+                                                <label class="form-check-label" for="typeWallet">
+                                                    <i class="fa-solid fa-wallet me-1"></i>Wallet
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="cmpType" id="typeWA" value="whatsapp">
-                                                <label class="form-check-label" for="typeWA"><i class="fa-brands fa-whatsapp me-1"></i>WhatsApp
+                                                <label class="form-check-label" for="typeWA">
+                                                    <i class="fa-brands fa-whatsapp me-1"></i>WhatsApp
                                                 </label>
                                             </div>
                                         </div>
@@ -112,7 +125,8 @@
                                         <textarea id="walletText" class="form-control" rows="4" placeholder="Short notification text shown on customer’s wallet pass"></textarea>
                                         <div class="d-flex justify-content-between">
                                             <div class="form-hint">Keep it brief and clear. Emojis are supported.</div>
-                                            <div class="form-hint counter"><span id="walletCount">0</span>/<span id="walletMax">200</span>
+                                            <div class="form-hint counter">
+                                                <span id="walletCount">0</span>/<span id="walletMax">200</span>
                                             </div>
                                         </div>
                                     </div>
@@ -168,19 +182,25 @@
                                         <div class="section-title">Summary</div>
                                         <div class="small text-muted">Quick check before sending.</div>
                                         <hr class="my-2">
-                                        <div class="small"><span class="text-muted">Name:</span> <span id="sName">—</span>
+                                        <div class="small">
+                                            <span class="text-muted">Name:</span> <span id="sName">—</span>
                                         </div>
-                                        <div class="small"><span class="text-muted">Audience:</span> <span id="sAudience">—</span>
+                                        <div class="small">
+                                            <span class="text-muted">Audience:</span> <span id="sAudience">—</span>
                                         </div>
-                                        <div class="small"><span class="text-muted">Type:</span> <span id="sType">Wallet</span>
+                                        <div class="small">
+                                            <span class="text-muted">Type:</span> <span id="sType">Wallet</span>
                                         </div>
-                                        <div class="small"><span class="text-muted">When:</span> <span id="sWhen">Now</span>
+                                        <div class="small">
+                                            <span class="text-muted">When:</span> <span id="sWhen">Now</span>
                                         </div>
                                     </div>
                                     <div class="d-grid gap-2 mt-2">
-                                        <button class="btn btn-primary" type="button" id="btnPrimarySend"><i class="fa-solid fa-paper-plane me-1"></i>Send
+                                        <button class="btn btn-primary" type="button" id="btnPrimarySend">
+                                            <i class="fa-solid fa-paper-plane me-1"></i>Send
                                         </button>
-                                        <button class="btn btn-outline-secondary" type="button" id="btnPrimarySchedule"><i class="fa-regular fa-clock me-1"></i>Schedule
+                                        <button class="btn btn-outline-secondary" type="button" id="btnPrimarySchedule">
+                                            <i class="fa-regular fa-clock me-1"></i>Schedule
                                         </button>
                                     </div>
                                 </div>
