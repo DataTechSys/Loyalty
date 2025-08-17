@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Orders · Loyalty Console</title>
+        <!-- Fonts + UI -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- App styles -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <style>
+    /* Stretch content to full width and keep things tidy */
+    body.fullpage .container-narrow {max-width: 1400px;}
+    .filters .form-select, .filters .form-control {height: 40px}
+    .filters .btn {height: 40px}
+    .kpi-lite{border:1px solid var(--dt-border);background:#fff;border-radius:12px;padding:12px;box-shadow:var(--dt-shadow)}
+    .kpi-lite .label{color:var(--dt-muted);font-size:.8rem}
+    .badge-pill{border-radius:999px;padding:.4rem .65rem;font-weight:700;font-size:.72rem}
+    .st-done{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
+    .st-refunded{background:#eff6ff;color:#1e3a8a;border:1px solid #bfdbfe}
+    .st-open{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+    .pay-knet{background:#eef2ff;border:1px solid #c7d2fe;color:#3730a3}
+    .pay-apple{background:#f5f5f5;border:1px solid #e5e7eb;color:#111827}
+    .pay-cash{background:#f0fdf4;border:1px solid #bbf7d0;color:#065f46}
+    .pay-loyalty{background:#ecfeff;border:1px solid #a5f3fc;color:#155e75}
+    .tw-nowrap{white-space:nowrap}
+    .table thead th {vertical-align:bottom}
+  </style>
+    </head>
+    <body class="fullpage">
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title + Filters -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h1 class="h5 fw-bold mb-0">Orders</h1>
+                        </div>
+                        <div class="dt-card p-card filters mb-2">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-12 col-md-3">
+                                    <select id="fltBranch" class="form-select">
+                                        <option value="">All Branches</option>
+                                        <option value="AHB | Abu Halifa">AHB | Abu Halifa</option>
+                                        <option value="ADB | Ardiya">ADB | Ardiya</option>
+                                        <option value="SLB | Salmiya">SLB | Salmiya</option>
+                                        <option value="JRB | Jahra">JRB | Jahra</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <input id="fltDate" type="date" class="form-control"/>
+                                </div>
+                                <div class="col-12 col-md-6 d-flex justify-content-md-end gap-2">
+                                    <button id="btnExport" class="btn btn-outline-secondary"><i class="fa-solid fa-file-export me-1"></i>Export
+                                    </button>
+                                    <button id="btnReset" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate me-1"></i>Reset
+                                    </button>
+                                    <button id="btnFilter" class="btn btn-outline-secondary"><i class="fa-solid fa-filter me-1"></i>Filter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Smart insights -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi-lite">
+                                    <div class="label">Total Revenue</div>
+                                    <div class="fw-bold" id="sumRevenue">KWD 0.000</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi-lite">
+                                    <div class="label">Orders</div>
+                                    <div class="fw-bold" id="sumOrders">0</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi-lite">
+                                    <div class="label">Top Payment</div>
+                                    <div class="fw-bold" id="topPayment">—</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="kpi-lite">
+                                    <div class="label">Avg Ticket</div>
+                                    <div class="fw-bold" id="avgTicket">KWD 0.000</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Orders table -->
+                        <div class="dt-card p-card">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0" id="tblOrders">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:34px"></th>
+                                            <th>Reference</th>
+                                            <th>Number</th>
+                                            <th>Branch</th>
+                                            <th>Customer</th>
+                                            <th>Status</th>
+                                            <th>Source</th>
+                                            <th class="text-end">Total</th>
+                                            <th class="tw-nowrap">Business Date</th>
+                                            <th class="tw-nowrap">Opened At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordBody"></tbody>
+                                </table>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2 small text-muted">
+                                <div id="pagerText">Showing 1 to 10</div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm" disabled>Previous</button>
+                                    <button class="btn btn-outline-secondary btn-sm" disabled>Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <script>
+    (function(){
+      // ---- Demo rows (extend/replace with your data feed) -------------------
+      const rows = [
+        {id:1770662, number:35, branch:'AHB | Abu Halifa',  custId:'253218', cust:'Khwaja koti - 253218<br>6586 1990', status:'Done',     source:'Cashier', pay:'Knet',     amount:0.000, bdate:'2025-08-16', opened:'August 16, 03:32pm'},
+        {id:1770661, number:31, branch:'ADB | Ardiya',      custId:'',       cust:'—',                              status:'Done',     source:'Cashier', pay:'Apple Pay', amount:4.400, bdate:'2025-08-16', opened:'August 16, 03:29pm'},
+        {id:1770660, number:137,branch:'SLB | Salmiya',     custId:'397548', cust:'mohammed aburumuh - 397548<br>6633 1534', status:'Done', source:'Cashier', pay:'Loyalty', amount:1.500, bdate:'2025-08-16', opened:'August 16, 03:28pm'},
+        {id:1770659, number:81, branch:'JRB | Jahra',       custId:'401516', cust:'Bader - 401516<br>6616 7722',   status:'Done',     source:'Cashier', pay:'Cash',      amount:1.250, bdate:'2025-08-16', opened:'August 16, 03:23pm'},
+        {id:1770658, number:136,branch:'SLB | Salmiya',     custId:'',       cust:'—',                              status:'Done',     source:'Cashier', pay:'Knet',      amount:1.750, bdate:'2025-08-16', opened:'August 16, 03:23pm'},
+        {id:1770657, number:135,branch:'SLB | Salmiya',     custId:'',       cust:'—',                              status:'Done',     source:'Cashier', pay:'Knet',      amount:4.450, bdate:'2025-08-16', opened:'August 16, 03:22pm'},
+        {id:1770656, number:134,branch:'SLB | Salmiya',     custId:'',       cust:'—',                              status:'Done',     source:'Cashier', pay:'Knet',      amount:0.950, bdate:'2025-08-16', opened:'August 16, 03:21pm'},
+        {id:1770655, number:68, branch:'SLB | Salmiya',     custId:'',       cust:'Fuad Majed Al_Ghazali - 839164<br>588 81127', status:'Done',source:'Cashier', pay:'Knet', amount:1.950, bdate:'2025-08-16', opened:'August 16, 03:18pm'},
+        {id:1770654, number:133,branch:'SLB | Salmiya',     custId:'',       cust:'—',                              status:'Done',     source:'Cashier', pay:'Knet',      amount:4.200, bdate:'2025-08-16', opened:'August 16, 03:20pm'},
+        {id:1770652, number:48, branch:'AHB | Abu Halifa',  custId:'288821', cust:'Dana bofeen - 288821<br>6600 4908', status:'Done', source:'Cashier', pay:'Knet', amount:2.250, bdate:'2025-08-16', opened:'August 16, 03:18pm'}
+      ];
+
+      // ---- Helpers ---------------------------------------------------------
+      const fmtKWD = v => 'KWD ' + Number(v||0).toLocaleString(undefined,{minimumFractionDigits:3, maximumFractionDigits:3});
+      const badgeStatus = s => {
+        if (s==='Done')     return '<span class="badge-pill st-done">Done</span>';
+        if (s==='Refunded') return '<span class="badge-pill st-refunded">Refunded</span>';
+        return '<span class="badge-pill st-open">'+(s||'Open')+'</span>';
+      };
+      const badgePay = p => {
+        const map = { 'Knet':'pay-knet', 'Apple Pay':'pay-apple', 'Cash':'pay-cash', 'Loyalty':'pay-loyalty' };
+        return `<span class="badge-pill ${map[p]||'pay-cash'}">${p||'—'}</span>`;
+      };
+
+      // ---- Render table ----------------------------------------------------
+      const body = document.getElementById('ordBody');
+      body.innerHTML = rows.map(r => {
+        // Customer cell: link to customer-details if we have an ID
+        let custHtml = r.cust || '—';
+        if (r.custId) {
+          const nameOnly = (r.cust.split('<')[0]||'').replace(/<br>.*/,''); // try to take the first line
+          custHtml = `<a href="customer-details.html?id=${encodeURIComponent(r.custId)}" class="text-decoration-none">${nameOnly}</a>` +
+                     (r.cust.includes('<br>') ? `<div class="text-muted small">${r.cust.split('<br>')[1]||''}</div>` : '');
+        }
+        return `
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><a href="order-details.html?id=${r.id}" class="text-decoration-none">#${r.id}</a></td>
+            <td>${r.number}</td>
+            <td>${r.branch}</td>
+            <td>${custHtml}</td>
+            <td>${badgeStatus(r.status)}</td>
+            <td>${badgePay(r.pay)}</td>
+            <td class="text-end">${fmtKWD(r.amount)}</td>
+            <td class="tw-nowrap">${r.bdate}</td>
+            <td class="tw-nowrap">${r.opened}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // ---- Smart insight calculations -------------------------------------
+      const sum = rows.reduce((a,r)=>a+r.amount,0);
+      const avg = rows.length ? sum/rows.length : 0;
+      const payCounts = rows.reduce((acc,r)=>{acc[r.pay]=(acc[r.pay]||0)+1;return acc;}, {});
+      const topPay = Object.entries(payCounts).sort((a,b)=>b[1]-a[1])[0]?.[0] || '—';
+
+      document.getElementById('sumRevenue').textContent = fmtKWD(sum);
+      document.getElementById('sumOrders').textContent  = rows.length.toLocaleString();
+      document.getElementById('avgTicket').textContent  = fmtKWD(avg);
+      document.getElementById('topPayment').textContent = topPay;
+
+      // ---- Filters (demo wiring) ------------------------------------------
+      document.getElementById('btnReset').addEventListener('click', ()=>{
+        document.getElementById('fltBranch').value = '';
+        document.getElementById('fltDate').value   = '';
+      });
+      document.getElementById('btnExport').addEventListener('click', ()=>{
+        // very small CSV export
+        const header = ['Reference','Number','Branch','Customer','Status','Payment','Total','Business Date','Opened At'];
+        const lines = [header.join(',')].concat(
+          rows.map(r => [
+            r.id, r.number, r.branch,
+            (r.custId? (r.cust.split('<')[0]||'') : (r.cust||'—')).replace(/<[^>]*>/g,''),
+            r.status, r.pay, r.amount, r.bdate, r.opened
+          ].map(x=>`"${String(x).replace(/"/g,'""')}"`).join(','))
+        );
+        const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8;'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a'); a.href=url; a.download='orders.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      });
+
+      // (Optional) Hook Filter button to actually filter your dataset later…
+      document.getElementById('btnFilter').addEventListener('click', ()=>{
+        alert('Demo filter: plug your API/filtering here');
+      });
+    })();
+  </script>
+    </body>
+</html>

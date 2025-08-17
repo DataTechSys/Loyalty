@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Order Details · Loyalty Console</title>
+        <!-- Fonts / CSS -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <style>
+    /* page tweaks consistent with your tokens */
+    .subtle { color: #667085; }
+    .section-title { font-weight: 700; font-size: .95rem; color:#344054; }
+    .kv { display:grid; grid-template-columns: 220px 1fr; gap:.35rem .75rem; }
+    .kv .key{ color:#667085; }
+    .kv .val{ font-weight:600; }
+    .chip-soft{border:1px solid var(--dt-border); background:#fff; border-radius:999px; padding:.25rem .6rem; font-weight:700; font-size:.75rem;}
+    .img-thumb{border:1px solid var(--dt-border); border-radius:12px; overflow:hidden; background:#f6f7fb;}
+    .img-thumb img{display:block; width:100%; height:140px; object-fit:cover;}
+    .divider {border-top:1px dashed var(--dt-border); margin:.5rem 0;}
+    .btn-linklike {border:1px solid var(--dt-border); background:#fff;}
+    .code {font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:.85rem;}
+    .grid-2{display:grid; gap:.75rem;}
+    @media(min-width:992px){.grid-2{grid-template-columns:1fr 1fr;}}
+  </style>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Header + Actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div><a class="small text-decoration-none subtle" href="orders.html"><i class="fa-solid fa-angle-left me-1"></i>Back</a>
+                                <h1 class="h5 fw-bold mb-0" id="odrTitle">Order</h1>
+                                <div class="text-muted small" id="odrSubtitle"></div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-secondary btn-sm" id="btnReceipt">
+                                    <i class="fa-regular fa-file-lines me-1"></i>Receipt
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" id="btnPrint">
+                                    <i class="fa-solid fa-print me-1"></i>Print
+                                </button>
+                                <button class="btn btn-primary btn-sm" id="btnRefund">
+                                    <i class="fa-solid fa-rotate-left me-1"></i>Refund
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Top Summary -->
+                        <div class="row g-2">
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card">
+                                    <div class="section-title mb-2">Order Summary</div>
+                                    <div class="kv" id="kvOrder"></div>
+                                    <div class="divider"></div>
+                                    <div class="kv" id="kvAmounts"></div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card">
+                                    <div class="section-title mb-2">Customer</div>
+                                    <div class="d-flex align-items-start gap-2">
+                                        <img id="custAvatar" src="images/avatar-placeholder.png" alt="" style="width:40px;height:40px;border-radius:50%;border:1px solid var(--dt-border)">
+                                        <div>
+                                            <div class="fw-semibold" id="custName">—</div>
+                                            <div class="small subtle" id="custPhone">—</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 grid-2">
+                                        <div class="dt-card p-2">
+                                            <div class="small subtle">Membership</div>
+                                            <div class="fw-semibold" id="pkTier">—</div>
+                                            <div class="small" id="pkSince">—</div>
+                                        </div>
+                                        <div class="dt-card p-2">
+                                            <div class="small subtle">Wallet Balance</div>
+                                            <div class="fw-semibold" id="pkWallet">—</div>
+                                            <div class="small" id="pkPoints">—</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2" id="pkCouponsWrap" style="display:none;">
+                                        <div class="section-title mb-1">Coupons applied</div>
+                                        <div id="pkCoupons" class="d-flex flex-wrap gap-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Items & Payments -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-lg-7">
+                                <div class="dt-card p-card h-100">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <div class="section-title mb-0">Items</div>
+                                        <button class="btn btn-outline-secondary btn-sm" id="btnExpandItems">
+                                            <i class="fa-solid fa-up-right-and-down-left-from-center me-1"></i>Expand
+                                        </button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th class="text-center">Qty</th>
+                                                    <th class="text-end">Unit</th>
+                                                    <th class="text-end">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="itemsBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="dt-card p-card h-100">
+                                    <div class="section-title mb-1">Payments</div>
+                                    <div id="payList"></div>
+                                    <div class="divider"></div>
+                                    <div class="kv" id="kvTotals"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- POS / Source & Drive-thru (conditional) -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card">
+                                    <div class="section-title mb-1">Source & POS</div>
+                                    <div class="kv" id="kvSource"></div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6" id="driveWrap" style="display:none;">
+                                <div class="dt-card p-card">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="section-title mb-0">Drive Thru</div><span class="chip-soft"><i class="fa-solid fa-car-rear me-1"></i>Camera</span>
+                                    </div>
+                                    <div class="kv mt-2" id="kvDrive"></div>
+                                    <div class="row g-2 mt-1" id="driveImgs"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Timeline & Notes -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card">
+                                    <div class="section-title mb-1">Timeline</div>
+                                    <ul class="list-unstyled mb-0" id="timeline"></ul>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="dt-card p-card">
+                                    <div class="section-title mb-1">Notes</div>
+                                    <div id="notes" class="small">—</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <!-- Demo data + rendering -->
+        <script>
+  (function(){
+    // --- Utilities ----------------------------------------------------------
+    const fmtKWD = v => 'KWD ' + Number(v||0).toFixed(3);
+    const qs = sel => document.querySelector(sel);
+
+    // --- Simulated order (replace later with real data) ---------------------
+    // You can hydrate this object from your backend/POS/PassKit APIs.
+    const ORDER = {
+      id:      (new URLSearchParams(location.search).get('id')) || '1770355',
+      number:  19,
+      branch:  'AHB | Abu Halifa',
+      type:    'Drive Thru', // 'Dine In' | 'Delivery' | 'Drive Thru'
+      source:  { channel:'Cashier', device:'POS-2', user:{id:285, name:'Mark Christopher'} },
+      openedAt:'2025-08-16T08:04:00Z',
+      closedAt:'2025-08-16T08:05:00Z',
+      businessDate:'2025-08-16',
+      guests:  1,
+
+      customer:{
+        id:'738868',
+        name:'Noura Alazzaz',
+        phone:'+965 9793 5543',
+        avatar:'', // could be filled by your profile uploader
+        passkit:{
+          tier:'Green',
+          since:'2024-09-12',
+          walletKwd:3.200,
+          points:3200,
+          coupons:[
+            { code:'WELCOME5', title:'Welcome 5', value:'KWD 0.500', status:'Redeemed', sent:'2025-07-01', redeemed:'2025-08-05', expires:'2026-01-01' }
+          ]
+        }
+      },
+
+      items:[
+        {
+          name:'Latte', qty:1, unit:1.200, total:1.400,
+          modifiers:[
+            { group:'Milk',  value:'Skimmed' },
+            { group:'Espresso', value:'Double shot' },
+            { group:'Temp', value:'Hot' }
+          ],
+          notes:'Less foam'
+        }
+      ],
+
+      payments:[
+        { method:'Knet', amount:1.400, ref:'477789', added:'2025-08-16T08:05:00Z' }
+        // { method:'Apple Pay', amount:3.780, ... }
+        // { method:'Loyalty', amount:0.350, points:350, ... }
+      ],
+
+      amounts:{ subTotal:1.400, discount:0.000, rounding:0.000, taxes:0.000, final:1.400 },
+
+      // If Drive Thru: plate & possible LPR (license plate recognition) metadata
+      driveThru:{
+        plate:'KWT 48253',
+        country:'KW',
+        color:'White',
+        vehicle:'SUV',
+        cameraFrames:[
+          // Replace with your endpoint/frames; these are placeholders
+          { src:'images/drive-front.jpg',  ts:'2025-08-16T08:04:11Z' },
+          { src:'images/drive-window.jpg', ts:'2025-08-16T08:04:25Z' }
+        ]
+      },
+
+      notes:'Customer asked for “less foam” and “receipt by email.”',
+      timeline:[
+        { at:'2025-08-16T08:04:00Z', text:'Order opened' },
+        { at:'2025-08-16T08:04:45Z', text:'Items prepared' },
+        { at:'2025-08-16T08:05:00Z', text:'Payment captured (Knet)' },
+        { at:'2025-08-16T08:05:00Z', text:'Order closed' }
+      ]
+    };
+
+    // --- Header -------------------------------------------------------------
+    qs('#odrTitle').textContent = `Order #${ORDER.id}`;
+    qs('#odrSubtitle').textContent = `${ORDER.branch} · ${new Date(ORDER.closedAt).toLocaleString([], { dateStyle:'medium', timeStyle:'short' })}`;
+
+    // --- Summary blocks -----------------------------------------------------
+    const kv = (k,v)=>`<div class="key">${k}</div><div class="val">${v ?? '—'}</div>`;
+
+    qs('#kvOrder').innerHTML = [
+      kv('Order Number', ORDER.number),
+      kv('Business Date', ORDER.businessDate),
+      kv('Type', ORDER.type),
+      kv('Guests', ORDER.guests),
+      kv('Status', '<span class="badge text-bg-success">Done</span>'),
+      kv('Opened At', new Date(ORDER.openedAt).toLocaleString()),
+      kv('Closed At', new Date(ORDER.closedAt).toLocaleString()),
+    ].join('');
+
+    qs('#kvAmounts').innerHTML = [
+      kv('Sub Total', fmtKWD(ORDER.amounts.subTotal)),
+      kv('Discount', fmtKWD(ORDER.amounts.discount)),
+      kv('Rounding Amount', fmtKWD(ORDER.amounts.rounding)),
+      kv('Total Taxes', fmtKWD(ORDER.amounts.taxes)),
+      kv('<strong>Final Price</strong>', `<strong>${fmtKWD(ORDER.amounts.final)}</strong>`),
+    ].join('');
+
+    // --- Customer + PassKit -------------------------------------------------
+    qs('#custName').textContent = `${ORDER.customer.name} - ${ORDER.customer.id}`;
+    qs('#custPhone').textContent = ORDER.customer.phone || '—';
+    if (ORDER.customer.avatar) {
+      qs('#custAvatar').src = ORDER.customer.avatar;
+    }
+
+    const pk = ORDER.customer.passkit || {};
+    qs('#pkTier').textContent = pk.tier || '—';
+    qs('#pkSince').textContent = pk.since ? `Since ${new Date(pk.since).toLocaleDateString()}` : '—';
+    qs('#pkWallet').textContent = (typeof pk.walletKwd === 'number') ? fmtKWD(pk.walletKwd) : '—';
+    qs('#pkPoints').textContent = (typeof pk.points === 'number') ? `${pk.points.toLocaleString()} pts` : '—';
+
+    if (pk.coupons && pk.coupons.length) {
+      const wrap = qs('#pkCouponsWrap');
+      const host = qs('#pkCoupons');
+      host.innerHTML = pk.coupons.map(c => `
+        <span class="chip-soft">
+          <span class="code">${c.code}</span> · ${c.status}
+        </span>`).join('');
+      wrap.style.display = '';
+    }
+
+    // --- Items with modifiers ----------------------------------------------
+    qs('#itemsBody').innerHTML = ORDER.items.map(it => `
+      <tr>
+        <td>
+          <div class="fw-semibold">${it.name}</div>
+          ${it.modifiers?.length ? `
+            <div class="small subtle">
+              ${it.modifiers.map(m => `<span class="me-2"><strong>${m.group}</strong>: ${m.value}</span>`).join('')}
+            </div>` : ''}
+          ${it.notes ? `<div class="small"><i class="fa-regular fa-note-sticky me-1"></i>${it.notes}</div>`:''}
+        </td>
+        <td class="text-center">${it.qty}</td>
+        <td class="text-end">${fmtKWD(it.unit)}</td>
+        <td class="text-end">${fmtKWD(it.total)}</td>
+      </tr>
+    `).join('');
+
+    // Expand (turns each modifier row into block) purely cosmetic demo
+    qs('#btnExpandItems').addEventListener('click', () => {
+      document.querySelectorAll('#itemsBody .subtle').forEach(el => el.classList.toggle('d-block'));
+    });
+
+    // --- Payments + totals --------------------------------------------------
+    const payHost = qs('#payList');
+    payHost.innerHTML = ORDER.payments.map(p => `
+      <div class="d-flex align-items-center justify-content-between py-1">
+        <div>
+          <span class="chip-soft me-2">${p.method}</span>
+          ${p.ref ? `<span class="code subtle">Ref ${p.ref}</span>`:''}
+        </div>
+        <div class="fw-semibold">${fmtKWD(p.amount)}</div>
+      </div>
+    `).join('');
+
+    qs('#kvTotals').innerHTML = [
+      kv('Total Paid', fmtKWD(ORDER.payments.reduce((a,b)=>a+(b.amount||0),0))),
+      kv('Balance', fmtKWD(ORDER.amounts.final - ORDER.payments.reduce((a,b)=>a+(b.amount||0),0)))
+    ].join('');
+
+    // --- Source / POS -------------------------------------------------------
+    const src = ORDER.source || {};
+    qs('#kvSource').innerHTML = [
+      kv('Channel', src.channel || '—'),
+      kv('Device',  src.device || '—'),
+      kv('User',    (src.user && (src.user.name + (src.user.id?` · ${src.user.id}`:''))) || '—')
+    ].join('');
+
+    // --- Drive Thru (conditional) ------------------------------------------
+    if (ORDER.type === 'Drive Thru' && ORDER.driveThru) {
+      const d = ORDER.driveThru;
+      qs('#driveWrap').style.display = '';
+      qs('#kvDrive').innerHTML = [
+        kv('Plate', `<span class="code">${d.plate || '—'}</span>`),
+        kv('Country', d.country || '—'),
+        kv('Vehicle', d.vehicle || '—'),
+        kv('Color', d.color || '—')
+      ].join('');
+      const imgRow = qs('#driveImgs');
+      imgRow.innerHTML = (d.cameraFrames||[]).map(fr => `
+        <div class="col-6">
+          <div class="img-thumb"><img src="${fr.src || 'images/cam-placeholder.jpg'}" alt=""></div>
+          <div class="small subtle mt-1">${new Date(fr.ts).toLocaleString()}</div>
+        </div>
+      `).join('');
+    }
+
+    // --- Timeline & notes ---------------------------------------------------
+    qs('#notes').textContent = ORDER.notes || '—';
+    qs('#timeline').innerHTML = (ORDER.timeline||[]).map(t => `
+      <li class="d-flex justify-content-between py-1">
+        <span>${t.text}</span>
+        <span class="small subtle">${new Date(t.at).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}</span>
+      </li>
+    `).join('');
+
+    // --- Actions ------------------------------------------------------------
+    qs('#btnPrint').addEventListener('click', () => window.print());
+    qs('#btnReceipt').addEventListener('click', () => alert('Open receipt (demo)'));
+    qs('#btnRefund').addEventListener('click', () => alert('Refund flow (demo)'));
+  })();
+  </script>
+    </body>
+</html>
