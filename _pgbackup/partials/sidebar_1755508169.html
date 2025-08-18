@@ -1,0 +1,32 @@
+<!-- partials/sidebar.html -->
+<div class="sb-brand">
+    <img src="images/DataTech.png" alt="DataTech"><span class="brand-text">Loyalty Console</span>
+</div>
+<nav class="sb-nav" aria-label="Primary">
+    <!-- Core pages --><a class="sb-link" href="dashboard.html"> <i class="fa-solid fa-gauge-high"></i> <span class="sb-text">Dashboard</span> </a><a class="sb-link" href="orders.html"> <i class="fa-solid fa-cart-shopping"></i> <span class="sb-text">Orders</span> </a><a class="sb-link" href="customers.html"> <i class="fa-solid fa-users"></i> <span class="sb-text">Customers</span> </a><a class="sb-link" href="messages.html"> <i class="fa-solid fa-paper-plane"></i> <span class="sb-text">Messages</span> </a><a class="sb-link" href="reports.html"> <i class="fa-solid fa-chart-line"></i> <span class="sb-text">Reports</span> </a>
+    <!-- Settings (single page; keep simple per your latest plan) -->
+    <div class="sb-parent">
+        <button type="button" class="sb-link sb-toggle" aria-expanded="false"><i class="fa-solid fa-gear"></i><span class="sb-text">Settings</span><i class="fa-solid fa-chevron-down ms-auto"></i>
+        </button>
+        <div class="sb-group" role="region" aria-label="Settings submenu"><a class="sb-link" href="settings.html"> <i class="fa-regular fa-circle"></i> <span class="sb-text">General Settings</span> </a>
+            <!-- You said Admin / Super Admin actions live inside Settings as buttons,
+           so we just link to the Settings hub here. Add more items if needed. -->
+        </div>
+    </div>
+    <!-- Optional Admin group (kept collapsed; safe to leave for role-based reveal later) -->
+    <div class="sb-parent">
+        <button type="button" class="sb-link sb-toggle" aria-expanded="false"><i class="fa-solid fa-user-shield"></i><span class="sb-text">Admin</span><i class="fa-solid fa-chevron-down ms-auto"></i>
+        </button>
+        <div class="sb-group" role="region" aria-label="Admin submenu"><a class="sb-link" href="admin-users.html"> <i class="fa-regular fa-circle"></i> <span class="sb-text">Users</span> </a><a class="sb-link" href="admin-rolls.html"> <i class="fa-regular fa-circle"></i> <span class="sb-text">Roles</span> </a><a class="sb-link" href="admin-loyalty.html"> <i class="fa-regular fa-circle"></i> <span class="sb-text">Loyalty</span> </a><a class="sb-link" href="admin-invite.html"> <i class="fa-regular fa-circle"></i> <span class="sb-text">Invite Admin</span> </a>
+        </div>
+    </div>
+    <!-- Optional Super Admin group -->
+    <div class="sb-parent">
+        <button type="button" class="sb-link sb-toggle" aria-expanded="false"><i class="fa-solid fa-screwdriver-wrench"></i><span class="sb-text">Super Admin</span><i class="fa-solid fa-chevron-down ms-auto"></i>
+        </button>
+        <div class="sb-group" role="region" aria-label="Super Admin submenu"><a class="sb-link" href="super-admin.html"> <i class="fa-regular fa-circle"></i> <span class="sb-text">API & Tokens</span> </a>
+        </div>
+    </div>
+    <!-- Login/Logout entry (handy during dev) --><a class="sb-link" href="login.html"> <i class="fa-solid fa-right-to-bracket"></i> <span class="sb-text">Login</span> </a>
+</nav>
+<div class="sb-footer">© DataTech 2025</div>

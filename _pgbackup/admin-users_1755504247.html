@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Admin · Users · Loyalty Console</title>
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Your styles -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <style>
+    .badge-soft { border:1px solid; padding:.3rem .55rem; border-radius:999px; font-weight:700; font-size:.7rem; }
+    .st-active   { background:#ecfdf5; color:#065f46; border-color:#a7f3d0; }
+    .st-pending  { background:#fff7ed; color:#9a3412; border-color:#fed7aa; }
+    .st-disabled { background:#f1f5f9; color:#475569; border-color:#e2e8f0; }
+    .table-actions .btn{ padding:.25rem .5rem }
+    .searchbar{max-width:260px}
+  </style>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title + actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Users</h1>
+                                <div class="text-muted small">Manage console users and roles</div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <input id="txtSearch" class="form-control form-control-sm searchbar" placeholder="Search name or email">
+                                <button id="btnAdd" class="btn btn-primary btn-sm"><i class="fa-solid fa-user-plus me-1"></i>Add User
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Table -->
+                        <div class="dt-card p-card">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Company</th>
+                                            <th>Role</th>
+                                            <th class="text-end">Status</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersBody"></tbody>
+                                </table>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2 small text-muted">
+                                <div id="usersCount">0 users</div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm" id="prevPage">Previous</button>
+                                    <button class="btn btn-outline-secondary btn-sm" id="nextPage">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Add/Edit Modal -->
+        <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <form class="modal-content" id="userForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userModalTitle">Add User</h5>
+                        <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="userId">
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">First Name</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small">Email</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Company</label>
+                                <input type="text" class="form-control" id="company" placeholder="e.g. Koobs Cafe">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Role</label>
+                                <select id="role" class="form-select">
+                                    <option value="Owner">Owner</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Editor">Editor</option>
+                                    <option value="Viewer">Viewer</option>
+                                    <option value="Cashier">Cashier</option>
+                                    <option value="Accountant">Accountant</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Status</label>
+                                <select id="status" class="form-select">
+                                    <option value="Active">Active</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Disabled">Disabled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="alert alert-success d-none mt-2" id="saveSuccess">Saved.</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Delete confirm -->
+        <div class="modal fade" id="confirmDelete" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete user</h5>
+                        <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="delText">Are you sure you want to delete this user?</div>
+                        <div class="text-muted small mt-1">This action can be reversed only by creating the user again.</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                        <button class="btn btn-danger" id="btnDeleteConfirm" type="button"><i class="fa-solid fa-trash me-1"></i>Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap + shared scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <script>
+  (function(){
+    // --- Demo data (replace with API) ---------------------------------------
+    let USERS = [
+      { id:'u1', first:'Hussain', last:'Mosawi',   email:'hussain@example.com', company:'Koobs Cafe',     role:'Owner',      status:'Active'   },
+      { id:'u2', first:'Sara',    last:'Ali',      email:'sara@example.com',    company:'Koobs Cafe',     role:'Admin',      status:'Pending'  },
+      { id:'u3', first:'Omar',    last:'Yousef',   email:'omar@example.com',    company:'Al Sabah Bistro',role:'Viewer',     status:'Active'   },
+      { id:'u4', first:'Layla',   last:'Rahman',   email:'layla@example.com',   company:'Sand Dunes',     role:'Accountant', status:'Disabled' },
+    ];
+    let PAGE = 1, SIZE = 10, FILTER = '';
+
+    const $ = (sel, root=document) => root.querySelector(sel);
+
+    const body = $('#usersBody');
+    const count = $('#usersCount');
+    const search = $('#txtSearch');
+    const prevBtn = $('#prevPage');
+    const nextBtn = $('#nextPage');
+
+    function statusBadge(s){
+      const map = { Active:'st-active', Pending:'st-pending', Disabled:'st-disabled' };
+      return '<span class="badge-soft '+(map[s]||'st-disabled')+'">'+s+'</span>';
+    }
+
+    function fullName(u){ return (u.first||'') + (u.last?(' '+u.last):''); }
+
+    function filtered(){
+      const q = (FILTER||'').trim().toLowerCase();
+      if (!q) return USERS;
+      return USERS.filter(u =>
+        fullName(u).toLowerCase().includes(q) ||
+        (u.email||'').toLowerCase().includes(q)
+      );
+    }
+
+    function render(){
+      const list = filtered();
+      const total = list.length;
+      const pages = Math.max(1, Math.ceil(total / SIZE));
+      if (PAGE > pages) PAGE = pages;
+      const start = (PAGE-1)*SIZE;
+      const rows = list.slice(start, start+SIZE);
+
+      body.innerHTML = rows.map(u=>`
+        <tr data-id="${u.id}">
+          <td class="fw-semibold">${fullName(u)}</td>
+          <td>${u.email||'—'}</td>
+          <td>${u.company||'—'}</td>
+          <td>${u.role||'—'}</td>
+          <td class="text-end">${statusBadge(u.status||'Disabled')}</td>
+          <td class="text-end table-actions">
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-secondary" data-action="edit"><i class="fa-regular fa-pen-to-square"></i></button>
+              <button class="btn btn-outline-secondary" data-action="delete"><i class="fa-regular fa-trash-can"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      count.textContent = `${start+1}-${Math.min(start+rows.length,total)} of ${total}`;
+      prevBtn.disabled = PAGE<=1;
+      nextBtn.disabled = PAGE>=pages;
+    }
+
+    // Pagination
+    prevBtn.addEventListener('click', ()=>{ PAGE=Math.max(1,PAGE-1); render(); });
+    nextBtn.addEventListener('click', ()=>{ PAGE=PAGE+1; render(); });
+
+    // Search
+    search.addEventListener('input', ()=>{
+      FILTER = search.value;
+      PAGE = 1;
+      render();
+    });
+
+    // Row actions
+    body.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const tr = e.target.closest('tr');
+      const id = tr?.getAttribute('data-id');
+      const user = USERS.find(u=>u.id===id);
+      if (!user) return;
+
+      const action = btn.getAttribute('data-action');
+      if (action === 'edit') openEdit(user);
+      if (action === 'delete') openDelete(user);
+    });
+
+    // Add User
+    $('#btnAdd').addEventListener('click', ()=> openEdit(null));
+
+    // --- Modals / Forms -----------------------------------------------------
+    const modalEl = $('#userModal');
+    const modal = new bootstrap.Modal(modalEl);
+    const form = $('#userForm');
+    const saveMsg = $('#saveSuccess');
+
+    function openEdit(user){
+      $('#userModalTitle').textContent = user ? 'Edit User' : 'Add User';
+      $('#userId').value = user?.id || '';
+      $('#firstName').value = user?.first || '';
+      $('#lastName').value  = user?.last || '';
+      $('#email').value     = user?.email || '';
+      $('#company').value   = user?.company || '';
+      $('#role').value      = user?.role || 'Viewer';
+      $('#status').value    = user?.status || 'Active';
+      saveMsg.classList.add('d-none');
+      modal.show();
+    }
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const id = $('#userId').value.trim();
+      const u = {
+        id: id || ('u'+Math.random().toString(36).slice(2,9)),
+        first: $('#firstName').value.trim(),
+        last:  $('#lastName').value.trim(),
+        email: $('#email').value.trim(),
+        company: $('#company').value.trim(),
+        role: $('#role').value,
+        status: $('#status').value
+      };
+
+      if (!u.first || !u.last || !u.email){
+        alert('First, last and email are required.'); return;
+      }
+
+      const ix = USERS.findIndex(x=>x.id===id);
+      if (ix>=0) USERS[ix] = u; else USERS.unshift(u);
+
+      // TODO: replace with API call, then only show success on 200 OK
+      saveMsg.classList.remove('d-none');
+      setTimeout(()=>{ modal.hide(); render(); }, 600);
+    });
+
+    const delEl = $('#confirmDelete');
+    const delModal = new bootstrap.Modal(delEl);
+    let delUserId = null;
+
+    function openDelete(user){
+      delUserId = user.id;
+      $('#delText').innerHTML = `Delete <strong>${fullName(user)}</strong>?`;
+      delModal.show();
+    }
+
+    $('#btnDeleteConfirm').addEventListener('click', ()=>{
+      if (!delUserId) return;
+      USERS = USERS.filter(u=>u.id!==delUserId);
+      delUserId = null;
+      delModal.hide();
+      render();
+    });
+
+    // Initial render
+    render();
+
+    // --- API wiring notes ---------------------------------------------------
+    // Replace the add/update/delete blocks with fetch() calls to your backend:
+    //
+    //  - POST /api/admin/users        (create)
+    //  - PUT  /api/admin/users/:id    (update)
+    //  - DELETE /api/admin/users/:id  (delete)
+    //
+    // And GET /api/admin/users?search=&page=&size=  for listing/paging.
+  })();
+  </script>
+    </body>
+</html>

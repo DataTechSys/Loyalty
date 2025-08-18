@@ -49,27 +49,16 @@
       .forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
 
     // Expand/collapse grouped parents (the ones with a chevron)
-    // (Original click wiring) 
     sidebar.addEventListener('click', (e) => {
-      const toggle = e.target.closest('.sb-toggle');
-      if (!toggle) return;
-
+      const t = e.target.closest('.sb-toggle');
+      if (!t) return;
+      const parent = t.closest('.sb-parent');
+      parent?.classList.toggle('open');
       e.preventDefault();
-
-      const parent = toggle.closest('.sb-parent');
-      if (!parent) return;
-
-      // Accordion: close other open groups at the same level
-      const siblings = parent.parentElement?.querySelectorAll(':scope > .sb-parent.open') || [];
-      siblings.forEach(sib => { if (sib !== parent) sib.classList.remove('open'); });
-
-      // Toggle current
-      parent.classList.toggle('open');
     });
   }
 
   function markActive() {
-    // Highlight the current page in the sidebar
     const here = location.pathname.split('/').pop().toLowerCase(); // e.g. 'customer-details.html'
     document.querySelectorAll('.sidebar a.sb-link').forEach(a => {
       const href = (a.getAttribute('href') || '').split('/').pop().toLowerCase();

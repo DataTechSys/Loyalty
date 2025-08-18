@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>New Campaign · Loyalty Console</title>
+        <!-- Fonts + Bootstrap + Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Shared styles -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <style>.form-hint { color: #6b7280; font-size: .85rem; } .chips { display: flex; flex-wrap: wrap; gap: .35rem; } .chip { background: #eef2ff; border: 1px solid #dbeafe; border-radius: 999px; padding: .25rem .6rem; font-weight: 600; } .chip .x { cursor: pointer; margin-left: .35rem; } .section-title { font-weight: 700; margin-bottom: .35rem; } .split { display: grid; grid-template-columns: 1fr; gap: .75rem; } @media (min-width: 992px){ .split {  grid-template-columns: 1.2fr .8fr; } } .counter { font-variant-numeric: tabular-nums; } .hidden { display: none!important; }</style>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">New Campaign</h1>
+                                <div class="text-muted small">Send a Wallet notification or WhatsApp message to customers.</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-secondary btn-sm" id="btnDraft"><i class="fa-regular fa-floppy-disk me-1"></i>Save draft
+                                </button>
+                                <button class="btn btn-primary btn-sm" id="btnSend"><i class="fa-solid fa-paper-plane me-1"></i>Send
+                                </button>
+                            </div>
+                        </div>
+                        <div class="dt-card p-card">
+                            <form id="campaignForm" class="split">
+                                <!-- LEFT: Main form -->
+                                <div>
+                                    <!-- Name -->
+                                    <div class="mb-2">
+                                        <label class="form-label fw-semibold">Campaign name</label>
+                                        <input id="cmpName" type="text" class="form-control" placeholder="e.g., Weekend Offer – Buy 1 Get 1"/>
+                                    </div>
+                                    <!-- Audience -->
+                                    <div class="mb-2">
+                                        <div class="section-title">Send to</div>
+                                        <ul class="nav nav-pills small mb-2" id="audTabs" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="tab-customers" data-bs-toggle="pill" data-bs-target="#pane-customers" type="button" role="tab">Customers</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="tab-tags" data-bs-toggle="pill" data-bs-target="#pane-tags" type="button" role="tab">By Tag</button>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <!-- Customers search/add -->
+                                            <div class="tab-pane fade show active" id="pane-customers" role="tabpanel">
+                                                <div class="input-group input-group-sm mb-1">
+                                                    <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                                    <input id="custSearch" type="text" class="form-control" placeholder="Search customers by name or phone (demo list)"/>
+                                                    <button class="btn btn-outline-secondary" type="button" id="btnAddCust">Add</button>
+                                                </div>
+                                                <div class="form-hint">Type a name/phone and click <strong>Add</strong>. Selected recipients appear below.
+                                                </div>
+                                                <div id="custChips" class="chips mt-2"></div>
+                                            </div>
+                                            <!-- Tags -->
+                                            <div class="tab-pane fade" id="pane-tags" role="tabpanel">
+                                                <div class="row g-1 align-items-center">
+                                                    <div class="col-md-8">
+                                                        <label class="form-label small">Customer Tag</label>
+                                                        <select id="tagSelect" class="form-select form-select-sm">
+                                                            <option value="">Select a tag…</option>
+                                                            <option>VIP</option>
+                                                            <option>New Customers</option>
+                                                            <option>Inactive 30+ days</option>
+                                                            <option>Birthday month</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label small">Estimated reach</label>
+                                                        <input id="tagReach" type="text" class="form-control form-control-sm" value="—" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Type -->
+                                    <div class="mb-2">
+                                        <div class="section-title">Type</div>
+                                        <div class="d-flex gap-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="cmpType" id="typeWallet" value="wallet" checked>
+                                                <label class="form-check-label" for="typeWallet"><i class="fa-solid fa-wallet me-1"></i>Wallet
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="cmpType" id="typeWA" value="whatsapp">
+                                                <label class="form-check-label" for="typeWA"><i class="fa-brands fa-whatsapp me-1"></i>WhatsApp
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Wallet message -->
+                                    <div class="mb-2" id="walletBox">
+                                        <label class="form-label fw-semibold">Message</label>
+                                        <textarea id="walletText" class="form-control" rows="4" placeholder="Short notification text shown on customer’s wallet pass"></textarea>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="form-hint">Keep it brief and clear. Emojis are supported.</div>
+                                            <div class="form-hint counter"><span id="walletCount">0</span>/<span id="walletMax">200</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- WhatsApp -->
+                                    <div class="mb-2 hidden" id="waBox">
+                                        <div class="row g-2">
+                                            <div class="col-md-7">
+                                                <label class="form-label fw-semibold">Twilio Template</label>
+                                                <select id="waTemplate" class="form-select">
+                                                    <!-- filled by JS -->
+                                                </select>
+                                                <div class="form-hint">Choose a pre‑approved template. Variables can be merged below.</div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <label class="form-label fw-semibold">Sample Variables</label>
+                                                <div class="row g-1">
+                                                    <div class="col-6">
+                                                        <input id="varName" class="form-control form-control-sm" placeholder="{{name}}" value="Mustafa">
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <input id="varOffer" class="form-control form-control-sm" placeholder="{{offer}}" value="20% OFF">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label class="form-label small">Preview</label>
+                                            <div class="dt-card p-2" id="waPreview" style="white-space:pre-wrap;min-height:70px"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Send time -->
+                                    <div class="mb-2">
+                                        <div class="section-title">Send</div>
+                                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="sendTime" id="sendNow" value="now" checked>
+                                                <label class="form-check-label" for="sendNow">Now</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="sendTime" id="sendLater" value="later">
+                                                <label class="form-check-label" for="sendLater">Later</label>
+                                            </div>
+                                            <div id="scheduleWrap" class="d-flex align-items-center gap-2 hidden">
+                                                <input id="whenDate" type="date" class="form-control form-control-sm">
+                                                <input id="whenTime" type="time" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- RIGHT: Summary -->
+                                <div>
+                                    <div class="dt-card p-2">
+                                        <div class="section-title">Summary</div>
+                                        <div class="small text-muted">Quick check before sending.</div>
+                                        <hr class="my-2">
+                                        <div class="small"><span class="text-muted">Name:</span> <span id="sName">—</span>
+                                        </div>
+                                        <div class="small"><span class="text-muted">Audience:</span> <span id="sAudience">—</span>
+                                        </div>
+                                        <div class="small"><span class="text-muted">Type:</span> <span id="sType">Wallet</span>
+                                        </div>
+                                        <div class="small"><span class="text-muted">When:</span> <span id="sWhen">Now</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2 mt-2">
+                                        <button class="btn btn-primary" type="button" id="btnPrimarySend"><i class="fa-solid fa-paper-plane me-1"></i>Send
+                                        </button>
+                                        <button class="btn btn-outline-secondary" type="button" id="btnPrimarySchedule"><i class="fa-regular fa-clock me-1"></i>Schedule
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- JS libs -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Your helpers -->
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <!-- Page logic -->
+        <script>
+  (function(){
+    // --- Config ------------------------------------------------------------
+    const MAX_WALLET_CHARS = 200; // adjust to PassKit constraint if needed
+    walletMax.textContent = MAX_WALLET_CHARS;
+
+    // Demo customers + tags
+    const DEMO_CUSTOMERS = [
+      'Mustafa · 285', 'Reem · 302', 'Ali · 401516',
+      'Sara · 826158', 'Omar · 529946', 'Mark Christopher · 285'
+    ];
+
+    // Demo Twilio templates (name + body with variables)
+    const TEMPLATES = [
+      { id:'promo_simple',
+        name:'Promo – Simple',
+        body:'Hi {{name}}, great news! Enjoy {{offer}} at Koobs Cafe today. Reply STOP to opt out.' },
+      { id:'promo_reminder',
+        name:'Promo – Reminder',
+        body:'Dear {{name}}, reminder: {{offer}} ends tonight. See you soon!' },
+      { id:'points_update',
+        name:'Points Update',
+        body:'Hi {{name}}, your points balance changed. New offer: {{offer}}.' }
+    ];
+
+    // Fill template select
+    waTemplate.innerHTML = TEMPLATES.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+
+    function currentTemplate(){
+      const id = waTemplate.value || TEMPLATES[0].id;
+      return TEMPLATES.find(t => t.id===id) || TEMPLATES[0];
+    }
+    function renderPreview(){
+      let txt = currentTemplate().body;
+      txt = txt.replace('{{name}}', varName.value || '{{name}}')
+               .replace('{{offer}}', varOffer.value || '{{offer}}');
+      waPreview.textContent = txt;
+    }
+    renderPreview();
+    waTemplate.addEventListener('change', renderPreview);
+    varName.addEventListener('input', renderPreview);
+    varOffer.addEventListener('input', renderPreview);
+
+    // Wallet counter
+    function updateCount(){
+      const len = walletText.value.length;
+      if (len > MAX_WALLET_CHARS) walletText.value = walletText.value.slice(0, MAX_WALLET_CHARS);
+      walletCount.textContent = walletText.value.length;
+    }
+    walletText.addEventListener('input', updateCount);
+    updateCount();
+
+    // Type toggle
+    function syncType(){
+      const wallet = typeWallet.checked;
+      walletBox.classList.toggle('hidden', !wallet);
+      waBox.classList.toggle('hidden', wallet);
+      sType.textContent = wallet ? 'Wallet' : 'WhatsApp';
+    }
+    typeWallet.addEventListener('change', syncType);
+    typeWA.addEventListener('change', syncType);
+    syncType();
+
+    // Send time toggle
+    function syncWhen(){
+      const later = sendLater.checked;
+      scheduleWrap.classList.toggle('hidden', !later);
+      sWhen.textContent = later
+        ? (whenDate.value && whenTime.value ? `${whenDate.value} ${whenTime.value}` : 'Scheduled')
+        : 'Now';
+    }
+    sendNow.addEventListener('change', syncWhen);
+    sendLater.addEventListener('change', syncWhen);
+    whenDate.addEventListener('change', syncWhen);
+    whenTime.addEventListener('change', syncWhen);
+
+    // Audience: customers chips
+    const selected = new Set();
+    function redrawChips(){
+      custChips.innerHTML = Array.from(selected).map(v =>
+        `<span class="chip">${v}<span class="x" data-x="${v}">×</span></span>`
+      ).join('');
+      custChips.querySelectorAll('.x').forEach(x=>{
+        x.addEventListener('click', ()=>{ selected.delete(x.getAttribute('data-x')); redrawChips(); syncSummary(); });
+      });
+      syncSummary();
+    }
+    btnAddCust.addEventListener('click', ()=>{
+      const q = (custSearch.value||'').trim();
+      if (!q) return;
+      // In a real app search backend; for demo accept if found in list or free‑form
+      const match = DEMO_CUSTOMERS.find(c => c.toLowerCase().includes(q.toLowerCase())) || q;
+      selected.add(match);
+      custSearch.value = '';
+      redrawChips();
+    });
+
+    // Audience: tag reach (demo)
+    tagSelect.addEventListener('change', ()=>{
+      const m = { 'VIP': 320, 'New Customers': 410, 'Inactive 30+ days': 185, 'Birthday month': 92 };
+      tagReach.value = m[tagSelect.value] ? m[tagSelect.value].toLocaleString() : '—';
+      syncSummary();
+    });
+
+    // Summary
+    function syncSummary(){
+      sName.textContent = cmpName.value || '—';
+      const tabTagsActive = document.getElementById('tab-tags').classList.contains('active');
+      let aud = '—';
+      if (tabTagsActive) {
+        aud = tagSelect.value ? `Tag: ${tagSelect.value} (${tagReach.value||'—'})` : 'Tag: —';
+      } else {
+        aud = selected.size ? `${selected.size} selected` : 'No customers selected';
+      }
+      sAudience.textContent = aud;
+      syncWhen();
+      syncType();
+    }
+    cmpName.addEventListener('input', syncSummary);
+    document.getElementById('tab-tags').addEventListener('shown.bs.tab', syncSummary);
+    document.getElementById('tab-customers').addEventListener('shown.bs.tab', syncSummary);
+    syncSummary();
+
+    // Actions (demo only)
+    function collectPayload(){
+      const type = typeWallet.checked ? 'wallet' : 'whatsapp';
+      const later = sendLater.checked;
+      const payload = {
+        name: cmpName.value.trim(),
+        audience: document.getElementById('tab-tags').classList.contains('active')
+          ? { mode:'tag', tag: tagSelect.value||null }
+          : { mode:'list', customers: Array.from(selected) },
+        type,
+        wallet: type==='wallet' ? { text: walletText.value.trim() } : null,
+        whatsapp: type==='whatsapp' ? {
+          template: waTemplate.value,
+          vars: { name: varName.value, offer: varOffer.value }
+        } : null,
+        send: later ? { when: (whenDate.value||'')+' '+(whenTime.value||'') } : { when:'now' }
+      };
+      return payload;
+    }
+
+    function validate(payload){
+      if (!payload.name) return 'Please enter a campaign name.';
+      if (payload.audience.mode==='list' && (!payload.audience.customers || !payload.audience.customers.length))
+        return 'Add at least one recipient or choose a Tag.';
+      if (payload.audience.mode==='tag' && !payload.audience.tag)
+        return 'Choose a customer tag.';
+      if (payload.type==='wallet' && !payload.wallet.text) return 'Enter wallet message text.';
+      if (payload.type==='whatsapp' && !payload.whatsapp.template) return 'Select a WhatsApp template.';
+      if (payload.send.when!=='now' && payload.send.when.trim()==='') return 'Pick a schedule date/time.';
+      return null;
+    }
+
+    function toast(msg){ alert(msg); } // replace with a nicer toast if you want
+
+    function onSend(schedule=false){
+      const data = collectPayload();
+      const err = validate(data);
+      if (err) return toast(err);
+      // API call placeholder
+      console.log(schedule ? 'SCHEDULE' : 'SEND', data);
+      toast(schedule ? 'Campaign scheduled (demo).' : 'Campaign sent (demo).');
+    }
+
+    btnSend.addEventListener('click', ()=> onSend(false));
+    btnPrimarySend.addEventListener('click', ()=> onSend(false));
+    btnPrimarySchedule.addEventListener('click', ()=> onSend(true));
+    btnDraft.addEventListener('click', ()=>{
+      const data = collectPayload();
+      console.log('DRAFT', data);
+      toast('Draft saved (demo).');
+    });
+  })();
+  </script>
+    </body>
+</html>

@@ -27,7 +27,6 @@
         <div class="layout">
             <!-- Sidebar -->
             <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
-            <script src="js/sidebar.js" defer></script>
             <!-- Main -->
             <div class="main">
                 <!-- Topbar -->
@@ -41,7 +40,9 @@
                                 <h1 class="h5 fw-bold mb-0">Members dashboard</h1>
                                 <div class="small page-sub">Engagement, growth, and member vs non‑member performance</div>
                             </div>
-                            <div class="d-flex gap-2"><a class="btn btn-outline-secondary btn-sm" href="reports.html"> <i class="fa-solid fa-chart-simple me-1"></i>Open Reports </a><a class="btn btn-primary btn-sm" href="messages.html"> <i class="fa-solid fa-paper-plane me-1"></i>New Campaign </a>
+                            <div class="d-flex gap-2">
+                                <a class="btn btn-outline-secondary btn-sm" href="reports.html"> <i class="fa-solid fa-chart-simple me-1"></i>Open Reports </a>
+                                <a class="btn btn-primary btn-sm" href="messages.html"> <i class="fa-solid fa-paper-plane me-1"></i>New Campaign </a>
                             </div>
                         </div>
                         <!-- KPIs (members only) -->
@@ -80,7 +81,8 @@
                             <div class="col-12 col-lg-7">
                                 <div class="dt-card p-card h-100">
                                     <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <h2 class="h6 mb-0">Orders by day (members vs non‑members, 30d)</h2><a class="small" href="reports.html#orders">View in Reports</a>
+                                        <h2 class="h6 mb-0">Orders by day (members vs non‑members, 30d)</h2>
+                                        <a class="small" href="reports.html#orders">View in Reports</a>
                                     </div>
                                     <div class="chart-wrap">
                                         <canvas id="chartOrdersStacked"></canvas>
@@ -90,7 +92,8 @@
                             <div class="col-12 col-lg-5">
                                 <div class="dt-card p-card h-100">
                                     <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <h2 class="h6 mb-0">Member growth (last 30 days)</h2><a class="small" href="reports.html#members">View in Reports</a>
+                                        <h2 class="h6 mb-0">Member growth (last 30 days)</h2>
+                                        <a class="small" href="reports.html#members">View in Reports</a>
                                     </div>
                                     <div class="chart-wrap">
                                         <canvas id="chartMembersGrowth"></canvas>
@@ -103,7 +106,8 @@
                             <div class="col-12 col-lg-5">
                                 <div class="dt-card p-card h-100">
                                     <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <h2 class="h6 mb-0">Redemptions split</h2><span class="small text-muted">Members vs non‑members</span>
+                                        <h2 class="h6 mb-0">Redemptions split</h2>
+                                        <span class="small text-muted">Members vs non‑members</span>
                                     </div>
                                     <div class="chart-wrap">
                                         <canvas id="chartRedeemSplit"></canvas>
@@ -113,7 +117,8 @@
                             <div class="col-12 col-lg-7">
                                 <div class="dt-card p-card h-100">
                                     <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <h2 class="h6 mb-0">Payment mix (members only)</h2><span class="small text-muted">Knet / Apple Pay / Wallet</span>
+                                        <h2 class="h6 mb-0">Payment mix (members only)</h2>
+                                        <span class="small text-muted">Knet / Apple Pay / Wallet</span>
                                     </div>
                                     <div class="chart-wrap">
                                         <canvas id="chartMemberPay"></canvas>
@@ -124,7 +129,8 @@
                         <!-- Recent member activity -->
                         <div class="dt-card p-card mt-2">
                             <div class="d-flex align-items-center justify-content-between mb-1">
-                                <h2 class="h6 mb-0">Recent member activity</h2><a class="small" href="customers.html">View all members</a>
+                                <h2 class="h6 mb-0">Recent member activity</h2>
+                                <a class="small" href="customers.html">View all members</a>
                             </div>
                             <div class="table-responsive">
                                 <table class="table align-middle mb-0">
