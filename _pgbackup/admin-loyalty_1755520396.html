@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Loyalty Tiers · Loyalty Console</title>
+        <!-- Fonts / Bootstrap / Icons -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="images/datatech-ico.ico">
+        <!-- Your shared styles -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <style>
+    .tier-badge{border-radius:999px;padding:.3rem .6rem;font-weight:700;}
+    .tier-Green{background:#e8f7ee;color:#0b6b3a;border:1px solid #b6e9c9}
+    .tier-Silver{background:#f2f3f5;color:#374151;border:1px solid #d7dbe2}
+    .tier-Gold{background:#fff7e6;color:#8a5a00;border:1px solid #ffe0a6}
+    .tier-Platinum{background:#eef2ff;color:#3446a1;border:1px solid #cdd7ff}
+    .mono{font-variant-numeric:tabular-nums}
+  </style>
+    </head>
+    <body>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar" data-include="partials/sidebar.html"></aside>
+            <!-- Main -->
+            <div class="main">
+                <!-- Topbar -->
+                <div data-include="partials/topbar.html"></div>
+                <!-- Page -->
+                <main class="page">
+                    <div class="container-narrow">
+                        <!-- Title / actions -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <h1 class="h5 fw-bold mb-0">Loyalty Tiers</h1>
+                                <div class="text-muted small">Define membership types and rewards; sync designs to PassKit.</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button id="btnActivate" class="btn btn-outline-secondary btn-sm"><i class="fa-regular fa-star me-1"></i>Activate Loyalty
+                                </button>
+                                <button id="btnSync" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrows-rotate me-1"></i>Sync to PassKit
+                                </button>
+                                <button id="btnNewTier" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>New Tier
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Tiers table -->
+                        <div class="dt-card p-card">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Tier</th>
+                                            <th class="text-end">Min Spend (KWD / year)</th>
+                                            <th class="text-end">Max Spend</th>
+                                            <th class="text-end">Cashback</th>
+                                            <th class="text-end">Earn Rate</th>
+                                            <th class="text-end">Redeem Rate</th>
+                                            <th>Design</th>
+                                            <th class="text-end">Members</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tiersBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Help / notes -->
+                        <div class="small text-muted mt-2"><strong>Notes:</strong> Cashback is a % of bill returned as points. Earn/ Redeem show points-per-KWD and KWD-per-points.  
+                            Use <em>Sync to PassKit</em> after edits to push templates, images, and tier rules.
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- Edit Tier Modal -->
+        <div class="modal fade" id="tierModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <form class="modal-content" id="tierForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Tier</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Tier Name</label>
+                                <input type="text" id="fName" class="form-control" placeholder="e.g. Gold" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small">Card / Template ID (PassKit)</label>
+                                <input type="text" id="fTemplate" class="form-control" placeholder="passkit_template_id">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small">Min Spend (KWD/year)</label>
+                                <input type="number" id="fMin" class="form-control" step="0.001" min="0">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small">Max Spend</label>
+                                <input type="number" id="fMax" class="form-control" step="0.001" min="0">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small">Cashback %</label>
+                                <input type="number" id="fCashback" class="form-control" step="0.1" min="0" max="100">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small">Earn Rate (points / KWD)</label>
+                                <input type="number" id="fEarn" class="form-control" step="1" min="0">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small">Redeem: KWD per 1,000 points</label>
+                                <input type="number" id="fRedeem" class="form-control" step="0.001" min="0">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small">Card Accent (hex)</label>
+                                <input type="text" id="fColor" class="form-control" placeholder="#FFD166">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small">Benefits (bullets)</label>
+                                <textarea id="fBenefits" class="form-control" rows="3" placeholder="10% cashback, free birthday drink, priority service"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <div class="alert alert-info small mb-0"><strong>Preview math:</strong>
+                                    For every KWD 10 spend at <span class="mono">earnRate</span> points/KWD, customer earns<span class="mono">earnRate*10</span> points.  
+                                    1,000 points = <span class="mono">redeemKWD</span> KWD; effective cashback is roughly<span class="mono">redeemKWD / 10**</span> (not including promos).  <em>**Cashback % you set can differ to reflect real program economics.</em>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Vendor JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Shared includes -->
+        <script src="js/dt-include.js"></script>
+        <script src="js/sidebar.js" defer></script>
+        <script src="js/app-user.js" defer></script>
+        <!-- Page logic -->
+        <script>
+  (function(){
+    const STORAGE_KEY = 'dt_loyalty_tiers';
+
+    /** Seed demo tiers if none saved yet */
+    const seed = [
+      { id:'green',    name:'Green',    min:0,    max:500,  cashback:5,  earn:5,  redeemKWD:1,   color:'#3ECF8E',
+        template:'passkit_green',    members:2798, benefits:'5% cashback • Basic perks' },
+      { id:'silver',   name:'Silver',   min:501,  max:1500, cashback:8,  earn:10, redeemKWD:1,   color:'#9CA3AF',
+        template:'passkit_silver',   members:120,  benefits:'8% cashback • Free birthday drink' },
+      { id:'gold',     name:'Gold',     min:1501, max:5000, cashback:12, earn:15, redeemKWD:1,   color:'#F59E0B',
+        template:'passkit_gold',     members:60,   benefits:'12% cashback • Priority support' },
+      { id:'platinum', name:'Platinum', min:5001, max:100000, cashback:15, earn:20, redeemKWD:1, color:'#6366F1',
+        template:'passkit_platinum', members:18,   benefits:'15% cashback • VIP perks' },
+    ];
+
+    function load(){
+      try{
+        const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        return Array.isArray(s) && s.length ? s : seed;
+      }catch(_){ return seed; }
+    }
+    function save(tiers){
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(tiers)); }catch(_){}
+    }
+
+    let TIERS = load();
+
+    const tiersBody = document.getElementById('tiersBody');
+
+    function fmt(n, frac=3){
+      if(n===null || n===undefined || isNaN(n)) return '—';
+      return Number(n).toLocaleString(undefined,{minimumFractionDigits:frac,maximumFractionDigits:frac});
+    }
+
+    function render(){
+      tiersBody.innerHTML = TIERS.map(t => `
+        <tr>
+          <td>
+            <span class="tier-badge tier-${t.name} me-2">${t.name}</span>
+            <span class="text-muted small">${t.benefits?.split('•')[0]||''}</span>
+          </td>
+          <td class="text-end mono">KWD ${fmt(t.min)}</td>
+          <td class="text-end mono">KWD ${fmt(t.max)}</td>
+          <td class="text-end mono">${fmt(t.cashback,1)}%</td>
+          <td class="text-end mono">${fmt(t.earn,0)} pts / KWD</td>
+          <td class="text-end mono">KWD ${fmt(t.redeemKWD)}/1,000 pts</td>
+          <td>
+            <span class="badge text-bg-light border" style="border-color:${t.color};color:${t.color}">
+              ${t.template||'—'}
+            </span>
+          </td>
+          <td class="text-end mono">${(t.members||0).toLocaleString()}</td>
+          <td class="text-end">
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-secondary" data-action="edit" data-id="${t.id}">Edit</button>
+              <button class="btn btn-outline-secondary" data-action="duplicate" data-id="${t.id}">Duplicate</button>
+              <button class="btn btn-outline-danger" data-action="delete" data-id="${t.id}">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Open modal with a tier
+    const tierModalEl = document.getElementById('tierModal');
+    const tierModal = new bootstrap.Modal(tierModalEl);
+    const f = {
+      form: document.getElementById('tierForm'),
+      name: document.getElementById('fName'),
+      template: document.getElementById('fTemplate'),
+      min: document.getElementById('fMin'),
+      max: document.getElementById('fMax'),
+      cashback: document.getElementById('fCashback'),
+      earn: document.getElementById('fEarn'),
+      redeem: document.getElementById('fRedeem'),
+      color: document.getElementById('fColor'),
+      benefits: document.getElementById('fBenefits')
+    };
+    let editingId = null;
+
+    function openEditor(tier){
+      editingId = tier?.id || ('tier_'+Date.now());
+      f.name.value = tier?.name || '';
+      f.template.value = tier?.template || '';
+      f.min.value = tier?.min ?? 0;
+      f.max.value = tier?.max ?? 0;
+      f.cashback.value = tier?.cashback ?? 0;
+      f.earn.value = tier?.earn ?? 0;
+      f.redeem.value = tier?.redeemKWD ?? 1;
+      f.color.value = tier?.color || '#3ECF8E';
+      f.benefits.value = tier?.benefits || '';
+      tierModal.show();
+    }
+
+    function upsertFromForm(){
+      const o = {
+        id: editingId,
+        name: f.name.value.trim(),
+        template: f.template.value.trim(),
+        min: Number(f.min.value||0),
+        max: Number(f.max.value||0),
+        cashback: Number(f.cashback.value||0),
+        earn: Number(f.earn.value||0),
+        redeemKWD: Number(f.redeem.value||0),
+        color: f.color.value.trim(),
+        benefits: f.benefits.value.trim(),
+        members: TIERS.find(x=>x.id===editingId)?.members || 0
+      };
+      // Basic guards
+      if(!o.name){ alert('Tier name is required.'); return; }
+      if(o.max && o.max < o.min){ alert('Max spend must be ≥ Min spend.'); return; }
+
+      const i = TIERS.findIndex(x => x.id===editingId);
+      if(i>-1) TIERS[i] = o; else TIERS.push(o);
+      save(TIERS); render(); tierModal.hide();
+    }
+
+    // Events in table
+    tiersBody.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-action]');
+      if(!btn) return;
+      const id = btn.getAttribute('data-id');
+      const action = btn.getAttribute('data-action');
+      const row = TIERS.find(t=>t.id===id);
+      if(!row) return;
+
+      if(action==='edit'){ openEditor(row); }
+      if(action==='duplicate'){
+        const copy = { ...row, id:'tier_'+Date.now(), name: row.name+' Copy' };
+        TIERS.push(copy); save(TIERS); render();
+      }
+      if(action==='delete'){
+        if(!confirm(`Delete the "${row.name}" tier?`)) return;
+        TIERS = TIERS.filter(t => t.id!==id); save(TIERS); render();
+      }
+    });
+
+    // New tier
+    document.getElementById('btnNewTier').addEventListener('click', ()=> openEditor(null));
+
+    // Save from modal
+    f.form.addEventListener('submit', (e)=>{ e.preventDefault(); upsertFromForm(); });
+
+    // Activate (demo only)
+    document.getElementById('btnActivate').addEventListener('click', ()=>{
+      alert('Loyalty program activated (demo). In production, this would flip an org/feature flag.');
+    });
+
+    // Sync to PassKit (stub)
+    document.getElementById('btnSync').addEventListener('click', async ()=>{
+      try{
+        // TODO: Replace with real API calls:
+        // - Create/Update templates in PassKit per tier (t.template)
+        // - Upload assets (colors, images)
+        // - Push program rules (earn, redeemKWD, cashback, min/max)
+        // Example structure you might POST:
+        // await api.passkit.syncTiers(TIERS);
+        await new Promise(r=>setTimeout(r, 600));
+        alert('Synced to PassKit (demo). Add your API integration in btnSync listener.');
+      }catch(err){
+        console.error(err);
+        alert('Failed to sync. Check console.');
+      }
+    });
+
+    // Initial render
+    render();
+  })();
+  </script>
+    </body>
+</html>

@@ -1,73 +1,86 @@
-// server.js
-// Static site + profile photo upload (with CORS so it also works from Pinegrow on :40000)
+// server.js  (place this in the PROJECT ROOT)
+// Simple static server + avatar upload + robust logging
 
-const express = require("express");
-const multer = require("multer");
-const cors = require("cors");
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
+const express = require('express');
+const cors = require('cors');
+const multer = require('multer');
+const morgan = require('morgan');
+const rfs = require('rotating-file-stream');
 
 const app = express();
+const PORT = process.env.PORT || 4000;
 
-// ====== CONFIG ======
-const PORT = process.env.PORT || 3000;
+// --- Folders ----------------------------------------------------------------
+const publicDir = path.join(__dirname);         // serve the whole project as static
+const photosDir = path.join(__dirname, 'photos');
+const logsDir   = path.join(__dirname, 'logs');
 
-// Your project root (where index.html is)
-const ROOT = __dirname;
+if (!fs.existsSync(photosDir)) fs.mkdirSync(photosDir, { recursive: true });
+if (!fs.existsSync(logsDir))   fs.mkdirSync(logsDir,   { recursive: true });
 
-// Where to save uploaded profile photos
-const PHOTOS_DIR = path.join(ROOT, "photos");
+// --- Logging (access + error) ------------------------------------------------
+// Access log (rotates daily, keeps ~14 files by default)
+const accessLogStream = rfs.createStream('access.log', {
+  interval: '1d',
+  path: logsDir,
+  compress: 'gzip'
+});
+app.use(morgan('combined', { stream: accessLogStream }));
+// Also print concise logs to console during dev
+app.use(morgan('dev'));
 
-// Ensure photos dir exists
-if (!fs.existsSync(PHOTOS_DIR)) fs.mkdirSync(PHOTOS_DIR, { recursive: true });
+// Capture unhandled errors in a file
+const errorLog = fs.createWriteStream(path.join(logsDir, 'errors.log'), { flags: 'a' });
 
-// Allow CORS (so pages served by Pinegrow at :40000 can POST to this server)
-app.use(cors({ origin: true, credentials: true }));
-
-// Parse JSON if you ever need it
+// --- Middleware --------------------------------------------------------------
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Serve your whole project statically (optional, but handy)
-app.use(express.static(ROOT));
+// Serve static files (your HTML/CSS/JS)
+app.use(express.static(publicDir, { extensions: ['html'] }));
 
-// Serve photos as /photos/<filename>
-app.use("/photos", express.static(PHOTOS_DIR));
+// Serve uploaded avatars
+app.use('/photos', express.static(photosDir));
 
-// Configure multer storage + simple file filter
+// --- Multer setup ------------------------------------------------------------
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, PHOTOS_DIR),
+  destination: (_req, _file, cb) => cb(null, photosDir),
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname || "").toLowerCase() || ".jpg";
-    cb(null, `avatar_${Date.now()}${ext}`);
+    // Example file name: avatar_<timestamp>.jpg/png
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    const safeExt = ['.jpg', '.jpeg', '.png', '.webp'].includes(ext) ? ext : '.jpg';
+    cb(null, `avatar_${Date.now()}${safeExt}`);
   }
 });
-const fileFilter = (req, file, cb) => {
-  const ok = /image\/(jpeg|png|webp|gif|jpg)/i.test(file.mimetype);
-  cb(ok ? null : new Error("Only images are allowed"), ok);
-};
 const upload = multer({
   storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5 MB
+  limits: { fileSize: 3 * 1024 * 1024 }, // 3MB
 });
 
-// Upload endpoint: expects form field name "profilePhoto"
-app.post("/api/upload", upload.single("profilePhoto"), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+// --- Routes ------------------------------------------------------------------
+// Health check
+app.get('/health', (_req, res) => res.json({ ok: true }));
 
-  const publicPath = `/photos/${req.file.filename}`;
-  return res.json({
-    message: "Uploaded successfully",
-    path: publicPath,
-    url: `${req.protocol}://${req.get("host")}${publicPath}`
-  });
+// Avatar upload
+app.post('/upload-avatar', upload.single('avatar'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  const url = `/photos/${req.file.filename}`;
+  res.json({ ok: true, url });
 });
 
-// Basic health check
-app.get("/api/health", (_req, res) => res.json({ ok: true }));
+// --- Error handlers ----------------------------------------------------------
+app.use((err, _req, res, _next) => {
+  // Log to file
+  const stamp = new Date().toISOString();
+  errorLog.write(`[${stamp}] ${err.stack || err}\n`);
+  // Return safe message
+  res.status(500).json({ error: 'Internal server error' });
+});
 
-// Start server
+// --- Start -------------------------------------------------------------------
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-  console.log(`   Photos served from /photos`);
+  console.log(`✓ Server running on http://localhost:${PORT}`);
 });
